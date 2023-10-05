@@ -1,7 +1,6 @@
-const Player = require('./Player.js');
-const Game = require('./Game.js');
+const Game = require('./Game');
 
-const game = new Game(5);
+const game = new Game(10);
 
 game.InitGame();
 game.startGame();

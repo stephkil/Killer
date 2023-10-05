@@ -1,8 +1,9 @@
 class Player {
     
-    constructor(name) {
+    constructor(id,name) {
+      this.idPlayer = id;
       this.name = name;
-      this.cible = null;
+      this.target = null;
       this.number = null;
       this.mission = null;
     }
@@ -10,6 +11,7 @@ class Player {
     nbRandom() {
       this.number = Math.floor(Math.random() * 26 + 1);
     }
+
   }
   
   module.exports = Player;
