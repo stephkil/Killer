@@ -6,16 +6,18 @@ class Game {
         this.TableOfPlayers = [];
         this.TableInGame = [];
         this.nbPlayer = nb;
+        this.playerInGame = nb;
     }
   
     InitGame(){
         this.addPlayer();
         this.missionNumberPlayer();
+        this.shuffleTableOfPlayers();
         this.targetPlayer();
     }
 
     addPlayer(PlayerName){
-        for (let i = 1; i < this.nbPlayer+1; i++) {
+        for (let i = 0; i < this.nbPlayer; i++) {
             const name = "Player" + i;
             this.TableOfPlayers.push(new Player(i,name));
         }
@@ -24,14 +26,6 @@ class Game {
     missionNumberPlayer(){
         this.TableOfPlayers.forEach
             ((Player) => Player.nbRandom());
-    }
-
-    targetPlayer(){
-        this.shuffleTableOfPlayers();
-
-        for(let i = 0 ; i < this.nbPlayer; i++){
-        this.TableInGame[i].target = this.TableInGame[(i+1) % this.nbPlayer].name;
-        }
     }
 
     shuffleTableOfPlayers(){
@@ -45,14 +39,22 @@ class Game {
         this.TableInGame = playersCopy;
     }
 
-    startGame(){
-        console.log("Voici les concurents");
-        this.TableOfPlayers.forEach
-            ((Player) => console.log(`${Player.idPlayer} - ${Player.name}`));
+    targetPlayer(){
+        for(let i = 0 ; i < this.playerInGame; i++){
+        this.TableInGame[i].target = this.TableInGame[(i+1) % this.playerInGame].name;
+        }
+    }
+
+    kill(personkill){
         
-        console.log("\nLe jeu démarre !");
+
+    }
+
+    displayGame(){
         this.TableInGame.forEach
             ((Player) => console.log(`ID : ${Player.idPlayer} - ${Player.name} - Numéro : ${Player.number}  - Target : ${Player.target}`));
+        
+        console.log("\n");
     }
   }
   
