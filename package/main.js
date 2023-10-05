@@ -29,6 +29,8 @@ async function main() {
     killed = Number(killed);
     game.kill(killed);
 
+    game.displayGame();
+
     rl.close();
 }
 

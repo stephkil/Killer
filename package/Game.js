@@ -46,8 +46,11 @@ class Game {
     }
 
     kill(personkill){
-        
+        const idx = this.TableInGame.findIndex(p => p.idPlayer === personkill);
+        this.TableInGame.splice(idx,1);
 
+        this.playerInGame --;
+        this.targetPlayer();
     }
 
     displayGame(){
