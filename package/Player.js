@@ -6,6 +6,7 @@ class Player {
       this.target = null;
       this.number = null;
       this.mission = null;
+      this.nbKill = 0;
     }
     
     nbRandom() {

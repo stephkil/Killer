@@ -46,16 +46,19 @@ class Game {
     }
 
     kill(personkill){
-        const idx = this.TableInGame.findIndex(p => p.idPlayer === personkill);
-        this.TableInGame.splice(idx,1);
+        const idx = this.TableInGame.findIndex(player => player.idPlayer === personkill);
 
+        this.TableInGame[(idx-1 + this.playerInGame) % this.playerInGame].nbKill ++;
+
+        this.TableInGame.splice(idx,1);
+        
         this.playerInGame --;
         this.targetPlayer();
     }
 
     displayGame(){
         this.TableInGame.forEach
-            ((Player) => console.log(`ID : ${Player.idPlayer} - ${Player.name} - Numéro : ${Player.number}  - Target : ${Player.target}`));
+            ((Player) => console.log(`ID : ${Player.idPlayer} - ${Player.name} - Numéro : ${Player.number} - Target : ${Player.target} - Kill : ${Player.nbKill}`));
         
         console.log("\n");
     }

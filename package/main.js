@@ -15,7 +15,7 @@ function ask(question) {
 
 async function main() {
 
-    const Question1 = "Combien de joueur ? ";
+    const Question1 = "Combien de joueurs ? ";
     const Question2 = "Quel joueur a été tué ? ";
 
     let nb = await ask(Question1);
@@ -25,11 +25,15 @@ async function main() {
     game.InitGame();
     game.displayGame();
  
-    let killed = await ask(Question2);
-    killed = Number(killed);
-    game.kill(killed);
+    while(game.playerInGame > 1){
+        let killed = await ask(Question2);
+        killed = Number(killed);
+        game.kill(killed);
 
-    game.displayGame();
+        game.displayGame(); 
+    }
+
+    console.log("GG " + game.TableInGame[0].name + ", tu es le killer ultime !");
 
     rl.close();
 }
