@@ -26,18 +26,28 @@ async function main() {
     const Question2 = "Quel joueur a été tué ? ";
     const Question3 = "Username ? "
     const Question4 = "mdp ? "
+    const Question5 = "tu veux crée un nuv joueur ? y/n : "
+    const Question6 = "nom de la partie ? "
+    const Question7 = "temps de partie (en heures) ? "
 
-    let name = await ask(Question3);
-    let pwd = await ask(Question4);
+    let answer = await ask(Question5);
 
-    await bdd.insertUser(name,pwd);
-
-    /*
-    let nb = await ask(Question1);
-    nb = Number(nb);
-    const game = new Game(nb,456);
+    if(answer == 'y'){
+        let name,pwd,status = true;
+        do{
+            name = await ask(Question3);
+            pwd = await ask(Question4);
+            status = await bdd.insertUser(name,pwd);
+        }while(!status);
+    }
+    let gameName = await ask(Question6);
+    let end = Number(await ask(Question7));
+    let nb = Number(await ask(Question1));
+  
+    const game = new Game(nb,gameName,end);
 
     game.initGame();
+    await bdd.sendGame(game);
     game.displayGame();
  
     while(game.playerInGame > 1){
@@ -49,7 +59,6 @@ async function main() {
     }
 
     console.log("GG " + game.TableInGame[0].name + ", tu es le killer ultime !");
-    */
 
     rl.close();
     await bdd.closeBDD();

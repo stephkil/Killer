@@ -11,11 +11,11 @@ class BDD{
         this.client = new MongoClient(this.uri, {
             serverApi: {
               version: ServerApiVersion.v1,
-              strict: true,
+              strict: false,
               deprecationErrors: true,
             }
           });
-        this.collectionNames = ['User'];
+        this.collectionNames = ['User','Games'];
         this.collections = {};
     }
 
@@ -36,13 +36,37 @@ class BDD{
     }
 
     async insertUser(name,pwd){
+        //spécifie la nature de la recherche
+        this.collections.User.createIndex({username : "text"});
+        //mise en palce des parametres de recherche
+        const query = {$text : {$search : name}};
+        //recup id du username(db) si name = username
+        const projection = {_id:1}
+        //objet pour recup les donné
+        const cursor = this.collections.User.find(query).project(projection);
+        
+        if(await cursor.hasNext()) {
+            console.log("username already taken");
+            return false;
+        }
+
         const result = await this.collections.User.insertOne({
             username : name,
             password : pwd
         });
+
         console.log(`profil is register with id : ${result.insertedId}`);
+        return true;
     }
 
+    async sendGame(game){
+        await this.collections.Games.insertOne({
+            name : game.nameOfGame,
+            nb_Player : game.nbPlayer,
+            date_debut : new Date(),
+            heures_restante : game.end_date
+        });
+    }
 }
 
 

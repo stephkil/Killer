@@ -2,12 +2,13 @@ const Player = require('./Player');
 
 class Game {
 
-    constructor(nb,id){
-        this.idGame = id;
+    constructor(nb,name,timing){
+        this.nameOfGame = name;
         this.TableOfPlayers = [];
         this.TableInGame = [];
         this.nbPlayer = nb;
         this.playerInGame = nb;
+        this.end_date = timing;
     }
   
     initGame(){
@@ -18,6 +19,7 @@ class Game {
     }
 
     addPlayer(PlayerName){
+
         for (let i = 0; i < this.nbPlayer; i++) {
             const name = "Player" + i;
             this.TableOfPlayers.push(new Player(i,name));
