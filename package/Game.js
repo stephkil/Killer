@@ -2,9 +2,9 @@ const Player = require('./Player');
 
 class Game {
 
-    constructor(nb,name,timing){
+    constructor(nb,gameName,timing){
         this.id_game = null;
-        this.nameOfGame = name;
+        this.name = gameName;
         this.TableOfPlayers = [];
         this.TableInGame = [];
         this.nbPlayer = nb;
@@ -19,10 +19,12 @@ class Game {
         this.targetPlayer();
     }
 
-    async addPlayer(rl){
+    async addPlayer(rl,player){
+        let playerName = null;
         for (let i = 0; i < this.nbPlayer; i++) {
-            let playerName = await this.askName(i,rl);
-            this.TableOfPlayers.push(new Player(i,playerName));
+            playerName = await this.askName(i,rl);
+            const player = new Player(i,playerName,this.id_game)
+            this.TableOfPlayers.push(player);
         }
     }
 

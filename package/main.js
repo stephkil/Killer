@@ -32,7 +32,6 @@ async function main() {
     const Question7 = "temps de partie (en heures) ? "
 
     let answer = await ask(Question5);
-
     let name,pwd,status = true;
     if(answer == 'y'){
         let name,pwd,status = true;
@@ -46,10 +45,12 @@ async function main() {
     let gameName = await ask(Question6);
     let end = Number(await ask(Question7));
     let nb = Number(await ask(Question1));
-  
     const game = new Game(nb,gameName,end);
     game.id_game = await bdd.sendGame(game);
+
     await game.initGame(rl);
+    await bdd.sendPlayer(game);
+
     game.displayGame();
  
     while(game.playerInGame > 1){

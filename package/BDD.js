@@ -15,7 +15,7 @@ class BDD{
               deprecationErrors: true,
             }
           });
-        this.collectionNames = ['User','Games'];
+        this.collectionNames = ['User','Games','Players'];
         this.collections = {};
     }
 
@@ -61,7 +61,7 @@ class BDD{
 
     async sendGame(game){
         const result = await this.collections.Games.insertOne({
-            name : game.nameOfGame,
+            name : game.gameName,
             nb_Player : game.nbPlayer,
             date_debut : new Date(),
             heures_restante : game.end_date
@@ -70,6 +70,20 @@ class BDD{
         console.log(`game is created with id : ${result.insertedId}`);
 
         return result.insertedId;
+    }
+
+    async sendPlayer(game){
+        for(let i=0; i < game.nbPlayer; i++){
+            await this.collections.Players.insertOne({
+                id_Player : game.TableInGame[i].idPlayer,
+                name : game.TableInGame[i].name,
+                id_game : game.TableInGame[i].game,
+                target : game.TableInGame[i].target,
+                mission : game.TableInGame[i].number,
+                nombre_kill : game.TableInGame[i].nbKill,
+                status : game.TableInGame[i].status
+            })
+        };
     }
 }
 
