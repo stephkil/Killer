@@ -2,14 +2,15 @@ const Player = require('./Player');
 
 class Game {
 
-    constructor(nb){
+    constructor(nb,id){
+        this.idGame = id;
         this.TableOfPlayers = [];
         this.TableInGame = [];
         this.nbPlayer = nb;
         this.playerInGame = nb;
     }
   
-    InitGame(){
+    initGame(){
         this.addPlayer();
         this.missionNumberPlayer();
         this.shuffleTableOfPlayers();
