@@ -1,6 +1,7 @@
 // https://www.mongodb.com/docs/mongodb-vscode/playgrounds/
 
 const secrets = require("../secrets.json");
+const bcrypt = require('bcrypt');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
 class BDD{
@@ -52,10 +53,11 @@ class BDD{
             console.log("username already taken");
             return false;
         }
-
+                
         const result = await this.collections.User.insertOne({
             username : name,
-            password : pwd
+            password : await bcrypt.hash(pwd, secrets.saltRounds),
+            success : 0
         });
 
         console.log(`profil is register with id : ${result.insertedId}`);
