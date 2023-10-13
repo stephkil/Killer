@@ -2,6 +2,7 @@ class Player {
     
     constructor(id,name) {
       this.idPlayer = id;
+      this.game = null;
       this.name = name;
       this.target = null;
       this.number = null;

@@ -3,6 +3,7 @@ const Player = require('./Player');
 class Game {
 
     constructor(nb,name,timing){
+        this.id_game = null;
         this.nameOfGame = name;
         this.TableOfPlayers = [];
         this.TableInGame = [];
@@ -11,19 +12,25 @@ class Game {
         this.end_date = timing;
     }
   
-    initGame(){
-        this.addPlayer();
+    async initGame(rl){
+        await this.addPlayer(rl);
         this.missionNumberPlayer();
         this.shuffleTableOfPlayers();
         this.targetPlayer();
     }
 
-    addPlayer(PlayerName){
-
+    async addPlayer(rl){
         for (let i = 0; i < this.nbPlayer; i++) {
-            const name = "Player" + i;
-            this.TableOfPlayers.push(new Player(i,name));
+            let playerName = await this.askName(i,rl);
+            this.TableOfPlayers.push(new Player(i,playerName));
         }
+    }
+
+    async askName(i,rl){
+        let question = `quel est le nom du ${i+1} Joueur ? `;
+        return new Promise((resolve) => {
+            rl.question(question, (response) => resolve(response.trim()));
+        });
     }
 
     missionNumberPlayer(){

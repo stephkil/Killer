@@ -60,12 +60,16 @@ class BDD{
     }
 
     async sendGame(game){
-        await this.collections.Games.insertOne({
+        const result = await this.collections.Games.insertOne({
             name : game.nameOfGame,
             nb_Player : game.nbPlayer,
             date_debut : new Date(),
             heures_restante : game.end_date
         });
+
+        console.log(`game is created with id : ${result.insertedId}`);
+
+        return result.insertedId;
     }
 }
 

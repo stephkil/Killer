@@ -4,6 +4,7 @@
 
 const Game = require('./Game');
 const BDD = require('./BDD');
+const Player = require('./Player')
 
 const readline = require('readline');
 
@@ -32,6 +33,7 @@ async function main() {
 
     let answer = await ask(Question5);
 
+    let name,pwd,status = true;
     if(answer == 'y'){
         let name,pwd,status = true;
         do{
@@ -40,14 +42,14 @@ async function main() {
             status = await bdd.insertUser(name,pwd);
         }while(!status);
     }
+    
     let gameName = await ask(Question6);
     let end = Number(await ask(Question7));
     let nb = Number(await ask(Question1));
   
     const game = new Game(nb,gameName,end);
-
-    game.initGame();
-    await bdd.sendGame(game);
+    game.id_game = await bdd.sendGame(game);
+    await game.initGame(rl);
     game.displayGame();
  
     while(game.playerInGame > 1){
