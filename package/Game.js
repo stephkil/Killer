@@ -8,7 +8,6 @@ class Game {
         this.TableOfPlayers = [];
         this.TableInGame = [];
         this.nbPlayer = nb;
-        this.playerInGame = nb;
         this.end_date = timing;
     }
   
@@ -52,25 +51,40 @@ class Game {
     }
 
     targetPlayer(){
-        for(let i = 0 ; i < this.playerInGame; i++){
-        this.TableInGame[i].target = this.TableInGame[(i+1) % this.playerInGame].name;
+        for(let i = 0 ; i < this.nbPlayer; i++){
+        this.TableInGame[i].target = this.TableInGame[(i+1) % this.nbPlayer].name;
         }
     }
 
     kill(personkill){
-        const idx = this.TableInGame.findIndex(player => player.idPlayer === personkill);
+        let idx = this.TableInGame.findIndex(player => player.idPlayer === personkill);
 
-        this.TableInGame[(idx-1 + this.playerInGame) % this.playerInGame].nbKill ++;
+        let idx2 = "life";
+        let i = 1;
+        do{
+            idx2 = ((idx-i + this.nbPlayer) % this.nbPlayer);
+            if(this.TableInGame[idx2].status == "dead") {
+                i++;
+            }
+        }while(this.TableInGame[idx2].status == "dead");
 
-        this.TableInGame.splice(idx,1);
-        
-        this.playerInGame --;
-        this.targetPlayer();
+
+        this.TableInGame[idx2].nbKill ++;
+        this.TableInGame[idx2].target = this.TableInGame[idx].target;
+
+        this.TableInGame[idx].status = "dead";
+        this.TableInGame[idx].target = "none";
+
+        if(this.TableInGame[idx2].target == this.TableInGame[idx2].name) return false
+
+        return true;
     }
 
     displayGame(){
-        this.TableInGame.forEach
-            ((Player) => console.log(`ID : ${Player.idPlayer} - ${Player.name} - Numéro : ${Player.number} - Target : ${Player.target} - Kill : ${Player.nbKill}`));
+
+        for(let i=0; i<this.nbPlayer;i++){
+            console.log(`ID : ${this.TableInGame[i].idPlayer} - ${this.TableInGame[i].name} - Numéro : ${this.TableInGame[i].number} - Target : ${this.TableInGame[i].target} - Kill : ${this.TableInGame[i].nbKill}`);  
+        }
         
         console.log("\n");
     }

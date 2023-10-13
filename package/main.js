@@ -30,6 +30,7 @@ async function main() {
     const Question5 = "tu veux crée un nuv joueur ? y/n : "
     const Question6 = "nom de la partie ? "
     const Question7 = "temps de partie (en heures) ? "
+    const Question8 = "taper entrer pour terminer la partie "
 
     let answer = await ask(Question5);
     let name,pwd,status = true;
@@ -50,21 +51,22 @@ async function main() {
 
     await game.initGame(rl);
     await bdd.sendPlayer(game);
-
-    game.displayGame();
  
-    while(game.playerInGame > 1){
+    let gameRunning = true;
+
+    while(gameRunning){
+        game.displayGame(); 
         let killed = await ask(Question2);
         killed = Number(killed);
-        game.kill(killed);
-
-        game.displayGame(); 
+        gameRunning = game.kill(killed);
     }
 
+    game.displayGame(); 
     console.log("GG " + game.TableInGame[0].name + ", tu es le killer ultime !");
 
+    await ask(Question8);
     rl.close();
-    await bdd.closeBDD();
+    await bdd.closeBDD(game);
 }
 
 main();

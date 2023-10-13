@@ -31,7 +31,10 @@ class BDD{
         this.collectionNames.forEach(name => this.collections[name] = this.db.collection(name));
     }
 
-    async closeBDD() {
+    async closeBDD(game) {
+        await this.collections.Players.deleteMany({ id_game : game.id_game });
+        await this.collections.Games.deleteMany({ _id : game.id_game });
+
         await this.client.close();
     }
 
@@ -61,7 +64,7 @@ class BDD{
 
     async sendGame(game){
         const result = await this.collections.Games.insertOne({
-            name : game.gameName,
+            name : game.name,
             nb_Player : game.nbPlayer,
             date_debut : new Date(),
             heures_restante : game.end_date
