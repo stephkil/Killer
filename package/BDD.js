@@ -78,17 +78,18 @@ class BDD{
     }
 
     async sendPlayer(game){
-        for(let i=0; i < game.nbPlayer; i++){
-            await this.collections.Players.insertOne({
-                id_Player : game.TableInGame[i].idPlayer,
-                name : game.TableInGame[i].name,
-                id_game : game.TableInGame[i].game,
-                target : game.TableInGame[i].target,
-                mission : game.TableInGame[i].number,
-                nombre_kill : game.TableInGame[i].nbKill,
-                status : game.TableInGame[i].status
+
+        game.TableInGame.forEach((p)=>
+            this.collections.Players.insertOne({
+                id_player : p.idPlayer,
+                name : p.name,
+                id_game : p.game,
+                target : p.target,
+                mission : p.number,
+                nombre_kill : p.nbKill,
+                status : p.status
             })
-        };
+        );
     }
 }
 

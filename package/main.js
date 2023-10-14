@@ -61,8 +61,14 @@ async function main() {
         gameRunning = game.kill(killed);
     }
 
-    game.displayGame(); 
-    console.log("GG " + game.TableInGame[0].name + ", tu es le killer ultime !");
+    game.displayGame();
+    
+    let i = 0;
+        do{
+            if(game.TableInGame[i].status == "dead") i++;
+        }while(game.TableInGame[i].status == "dead");
+
+    console.log("GG " + game.TableInGame[i].name + ", tu es le killer ultime !");
 
     await ask(Question8);
     rl.close();
