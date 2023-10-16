@@ -58,7 +58,7 @@ async function main() {
         game.displayGame(); 
         let killed = await ask(Question2);
         killed = Number(killed);
-        gameRunning = game.kill(killed);
+        gameRunning = await game.kill(killed,bdd);
     }
 
     game.displayGame();

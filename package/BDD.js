@@ -78,18 +78,32 @@ class BDD{
     }
 
     async sendPlayer(game){
-
         game.TableInGame.forEach((p)=>
             this.collections.Players.insertOne({
                 id_player : p.idPlayer,
                 name : p.name,
                 id_game : p.game,
+                init_target : p.target,
                 target : p.target,
                 mission : p.number,
                 nombre_kill : p.nbKill,
                 status : p.status
             })
         );
+    }
+
+    async updateKill(name,game,target,dead){
+        const killer = await this.collections.Players.findOne({ name: name, id_game: game});
+        const killed = await this.collections.Players.findOne({ name: dead, id_game: game});
+
+        const updateKiller = {
+            $inc: { nombre_kill : 1 },
+            $set: { target : target} 
+        };
+
+        const resultKiller = await this.collections.Players.updateOne({ _id: killer._id }, updateKiller);
+        const resultKilled1 = await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ status : "dead" }});
+        const resultKilled2 = await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ target : "none" }});
     }
 }
 

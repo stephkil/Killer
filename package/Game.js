@@ -56,7 +56,7 @@ class Game {
         }
     }
 
-    kill(personkill){
+    async kill(personkill,bdd){
         let idx = this.TableInGame.findIndex(player => player.idPlayer === personkill);
 
         let idx2 = "life";
@@ -68,14 +68,18 @@ class Game {
             }
         }while(this.TableInGame[idx2].status == "dead");
 
+        let killer = this.TableInGame[idx2];
+        let killed = this.TableInGame[idx];
 
-        this.TableInGame[idx2].nbKill ++;
-        this.TableInGame[idx2].target = this.TableInGame[idx].target;
+        killer.nbKill ++;
+        killer.target = killed.target;
 
-        this.TableInGame[idx].status = "dead";
-        this.TableInGame[idx].target = "none";
+        await bdd.updateKill(killer.name,killer.game,killer.target,killed.name);
 
-        if(this.TableInGame[idx2].target == this.TableInGame[idx2].name) return false
+        killed.status = "dead";
+        killed.target = "none";
+
+        if(killer.target == killer.name) return false
 
         return true;
     }
