@@ -49,7 +49,7 @@ async function main() {
     const game = new Game(nb,gameName,end);
     game.id_game = await bdd.sendGame(game);
 
-    await game.initGame(rl);
+    await game.initGame(rl,bdd);
     await bdd.sendPlayer(game);
  
     let gameRunning = true;

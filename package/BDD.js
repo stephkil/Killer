@@ -64,6 +64,20 @@ class BDD{
         return true;
     }
 
+    async checkPlayer(playerName){
+        this.collections.User.createIndex({username : "text"});
+        const query = {$text : {$search : playerName}};
+        const projection = {_id:1}
+        const cursor = this.collections.User.find(query).project(projection);
+        
+        if(await cursor.hasNext()) {
+            const user = await this.collections.User.findOne({ username: playerName});
+            return user;
+        }
+        return false;
+    }
+
+
     async sendGame(game){
         const result = await this.collections.Games.insertOne({
             name : game.name,

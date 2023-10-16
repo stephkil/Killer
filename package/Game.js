@@ -11,19 +11,26 @@ class Game {
         this.end_date = timing;
     }
   
-    async initGame(rl){
-        await this.addPlayer(rl);
+    async initGame(rl,bdd){
+        await this.addPlayer(rl,bdd);
         this.missionNumberPlayer();
         this.shuffleTableOfPlayers();
         this.targetPlayer();
     }
 
-    async addPlayer(rl,player){
+    async addPlayer(rl,bdd){
         let playerName = null;
         for (let i = 0; i < this.nbPlayer; i++) {
             playerName = await this.askName(i,rl);
-            const player = new Player(i,playerName,this.id_game)
-            this.TableOfPlayers.push(player);
+            const user = await bdd.checkPlayer(playerName);
+            if(user == false){
+                console.log("ce user n'existe pas, veuillez re-esayer");
+                i--;
+            } else{
+                const player = new Player(i,playerName,this.id_game,user)
+                this.TableOfPlayers.push(player);
+            }
+                
         }
     }
 
