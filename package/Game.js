@@ -2,13 +2,12 @@ const Player = require('./Player');
 
 class Game {
 
-    constructor(nb,gameName,timing){
-        this.id_game = null;
+    constructor(gameName){
         this.name = gameName;
         this.TableOfPlayers = [];
         this.TableInGame = [];
-        this.nbPlayer = nb;
-        this.end_date = timing;
+        this.nbPlayer = null;
+        this.end_date = null;
     }
   
     async initGame(rl,bdd){
@@ -27,7 +26,10 @@ class Game {
                 console.log("ce user n'existe pas, veuillez re-esayer");
                 i--;
             } else{
-                const player = new Player(playerName,this.id_game,user)
+                const player = new Player()
+                player.name = playerName;
+                player.game = this.name;
+                player.idUser = user;
                 this.TableOfPlayers.push(player);
             }
                 

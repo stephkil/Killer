@@ -25,14 +25,13 @@ async function main() {
     
     const Question1 = "Combien de joueurs ? ";
     const Question2 = "Quel joueur a été tué ? ";
-    const Question3 = "Username ? "
-    const Question4 = "mdp ? "
-    const Question5 = "tu veux crée un nuv joueur ? y/n : "
-    const Question6 = "nom de la partie ? "
+    const Question3 = "Username : "
+    const Question4 = "mdp : "
+    const Question5 = "tu veux crée un nuv joueur ? (y/n) : "
+    const Question6 = "nom de la partie : "
     const Question7 = "temps de partie (en heures) ? "
     const Question8 = "taper entrer pour terminer la partie "
-    const Question9 = "la partie existe t-elle déjà ? "
-    const Question10 = "quel est le nom de la partie ? "
+    const Question9 = "la partie existe t-elle déjà ? (y/n) :"
 
 /* -------------------------------------------------------------------------- */
 /*                                  New Player                                */
@@ -52,24 +51,30 @@ async function main() {
 /* -------------------------------------------------------------------------- */
 /*                                  Game existe                               */
 /* -------------------------------------------------------------------------- */
+
+    let gameExist = await ask(Question9); // est ce que la game existe
     let gameName = await ask(Question6); // nom de la game
-    let GameExiste = await ask(Question8); // est ce que la game existe
+    const game = new Game(gameName); // création de la game
 
-    let end,nb,game = null;
+    gameExist = await bdd.gameExist(game);
 
-    if(GameExiste){
-
-
+    if(gameExist){
+        await bdd.getGame(game);
     }
 
 /* -------------------------------------------------------------------------- */
 /*                               Game existe pas                              */
 /* -------------------------------------------------------------------------- */
     else {
-        end = Number(await ask(Question7)); // tps partie
+        let end,nb = null;
+
         nb = Number(await ask(Question1)); // nb joueur
-        game = new Game(nb,gameName,end); // création de la game
-        game.id_game = await bdd.sendGame(game); //envoie de la game
+        end = Number(await ask(Question7)); // tps partie
+
+        game.nbPlayer = nb;
+        game.end_date = end;
+
+        await bdd.sendGame(game); //envoie de la game
 
         await game.initGame(rl,bdd); // init game
         await bdd.sendPlayer(game); // envoie des joueurs
@@ -94,7 +99,6 @@ async function main() {
 /* -------------------------------------------------------------------------- */
 /*                              Cloture Game                                  */
 /* -------------------------------------------------------------------------- */
-
     game.displayGame();
     
     if(killed != 'q'){
@@ -109,6 +113,7 @@ async function main() {
         await bdd.closeBDD(game); // fermer bdd + suprimer élement superflu
     }
     else{
+        console.log("sortie du jeu");
         await bdd.client.close(); // fermer bdd
     }
 

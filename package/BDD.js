@@ -4,6 +4,8 @@ const secrets = require("../secrets.json");
 const bcrypt = require('bcrypt');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
+const Player = require('./Player');
+
 class BDD{
 
     constructor(){
@@ -33,8 +35,8 @@ class BDD{
     }
 
     async closeBDD(game) {
-        await this.collections.Players.deleteMany({ id_game : game.id_game });
-        await this.collections.Games.deleteMany({ _id : game.id_game });
+        await this.collections.Players.deleteMany({ game : game.name });
+        await this.collections.Games.deleteMany({ name : game.name });
 
         await this.client.close();
     }
@@ -79,16 +81,52 @@ class BDD{
 
 
     async sendGame(game){
-        const result = await this.collections.Games.insertOne({
+        await this.collections.Games.insertOne({
             name : game.name,
             nb_Player : game.nbPlayer,
             date_debut : new Date(),
             heures_restante : game.end_date
         });
+    }
 
-        console.log(`game is created with id : ${result.insertedId}`);
+    async gameExist(game){
+        const result = await this.collections.Games.findOne({ name: game.name});
 
-        return result.insertedId;
+        if(result) {
+            console.log("partie trouvé");
+            game.nbPlayer = result.nb_Player;
+            console.log(result);
+
+            return true;
+        }
+        
+        console.log("partie non trouvé");
+        return false;
+    }
+
+    async getGame(game){
+
+        for(let i=0; i<game.nbPlayer;i++){
+            const result = await this.collections.Players.findOne({game : game.name, id_player : i});
+
+            if(result){
+                const player = new Player();
+
+                player.idPlayer = result.id_player;
+                //player.idUser = result.user;
+                player.name = result.name;
+                player.game = result.game;
+                player.target = result.target;
+                player.mission = result.mission;
+                player.nbKill = result.nombre_kill;
+                player.status = result.status;
+
+                game.TableInGame.push(player);   
+            }
+            else {
+                console.log("erreur dans la récupération d'un ou plusieur joueurs")
+            }
+        }
     }
 
     async sendPlayer(game){
@@ -96,10 +134,10 @@ class BDD{
             this.collections.Players.insertOne({
                 id_player : p.idPlayer,
                 name : p.name,
-                id_game : p.game,
+                game : game.name,
                 init_target : p.target,
                 target : p.target,
-                mission : p.number,
+                mission : p.mission,
                 nombre_kill : p.nbKill,
                 status : p.status
             })
@@ -107,8 +145,8 @@ class BDD{
     }
 
     async updateKill(name,game,target,dead){
-        const killer = await this.collections.Players.findOne({ name: name, id_game: game});
-        const killed = await this.collections.Players.findOne({ name: dead, id_game: game});
+        const killer = await this.collections.Players.findOne({ name: name, game: game});
+        const killed = await this.collections.Players.findOne({ name: dead, game: game});
 
         const updateKiller = {
             $inc: { nombre_kill : 1 },

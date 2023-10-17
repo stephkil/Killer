@@ -1,19 +1,20 @@
 class Player {
     
-    constructor(playerName,game,user) {
+    constructor() {
       this.idPlayer = null;
-      this.idUser = user;
-      this.name = playerName;
-      this.game = game;
+      this.idUser = null;
+      this.name = null;
+      this.game = null;
       this.target = null;
-      this.number = null;
       this.mission = null;
       this.nbKill = 0;
       this.status = "life";
     }
     
     nbRandom() {
-      this.number = Math.floor(Math.random() * 26 + 1);
+      let number = Math.floor(Math.random() * 26 + 1);
+      
+      this.mission = "";
     }
   }
   
