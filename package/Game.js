@@ -12,7 +12,6 @@ class Game {
   
     async initGame(rl,bdd){
         await this.addPlayer(rl,bdd);
-        this.missionNumberPlayer();
         this.shuffleTableOfPlayers();
         this.targetPlayer();
     }
@@ -26,13 +25,14 @@ class Game {
                 console.log("ce user n'existe pas, veuillez re-esayer");
                 i--;
             } else{
-                const player = new Player()
+                const player = new Player();
                 player.name = playerName;
                 player.game = this.name;
                 player.idUser = user;
                 this.TableOfPlayers.push(player);
-            }
-                
+
+                player.mission = await player.taskRandom(bdd);
+            }   
         }
     }
 
@@ -41,11 +41,6 @@ class Game {
         return new Promise((resolve) => {
             rl.question(question, (response) => resolve(response.trim()));
         });
-    }
-
-    missionNumberPlayer(){
-        this.TableOfPlayers.forEach
-            ((Player) => Player.nbRandom());
     }
 
     shuffleTableOfPlayers(){
@@ -95,9 +90,8 @@ class Game {
     }
 
     displayGame(){
-
         for(let i=0; i<this.nbPlayer;i++){
-            console.log(`ID : ${this.TableInGame[i].idPlayer} - ${this.TableInGame[i].name} - Numéro : ${this.TableInGame[i].number} - Target : ${this.TableInGame[i].target} - Kill : ${this.TableInGame[i].nbKill}`);  
+            console.log(`ID : ${this.TableInGame[i].idPlayer} - ${this.TableInGame[i].name} - Numéro : ${this.TableInGame[i].mission} - Target : ${this.TableInGame[i].target} - Kill : ${this.TableInGame[i].nbKill}`);  
         }
         
         console.log("\n");

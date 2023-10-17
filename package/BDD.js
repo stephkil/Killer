@@ -18,7 +18,7 @@ class BDD{
               deprecationErrors: true,
             }
           });
-        this.collectionNames = ['User','Games','Players'];
+        this.collectionNames = ['User','Games','Players','Task'];
         this.collections = {};
     }
 

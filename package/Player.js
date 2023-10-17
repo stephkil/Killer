@@ -11,10 +11,12 @@ class Player {
       this.status = "life";
     }
     
-    nbRandom() {
-      let number = Math.floor(Math.random() * 26 + 1);
-      
-      this.mission = "";
+    async taskRandom(bdd) {
+      const result = await bdd.collections.Task.aggregate([
+        { $sample: { size: 1 } }
+      ]).next();
+
+      return result.task;
     }
   }
   
