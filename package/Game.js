@@ -27,7 +27,7 @@ class Game {
                 console.log("ce user n'existe pas, veuillez re-esayer");
                 i--;
             } else{
-                const player = new Player(i,playerName,this.id_game,user)
+                const player = new Player(playerName,this.id_game,user)
                 this.TableOfPlayers.push(player);
             }
                 
@@ -60,6 +60,7 @@ class Game {
     targetPlayer(){
         for(let i = 0 ; i < this.nbPlayer; i++){
         this.TableInGame[i].target = this.TableInGame[(i+1) % this.nbPlayer].name;
+        this.TableInGame[i].idPlayer = i;
         }
     }
 

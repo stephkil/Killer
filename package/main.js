@@ -21,7 +21,7 @@ function ask(question) {
 
 async function main() {
     const bdd = new BDD();
-    await bdd.setupBDD();
+    await bdd.setupBDD(); // démarer
     
     const Question1 = "Combien de joueurs ? ";
     const Question2 = "Quel joueur a été tué ? ";
@@ -31,48 +31,88 @@ async function main() {
     const Question6 = "nom de la partie ? "
     const Question7 = "temps de partie (en heures) ? "
     const Question8 = "taper entrer pour terminer la partie "
+    const Question9 = "la partie existe t-elle déjà ? "
+    const Question10 = "quel est le nom de la partie ? "
 
-    let answer = await ask(Question5);
+/* -------------------------------------------------------------------------- */
+/*                                  New Player                                */
+/* -------------------------------------------------------------------------- */
+
+    let answer = await ask(Question5); //crée un nouveau joueur
     let name,pwd,status = true;
     if(answer == 'y'){
         let name,pwd,status = true;
         do{
-            name = await ask(Question3);
-            pwd = await ask(Question4);
-            status = await bdd.insertUser(name,pwd);
-        }while(!status);
+            name = await ask(Question3); // username
+            pwd = await ask(Question4); // password
+            status = await bdd.insertUser(name,pwd); // insérer un user unique
+        }while(!status); // si il exise déja, on recommence
+    }
+
+/* -------------------------------------------------------------------------- */
+/*                                  Game existe                               */
+/* -------------------------------------------------------------------------- */
+    let gameName = await ask(Question6); // nom de la game
+    let GameExiste = await ask(Question8); // est ce que la game existe
+
+    let end,nb,game = null;
+
+    if(GameExiste){
+
+
+    }
+
+/* -------------------------------------------------------------------------- */
+/*                               Game existe pas                              */
+/* -------------------------------------------------------------------------- */
+    else {
+        end = Number(await ask(Question7)); // tps partie
+        nb = Number(await ask(Question1)); // nb joueur
+        game = new Game(nb,gameName,end); // création de la game
+        game.id_game = await bdd.sendGame(game); //envoie de la game
+
+        await game.initGame(rl,bdd); // init game
+        await bdd.sendPlayer(game); // envoie des joueurs
     }
     
-    let gameName = await ask(Question6);
-    let end = Number(await ask(Question7));
-    let nb = Number(await ask(Question1));
-    const game = new Game(nb,gameName,end);
-    game.id_game = await bdd.sendGame(game);
+/* -------------------------------------------------------------------------- */
+/*                              Déroulement Game                              */
+/* -------------------------------------------------------------------------- */
 
-    await game.initGame(rl,bdd);
-    await bdd.sendPlayer(game);
- 
-    let gameRunning = true;
+    let killed,gameRunning = true; // variable pour continuer  à jouer
 
     while(gameRunning){
         game.displayGame(); 
-        let killed = await ask(Question2);
-        killed = Number(killed);
-        gameRunning = await game.kill(killed,bdd);
+        killed = await ask(Question2); // qui est mort
+
+        if(killed == 'q') break; // sortir du jeu
+        else killed = Number(killed); // mettre en forme
+
+        gameRunning = await game.kill(killed,bdd); // update les joueurs après kill
     }
+
+/* -------------------------------------------------------------------------- */
+/*                              Cloture Game                                  */
+/* -------------------------------------------------------------------------- */
 
     game.displayGame();
     
-    let i = 0;
-        do{
-            if(game.TableInGame[i].status == "dead") i++;
-        }while(game.TableInGame[i].status == "dead");
+    if(killed != 'q'){
+        let i = 0;
+            do{ // check quel joueur est à afficher gagnant
+                if(game.TableInGame[i].status == "dead") i++;
+            }while(game.TableInGame[i].status == "dead");
 
-    console.log("GG " + game.TableInGame[i].name + ", tu es le killer ultime !");
+        console.log("GG " + game.TableInGame[i].name + ", tu es le killer ultime !");
 
-    await ask(Question8);
-    rl.close();
-    await bdd.closeBDD(game);
+        await ask(Question8); // attente de touche
+        await bdd.closeBDD(game); // fermer bdd + suprimer élement superflu
+    }
+    else{
+        await bdd.client.close(); // fermer bdd
+    }
+
+    rl.close(); // fermer espace pour écrire
 }
 
 main();
