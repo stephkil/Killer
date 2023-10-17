@@ -31,10 +31,18 @@ class Game {
                 player.idUser = user;
                 this.TableOfPlayers.push(player);
 
-                player.mission = await player.taskRandom(bdd);
+                player.mission = await this.taskRandom(bdd);
             }   
         }
     }
+
+    async taskRandom(bdd) {
+        const result = await bdd.collections.Task.aggregate([
+          { $sample: { size: 1 } }
+        ]).next();
+  
+        return result.task;
+      }
 
     async askName(i,rl){
         let question = `quel est le nom du ${i+1} Joueur ? `;
@@ -91,7 +99,7 @@ class Game {
 
     displayGame(){
         for(let i=0; i<this.nbPlayer;i++){
-            console.log(`ID : ${this.TableInGame[i].idPlayer} - ${this.TableInGame[i].name} - Numéro : ${this.TableInGame[i].mission} - Target : ${this.TableInGame[i].target} - Kill : ${this.TableInGame[i].nbKill}`);  
+            console.log(`ID : ${this.TableInGame[i].idPlayer} - ${this.TableInGame[i].name} - Mission : ${this.TableInGame[i].mission} - Target : ${this.TableInGame[i].target} - Kill : ${this.TableInGame[i].nbKill}`);  
         }
         
         console.log("\n");
