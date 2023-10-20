@@ -8,12 +8,12 @@ const Player = require('./Player')
 
 const readline = require('readline');
 
-const rl = readline.createInterface({
+const rl = readline.createInterface({ // pour demander du texte
     input: process.stdin,
     output: process.stdout
   });
 
-function ask(question) {
+function ask(question) { // attendre la réponse
     return new Promise((resolve) => {
         rl.question(question, (response) => resolve(response.trim()));
     });
