@@ -2,9 +2,9 @@
   "name": "killer",
   "version": "1.0.0",
   "description": "Petit projet sympa !",
-  "main": "index.js",
+  "main": "package/main.js",
   "scripts": {
-    "start": "nodemon main.js"
+    "start": "nodemon test.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,7 @@
     "body-parser": "^1.20.2",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "moment": "^2.29.4",
     "mongodb": "^6.1.0",
     "nodemon": "^3.0.1"
   }

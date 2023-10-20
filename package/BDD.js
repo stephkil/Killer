@@ -162,3 +162,4 @@ class BDD{
 
 module.exports = BDD;
 
+nbPlayer
