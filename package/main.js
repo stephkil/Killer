@@ -6,6 +6,12 @@ const Game = require('./Game');
 const BDD = require('./BDD');
 const Player = require('./Player')
 
+
+/* -------------------------------------------------------------------------- */
+/*                                   Question                                 */
+/* -------------------------------------------------------------------------- */
+
+
 const readline = require('readline');
 
 const rl = readline.createInterface({ // pour demander du texte
@@ -18,6 +24,12 @@ function ask(question) { // attendre la réponse
         rl.question(question, (response) => resolve(response.trim()));
     });
 }
+
+
+/* -------------------------------------------------------------------------- */
+/*                                    main                                    */
+/* -------------------------------------------------------------------------- */
+
 
 async function main() {
     const bdd = new BDD();
@@ -33,9 +45,11 @@ async function main() {
     const Question8 = "taper entrer pour terminer la partie "
     const Question9 = "la partie existe t-elle déjà ? (y/n) :"
 
+
 /* -------------------------------------------------------------------------- */
 /*                                  New Player                                */
 /* -------------------------------------------------------------------------- */
+
 
     let answer = await ask(Question5); //crée un nouveau joueur
     let name,pwd,status = true;
@@ -48,9 +62,11 @@ async function main() {
         }while(!status); // si il exise déja, on recommence
     }
 
+
 /* -------------------------------------------------------------------------- */
 /*                                  Game existe                               */
 /* -------------------------------------------------------------------------- */
+
 
     let gameExist = await ask(Question9); // est ce que la game existe
     let gameName = await ask(Question6); // nom de la game
@@ -62,9 +78,12 @@ async function main() {
         await bdd.getGame(game);
     }
 
+
 /* -------------------------------------------------------------------------- */
 /*                               Game existe pas                              */
 /* -------------------------------------------------------------------------- */
+
+
     else {
         let end,nb = null;
 
@@ -80,9 +99,11 @@ async function main() {
         await bdd.sendPlayer(game); // envoie des joueurs
     }
     
+
 /* -------------------------------------------------------------------------- */
 /*                              Déroulement Game                              */
 /* -------------------------------------------------------------------------- */
+
 
     let killed,gameRunning = true; // variable pour continuer  à jouer
 
@@ -96,9 +117,12 @@ async function main() {
         gameRunning = await game.kill(killed,bdd); // update les joueurs après kill
     }
 
+
 /* -------------------------------------------------------------------------- */
 /*                              Cloture Game                                  */
 /* -------------------------------------------------------------------------- */
+
+
     game.displayGame();
     
     if(killed != 'q'){
