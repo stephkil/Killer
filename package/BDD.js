@@ -11,54 +11,61 @@ class BDD{
     constructor(){
         this.uri = `mongodb+srv://${secrets.db_username}:${secrets.db_password}@${secrets.cluster}.${secrets.domain}/${secrets.database}?retryWrites=true&w=majority`;        
         console.log(this.uri);
-        this.client = new MongoClient(this.uri, {
+        this.client = new MongoClient(this.uri, { // création du client
             serverApi: {
               version: ServerApiVersion.v1,
               strict: false,
               deprecationErrors: true,
             }
           });
-        this.collectionNames = ['User','Games','Players','Task'];
+        this.collectionNames = ['User','Games','Players','Task']; // on renseigne le nom des collections présente dans la bdd
         this.collections = {};
     }
 
+
+    /* -------------------------------------------------------------------------- */
+    /*                                  Param BDD                                 */
+    /* -------------------------------------------------------------------------- */
+
+
     async setupBDD(){
-        console.log("connect to database ....");
-        // Connect the client to the server	(optional starting in v4.7)
-        await this.client.connect();
-        // Send a ping to confirm a successful connection
-        await this.client.db("admin").command({ ping: 1 });
+        console.log("connect to database ...."); 
+        await this.client.connect(); // connecter le client au serveur
+        await this.client.db("admin").command({ ping: 1 }); // envoie d'un ping quand la connection est faite
         console.log("You successfully connected to MongoDB!");
-        // refer database on server (vscode)
-        this.db = this.client.db("Killer_database");
+
+        this.db = this.client.db("Killer_database"); // référencer la database sur vscode
         this.collectionNames.forEach(name => this.collections[name] = this.db.collection(name));
     }
 
     async closeBDD(game) {
-        await this.collections.Players.deleteMany({ game : game.name });
-        await this.collections.Games.deleteMany({ name : game.name });
+        await this.collections.Players.deleteMany({ game : game.name }); // on retire les joueur racroché a l'id de la game, de la bdd
+        await this.collections.Games.deleteMany({ name : game.name }); // on retire la game de la bdd
 
-        await this.client.close();
+        await this.client.close(); // fermeture du client
     }
 
+
+    /* -------------------------------------------------------------------------- */
+    /*                                    User                                    */
+    /* -------------------------------------------------------------------------- */
+
+
     async insertUser(name,pwd){
-        //spécifie la nature de la recherche
-        this.collections.User.createIndex({username : "text"});
-        //mise en palce des parametres de recherche
-        const query = {$text : {$search : name}};
-        //recup id du username(db) si name = username
-        const projection = {_id:1}
-        //objet pour recup les donné
-        const cursor = this.collections.User.find(query).project(projection);
         
-        if(await cursor.hasNext()) {
+        this.collections.User.createIndex({username : "text"}); //spécifie la nature de la recherche
+        const query = {$text : {$search : name}}; //mise en place des parametres de recherche
+        const projection = {_id:1} //recup id du username(db) si name = username
+        const cursor = this.collections.User.find(query).project(projection);//objet pour recup les données
+        
+        if(await cursor.hasNext()) { // si il y a une valeur après celle actuel (ici, si il y a une valeur) on sais que le usenername n'est pas dispo
             console.log("username already taken");
             return false;
         }
                 
-        const result = await this.collections.User.insertOne({
+        const result = await this.collections.User.insertOne({ // inseré le user dans la bdd
             username : name,
-            password : await bcrypt.hash(pwd, secrets.saltRounds),
+            password : await bcrypt.hash(pwd, secrets.saltRounds), // hash du mdp
             success : 0
         });
 
@@ -66,7 +73,28 @@ class BDD{
         return true;
     }
 
-    async checkPlayer(playerName){
+
+    /* -------------------------------------------------------------------------- */
+    /*                                   Player                                   */
+    /* -------------------------------------------------------------------------- */
+
+
+    async sendPlayer(game){ // pour chaque player, à la création de la game, on les envoie vers la bdd
+        game.TableInGame.forEach((p)=>
+            this.collections.Players.insertOne({
+                id_player : p.idPlayer,
+                name : p.name,
+                game : game.name,
+                init_target : p.target,
+                target : p.target,
+                mission : p.mission,
+                nombre_kill : p.nbKill,
+                status : p.status
+            })
+        );
+    }
+
+    async checkPlayer(playerName){ // on vérifie si le user existe avant de permettre de l'ajouter à la game
         this.collections.User.createIndex({username : "text"});
         const query = {$text : {$search : playerName}};
         const projection = {_id:1}
@@ -80,7 +108,12 @@ class BDD{
     }
 
 
-    async sendGame(game){
+    /* -------------------------------------------------------------------------- */
+    /*                                    Game                                    */
+    /* -------------------------------------------------------------------------- */
+
+
+    async sendGame(game){ // envoie de la game sur la bdd
         await this.collections.Games.insertOne({
             name : game.name,
             nb_Player : game.nbPlayer,
@@ -89,7 +122,7 @@ class BDD{
         });
     }
 
-    async gameExist(game){
+    async gameExist(game){ // on vérifie si la game existe, on check le nom car il est unique
         const result = await this.collections.Games.findOne({ name: game.name});
 
         if(result) {
@@ -104,8 +137,7 @@ class BDD{
         return false;
     }
 
-    async getGame(game){
-
+    async getGame(game){ // si la game existe, on récupère les infos de la game
         for(let i=0; i<game.nbPlayer;i++){
             const result = await this.collections.Players.findOne({game : game.name, id_player : i});
 
@@ -113,7 +145,6 @@ class BDD{
                 const player = new Player();
 
                 player.idPlayer = result.id_player;
-                //player.idUser = result.user;
                 player.name = result.name;
                 player.game = result.game;
                 player.target = result.target;
@@ -129,37 +160,27 @@ class BDD{
         }
     }
 
-    async sendPlayer(game){
-        game.TableInGame.forEach((p)=>
-            this.collections.Players.insertOne({
-                id_player : p.idPlayer,
-                name : p.name,
-                game : game.name,
-                init_target : p.target,
-                target : p.target,
-                mission : p.mission,
-                nombre_kill : p.nbKill,
-                status : p.status
-            })
-        );
-    }
+    
+    /* -------------------------------------------------------------------------- */
+    /*                                  Function                                  */
+    /* -------------------------------------------------------------------------- */
+
 
     async updateKill(name,game,target,dead){
-        const killer = await this.collections.Players.findOne({ name: name, game: game});
-        const killed = await this.collections.Players.findOne({ name: dead, game: game});
+        const killer = await this.collections.Players.findOne({ name: name, game: game}); // je cherche le killer dans la bdd grâce au nom et id de game
+        const killed = await this.collections.Players.findOne({ name: dead, game: game}); // de même pour le tué
 
-        const updateKiller = {
+        const updateKiller = { // on défini les multiple modif à faire
             $inc: { nombre_kill : 1 },
             $set: { target : target} 
         };
 
-        const resultKiller = await this.collections.Players.updateOne({ _id: killer._id }, updateKiller);
-        const resultKilled1 = await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ status : "dead" }});
-        const resultKilled2 = await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ target : "none" }});
+        const resultKiller = await this.collections.Players.updateOne({ _id: killer._id }, updateKiller); // update Killer dans bdd
+        const resultKilled1 = await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ status : "dead" }}); // update tué dans bdd
+        const resultKilled2 = await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ target : "none" }}); // update tué dans bdd
     }
+
 }
 
 
 module.exports = BDD;
-
-nbPlayer
