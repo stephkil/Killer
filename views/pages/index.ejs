@@ -1,0 +1,73 @@
+<!-- ----------------------------------------------------------------------- -->
+<!--                                 header                                  -->
+<!-- ----------------------------------------------------------------------- -->
+
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title> hey </title>
+
+    <link rel="stylesheet" href="/assets/semantic/semantic.min.css">
+
+    <style>
+
+        .main.container{
+            margin-top: 7em;
+        }
+
+    </style>
+    
+</head>
+
+<body>
+
+<div class="ui fixed inverted menu">
+
+<a href = "/" class = "header item" > Accueil </a>
+
+</div>
+
+<div class="ui main container">
+
+<% if(locals.flash && locals.flash.error){ %>
+
+<div class="ui negative message">
+
+    <%= flash.error %>
+
+</div>
+
+<% } %>
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                                  index                                  -->
+<!-- ----------------------------------------------------------------------- -->
+
+<form action="/" method="post" class="ui form">
+
+    <div class="field">
+
+        <label for="message">Message</label>
+
+        <textarea name="message" id="message"></textarea>
+
+    </div>
+
+    <button type="submit" class="ui blue labeled submit icon button">
+
+        <i class="icon edit"></i>Envoyer
+
+    </button>
+
+</form>
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                                 footer                                  -->
+<!-- ----------------------------------------------------------------------- -->
+
+</div>
+
+</body>
+
+</html>
