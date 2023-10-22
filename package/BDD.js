@@ -128,6 +128,7 @@ class BDD{
         if(result) {
             console.log("partie trouvé");
             game.nbPlayer = result.nb_Player;
+            game.end_date = result.heures_restante;
             console.log(result);
 
             return true;

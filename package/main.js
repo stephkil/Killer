@@ -90,8 +90,8 @@ async function main() {
         nb = Number(await ask(Question1)); // nb joueur
         end = Number(await ask(Question7)); // tps partie
 
-        game.nbPlayer = nb;
         game.end_date = end;
+        game.nbPlayer = nb;
 
         await bdd.sendGame(game); //envoie de la game
 

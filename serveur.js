@@ -9,6 +9,7 @@ let bodyParser = require('body-parser');
 let session = require('express-session');
 
 let paramGame, status;
+let gameExist = null;
 
 /* -------------------------------------------------------------------------- */
 /*                                package setup                               */
@@ -21,25 +22,6 @@ const BDD = require('./package/BDD');
 const bdd = new BDD();
 
 const Player = require('./package/Player')
-
-
-/* -------------------------------------------------------------------------- */
-/*                               question setup                               */
-/* -------------------------------------------------------------------------- */
-
-const readline = require('readline');
-
-const rl = readline.createInterface({ // pour demander du texte
-    input: process.stdin,
-    output: process.stdout
-  });
-
-function ask(question) { // attendre la réponse
-    return new Promise((resolve) => {
-        rl.question(question, (response) => resolve(response.trim()));
-    });
-}
-
 
 
 /* -------------------------------------------------------------------------- */
@@ -72,23 +54,37 @@ app.use(require('./middlewares/flash'));
 /*                              Routes  post                                  */
 /* -------------------------------------------------------------------------- */
 
-app.post('/', (req,res)=>{
+app.post('/', async(req,res)=>{
     if(req.body.paramGame === ''){
         req.flash('error', "Vous n'avez pas posté de message  :(");
         res.redirect('/');
     } else {
+        await bdd.setupBDD(); // démarer la bdd
         game.name = req.body.paramGame;
-        res.redirect('/create');
+
+        gameExist = await bdd.gameExist(game);
+
+        if(gameExist){
+            await bdd.getGame(game);
+            res.redirect('/load');
+        } else {
+            res.redirect('/create');
+        }
     };
 });
 
-app.post('/create', (req,res)=>{
+app.post('/create', async (req,res)=>{
     if(req.body.paramGame[0] === '' || req.body.paramGame[1] === '' || req.body.paramGame[2] === '' ){
         req.flash('error', "Vous n'avez pas tous bien renseigné  :(");
         res.redirect('/create');
     } else {
-        req.flash('success', "Merci pour votre votre message  :)");
-        paramGame = req.body.paramGame;
+        req.flash('success', "Votre Partie est bien enregistrer  :)");
+        game.name = req.body.paramGame[0];
+        game.end_date = req.body.paramGame[1];
+        game.nbPlayer = req.body.paramGame[2];
+
+        await bdd.sendGame(game); //envoie de la game
+
         res.redirect('/load');
     };
 })
@@ -109,25 +105,8 @@ app.get('/create', (req,res) =>{
 });
 
 app.get('/load', (req,res) =>{
-    res.render('pages/index', { paramGame : paramGame, mode : "load"});
-    
+    res.render('pages/index', { paramGame : game, mode : "load"});
 });
 
 
 app.listen(8080);
-
-
-/* -------------------------------------------------------------------------- */
-/*                                    main                                    */
-/* -------------------------------------------------------------------------- */
-
-
-async function main() {
-
-    await bdd.setupBDD(); // démarer
-
-}
-
-main();
-
-

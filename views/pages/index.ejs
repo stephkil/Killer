@@ -25,7 +25,7 @@
 <div class="ui fixed inverted menu">
 
 <a href = "/" class = "header item" > Killer </a>
-<a href= "/" class="header item"> Crée mon profil </a>
+<a href= "/" class="header item"> Nouveau profil </a>
 
 </div>
 
@@ -120,9 +120,9 @@
 
             <div class="content">
 
-                <p> <%= "Nom de la partie : " + paramGame[0] %> </p> 
-                <p> <%= "Durée de la partie : " + paramGame[1] + " h" %> </p> 
-                <p> <%= "Nombre de Joueurs : " + paramGame[2] + " h" %> </p> 
+                <p> <%= "Nom de la partie : " + paramGame.name %> </p> 
+                <p> <%= "Durée de la partie : " + paramGame.end_date + " h" %> </p> 
+                <p> <%= "Nombre de Joueurs : " + paramGame.nbPlayer %> </p> 
 
             </div>
 
