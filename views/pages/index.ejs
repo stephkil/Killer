@@ -25,6 +25,7 @@
 <div class="ui fixed inverted menu">
 
 <a href = "/" class = "header item" > Killer </a>
+<a href= "/" class="header item"> Crée mon profil </a>
 
 </div>
 
@@ -54,17 +55,36 @@
     
 <% } %>
 
+
 <!-- ----------------------------------------------------------------------- -->
-<!--                                  index                                  -->
+<!--                                Create Game                              -->
 <!-- ----------------------------------------------------------------------- -->
 
-<% if( paramGame === undefined) { %>
+<% if((paramGame === '' || paramGame === undefined) && mode != "load" && mode != "create") { %>
 
     <form action="/" method="post" class="ui form">
 
         <div class="field">
             <label for="paramGameName">Nom de la Partie</label>
             <textarea name="paramGame" id="name" style="height: 0px; width: 200px;"></textarea>
+        </div>
+        
+        <button type="submit" class="ui blue labeled submit icon button">
+
+            <i class="icon edit"></i>Envoyer
+
+        </button>
+
+    </form>
+<% } %>
+
+<% if(mode == "create"){ %>
+    <form action="/create" method="post" class="ui form">
+
+        <div class="field">
+            <label for="paramGameName">Nom de la Partie</label>
+            <textarea  placeholder= <%= gameName %>
+                        name="paramGame" id="name" style="height: 0px; width: 200px;"></textarea>
         </div>
 
         <div class="field">
@@ -85,16 +105,15 @@
         </button>
 
     </form>
-
 <% } %>
 
 <!-- ----------------------------------------------------------------------- -->
-<!--                                affichage                                -->
+<!--                                Affi game                                -->
 <!-- ----------------------------------------------------------------------- -->
 
-<div class="ui comments">
-    <% if( paramGame !== undefined) { %>
-
+<% if(mode === "load") { %>
+    <div class="ui comments">
+    
         <h3 class="ui dividing header"> Information Game </h3>
         
         <div class="comment">
@@ -109,8 +128,7 @@
 
         </div>
 
-    <% } %>
-
-</div>
+    </div>
+<% } %>
 
 <% include ('footer') %>

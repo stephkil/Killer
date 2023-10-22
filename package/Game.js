@@ -2,8 +2,8 @@ const Player = require('./Player');
 
 class Game {
 
-    constructor(gameName){
-        this.name = gameName;
+    constructor(){
+        this.name = '';
         this.TableOfPlayers = [];
         this.TableInGame = [];
         this.nbPlayer = null;

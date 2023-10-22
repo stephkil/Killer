@@ -152,7 +152,8 @@ class BDD{
                 player.nbKill = result.nombre_kill;
                 player.status = result.status;
 
-                game.TableInGame.push(player);   
+                game.TableInGame.push(player); 
+                console.log("game récupéré");  
             }
             else {
                 console.log("erreur dans la récupération d'un ou plusieur joueurs")
