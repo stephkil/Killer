@@ -32,12 +32,22 @@
 
 <% if(locals.flash && locals.flash.error){ %>
 
-<div class="ui negative message">
+    <div class="ui negative message">
 
-    <%= flash.error %>
+        <%= flash.error %>
 
-</div>
+    </div>
 
+<% } %>
+
+<% if(locals.flash && locals.flash.success){ %>
+
+    <div class="ui positive message">
+    
+        <%= flash.success %>
+    
+    </div>
+    
 <% } %>
 
 <!-- ----------------------------------------------------------------------- -->
@@ -61,6 +71,26 @@
     </button>
 
 </form>
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                                affichage                                -->
+<!-- ----------------------------------------------------------------------- -->
+
+<div class="ui comments">
+
+    <h3 class="ui dividing header"> Commentaires </h3>
+    
+    <div class="comment">
+
+        <div class="content">
+
+            <p> <%= test %> </p> 
+
+        </div>
+
+    </div>
+
+</div>
 
 <!-- ----------------------------------------------------------------------- -->
 <!--                                 footer                                  -->
