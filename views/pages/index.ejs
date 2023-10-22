@@ -6,7 +6,7 @@
 <html>
 <head>
 
-    <title> hey </title>
+    <title> AshGames_Killer </title>
 
     <link rel="stylesheet" href="/assets/semantic/semantic.min.css">
 
@@ -24,11 +24,15 @@
 
 <div class="ui fixed inverted menu">
 
-<a href = "/" class = "header item" > Accueil </a>
+<a href = "/" class = "header item" > Killer </a>
 
 </div>
 
 <div class="ui main container">
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                              Message flash                              -->
+<!-- ----------------------------------------------------------------------- -->
 
 <% if(locals.flash && locals.flash.error){ %>
 
@@ -54,50 +58,59 @@
 <!--                                  index                                  -->
 <!-- ----------------------------------------------------------------------- -->
 
-<form action="/" method="post" class="ui form">
+<% if( paramGame === undefined) { %>
 
-    <div class="field">
+    <form action="/" method="post" class="ui form">
 
-        <label for="message">Message</label>
+        <div class="field">
+            <label for="paramGameName">Nom de la Partie</label>
+            <textarea name="paramGame" id="name"></textarea>
+        </div>
 
-        <textarea name="message" id="message"></textarea>
+        <div class="field">
+            <label for="paramGameTps">Temps Partie</label>
+            <textarea name="paramGame" id="tps"></textarea>
+        </div>
 
-    </div>
+        <div class="field">
+            <label for="paramGameNbPlayer">Nombre de Joueurs</label>
+            <textarea name="paramGame" id="nbPlayer"></textarea>
+        </div>
 
-    <button type="submit" class="ui blue labeled submit icon button">
 
-        <i class="icon edit"></i>Envoyer
+        <button type="submit" class="ui blue labeled submit icon button">
 
-    </button>
+            <i class="icon edit"></i>Envoyer
 
-</form>
+        </button>
+
+    </form>
+
+<% } %>
 
 <!-- ----------------------------------------------------------------------- -->
 <!--                                affichage                                -->
 <!-- ----------------------------------------------------------------------- -->
 
 <div class="ui comments">
+    <% if( paramGame !== undefined) { %>
 
-    <h3 class="ui dividing header"> Commentaires </h3>
-    
-    <div class="comment">
+        <h3 class="ui dividing header"> Information Game </h3>
+        
+        <div class="comment">
 
-        <div class="content">
+            <div class="content">
 
-            <p> <%= test %> </p> 
+                <p> <%= "Nom de la partie : " + paramGame[0] %> </p> 
+                <p> <%= "Durée de la partie : " + paramGame[1] + " h" %> </p> 
+                <p> <%= "Nombre de Joueurs : " + paramGame[2] + " h" %> </p> 
+
+            </div>
 
         </div>
 
-    </div>
+    <% } %>
 
 </div>
 
-<!-- ----------------------------------------------------------------------- -->
-<!--                                 footer                                  -->
-<!-- ----------------------------------------------------------------------- -->
-
-</div>
-
-</body>
-
-</html>
+<% include ('footer') %>

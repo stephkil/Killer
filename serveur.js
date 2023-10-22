@@ -1,11 +1,11 @@
+
 let express =  require('express');
 let app = express();
 let ejs =  require('ejs');
 let bodyParser = require('body-parser');
 let session = require('express-session');
 
-let mess;
-
+let paramGame;
 
 /* -------------------------------------------------------------------------- */
 /*                               Moteur template                              */
@@ -36,17 +36,19 @@ app.use(require('./middlewares/flash'));
 /* -------------------------------------------------------------------------- */
 
 app.get('/', (req,res) =>{
-    res.render('pages/index', {test : mess});
+    res.render('pages/index', { paramGame : paramGame});
+    paramGame = undefined;
 });
 
 app.post('/', (req,res)=>{
-    if(req.body.message === undefined || req.body.message === ''){
+    if(req.body.paramGame === undefined || req.body.paramGame === ''){
         req.flash('error', "Vous n'avez pas posté de message  :(");
     } else {
         req.flash('success', "Merci pour votre votre message  :)");
-        mess = req.body.message;
+        paramGame = req.body.paramGame;
         };
-    
+
+    console.log(req.body);
     res.redirect('/');
     }
 );
