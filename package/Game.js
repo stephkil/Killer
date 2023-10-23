@@ -8,6 +8,7 @@ class Game {
         this.TableInGame = [];
         this.nbPlayer = null;
         this.end_date = null;
+        this.winner = undefined;
     }
     
 
@@ -48,39 +49,29 @@ class Game {
 
 
     async kill(personkill,bdd){ // gestion du cas "kill"
-        let idx = this.TableInGame.findIndex(player => player.idPlayer === personkill);
-
-        let idx2 = "life";
-        let i = 1;
-        do{
-            idx2 = ((idx-i + this.nbPlayer) % this.nbPlayer);
-            if(this.TableInGame[idx2].status == "dead") {
-                i++;
-            }
-        }while(this.TableInGame[idx2].status == "dead");
-
-        let killer = this.TableInGame[idx2];
+        
+        // Recherche du tué
+        let idx = this.TableInGame.findIndex(player => player.idPlayer == personkill);
         let killed = this.TableInGame[idx];
 
-        killer.nbKill ++; // on incrémente le compteur de kill
-        killer.target = killed.target; // on donne au killer, une nouvelle target
-
-        await bdd.updateKill(killer.name,killer.game,killer.target,killed.name); // on va update les info dans la bdd après le kill
-
-        killed.status = "dead"; // on actualise le statut du tué, localement
-        killed.target = "none"; // on actualise le statut du tué localement
-
-        if(killer.target == killer.name) return false // si un joueur dois se tué lui même cela veut dire que il y a plus que lui, il gagne donc et on stop la game
-
-        return true; // sinon on continue à jouer
-    }
-
-    displayGame(){ // j'affiche la game localement sur le terminal
-        for(let i=0; i<this.nbPlayer;i++){
-            console.log(`ID : ${this.TableInGame[i].idPlayer} - ${this.TableInGame[i].name} - Mission : ${this.TableInGame[i].mission} - Target : ${this.TableInGame[i].target} - Kill : ${this.TableInGame[i].nbKill}`);  
-        }
+        // Recherche du tueur
+        let idx2 = this.TableInGame.findIndex(player => player.target == killed.name);
+        let killer = this.TableInGame[idx2];
         
-        console.log("\n");
+        await bdd.updateKill(killer,killed); // on va update les info dans la bdd après le kill
+
+        killer.target = killed.target;
+        killer.nbKill ++;
+
+        killed.status = "dead";
+        killed.target = "none";
+
+        if(killer.name == killer.target) {
+            this.winner = killer.name;
+            await bdd.updateGame(killer);
+            return false // si un joueur dois se tué lui même cela veut dire que il y a plus que lui, il gagne donc et on stop la game
+        }
+        return true; // sinon on continue à jouer
     }
   }
   

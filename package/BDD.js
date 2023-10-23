@@ -42,7 +42,7 @@ class BDD{
         await this.collections.Players.deleteMany({ game : game.name }); // on retire les joueur racroché a l'id de la game, de la bdd
         await this.collections.Games.deleteMany({ name : game.name }); // on retire la game de la bdd
 
-        await this.client.close(); // fermeture du client
+        //await this.client.close(); // fermeture du client
     }
 
 
@@ -119,7 +119,8 @@ class BDD{
             name : game.name,
             nb_Player : game.nbPlayer,
             date_debut : new Date(),
-            heures_restante : game.end_date
+            heures_restante : game.end_date,
+            winner : game.winner
         });
     }
 
@@ -130,6 +131,7 @@ class BDD{
             console.log("partie trouvé");
             game.nbPlayer = result.nb_Player;
             game.end_date = result.heures_restante;
+            game.winner = result.winner;
             console.log(result);
 
             return true;
@@ -168,18 +170,23 @@ class BDD{
     /* -------------------------------------------------------------------------- */
     
 
-    async updateKill(name,game,target,dead){
-        const killer = await this.collections.Players.findOne({ name: name, game: game}); // je cherche le killer dans la bdd grâce au nom et id de game
-        const killed = await this.collections.Players.findOne({ name: dead, game: game}); // de même pour le tué
+    async updateKill(killerInGame, killedInGame){
+        
+        // je cherche le killer dans la bdd grâce au nom et id de game
+        const killer = await this.collections.Players.findOne({ name: killerInGame.name, game: killerInGame.game}); 
+        await this.collections.Players.updateOne({ _id: killer._id }, {$inc: { nombre_kill : 1 }}, {$set: { target : killedInGame.target}} ); // update Killer dans bdd
+       
+         // de même pour le tué
+        const killed = await this.collections.Players.findOne({ name: killedInGame.name, game: killedInGame.game});
+        await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ status : "dead"}}); // update tué dans bdd
+        await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ target : "none" }}); // update tué dans bdd        
+    }
 
-        const updateKiller = { // on défini les multiple modif à faire
-            $inc: { nombre_kill : 1 },
-            $set: { target : target} 
-        };
+    async updateGame(killer){
 
-        const resultKiller = await this.collections.Players.updateOne({ _id: killer._id }, updateKiller); // update Killer dans bdd
-        const resultKilled1 = await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ status : "dead" }}); // update tué dans bdd
-        const resultKilled2 = await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ target : "none" }}); // update tué dans bdd
+         // de même pour le tué
+        const result = await this.collections.Games.findOne({ name: killer.game});
+        await this.collections.Games.updateOne({ _id: result._id }, { $set:{ winner : killer.name}}); // update winner dans bdd     
     }
 
 }

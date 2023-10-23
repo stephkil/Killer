@@ -10,6 +10,7 @@ let session = require('express-session');
 
 let paramGame, paramPlayer;
 let gameExist = null;
+var gameRunning = true;
 var nbAdd = 1;
 
 /* -------------------------------------------------------------------------- */
@@ -34,7 +35,6 @@ app.set('view engine', 'ejs');
 /* -------------------------------------------------------------------------- */
 /*                                 Middleware                                 */
 /* -------------------------------------------------------------------------- */
-
 
 
 app.use('/assets', express.static('public'))
@@ -94,7 +94,6 @@ app.post('/load', async(req,res)=>{
 
         if(gameExist){
             await bdd.getGame(game);
-            console.log(game);
             res.redirect('/affi');
         } else {
             req.flash('error', "Cette partie n'existe pas  :(");
@@ -172,9 +171,29 @@ app.post('/init' ,async(req,res)=>{
         }
     }
 });
+
+
+app.post('/affi', async(req,res)=>{
+
+    if(req.body.mort != '' && req.body.mort != undefined){
+
+        let killed = Number(req.body.mort); // mettre en forme
+        gameRunning = await game.kill(killed,bdd); // update les joueurs après kill
+
+        if(gameRunning == false){
+            console.log(game);
+            req.flash('success', "GG " + game.winner + ", tu es le killer ultime !")
+        } else {
+            req.flash('succes', "Le joueur" + game.TableInGame[killed].name + " est mort !")
+        }
+    }
+    res.redirect('/affi');
+});
+
 /* -------------------------------------------------------------------------- */
 /*                                 Routes  get                                */
 /* -------------------------------------------------------------------------- */
+
 
 app.get('/', async (req,res) =>{
     paramGame = undefined;
@@ -198,8 +217,12 @@ app.get('/load', async (req,res) =>{
     res.render('pages/load');
 });
 
-app.get('/affi', (req,res) =>{
-    res.render('pages/affi', { paramGame : game});
+app.get('/affi', async (req,res) =>{
+    res.render('pages/affi', { game : game, gameRunning: gameRunning});
+
+    if(gameRunning == false){
+        //await bdd.closeBDD(game); // fermer bdd + suprimer élement superflu
+    }
 });
 
 app.get('/register', (req,res) =>{
@@ -209,4 +232,6 @@ app.get('/register', (req,res) =>{
 app.listen(8080, async () => {
     await bdd.setupBDD(); // démarer la bdd
 });
+
+
 

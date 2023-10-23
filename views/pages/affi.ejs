@@ -67,22 +67,44 @@
     <div class="ui comments">
     
         <h3 class="ui dividing header"> Information Game </h3>
-        
-        <div class="comment">
 
-            <div class="content">
+        <div class="content">
 
-                <p> <%= "Nom de la partie : " + paramGame.name %> </p> 
-                <p> <%= "Durée de la partie : " + paramGame.end_date + " h" %> </p> 
-                <p> <%= "Nombre de Joueurs : " + paramGame.nbPlayer %> </p> 
-                
+            <p> <%= "Nom de la partie : " + game.name %> </p> 
+            <p> <%= "Durée de la partie : " + game.end_date + " h" %> </p> 
+            <p> <%= "Nombre de Joueurs : " + game.nbPlayer %> </p> 
 
+            <p></p>
+            
+            <% if(gameRunning == false ){%>
+                <p> <%= "Winner => " + game.winner %> </p>
+            <% } %>
 
-            </div>
+            <p></p>
 
+            <% for (var i = 0; i < game.nbPlayer;  i++ ) { %>
+                <p>  ID :  <%=game.TableInGame[i].idPlayer%> - <%=game.TableInGame[i].name%> - Mission : <%=game.TableInGame[i].mission%> - Status : <%=game.TableInGame[i].status%> - Target : <%=game.TableInGame[i].target%> - Kill : <%=game.TableInGame[i].nbKill %>;  
+            <% } %>
+            
         </div>
 
     </div>
 
+    <%if(gameRunning == true){%>
+        <form action="/affi" method="post" class="ui form">
+
+            <div class="field">
+                <label for="mort">Quel Joueur a été tué</label>
+                <textarea name="mort" id="mort" style="height: 0px; width: 200px;"></textarea>
+            </div>
+            
+            <button type="submit" class="ui blue labeled submit icon button">
+
+                <i class="icon edit"></i>Envoyer
+
+            </button>
+
+        </form>
+    <%}%>
 
 <% include ('footer') %>
