@@ -16,39 +16,6 @@ class Game {
     /* -------------------------------------------------------------------------- */
 
 
-    async initGame(rl,bdd){
-        await game.addPlayer(bdd); // add player
-        this.shuffleTableOfPlayers();
-        this.targetPlayer();
-    }
-
-    async addPlayer(rl,bdd){ // add un joueur
-        let playerName = null;
-        for (let i = 0; i < this.nbPlayer; i++) {
-            playerName = await this.askName(i,rl); // demande le username du joueur
-            const user = await bdd.checkPlayer(playerName); // on vérifie si il existe
-            if(user == false){
-                console.log("ce user n'existe pas, veuillez re-esayer");
-                i--; // on reste sur le même joueur à ajouter si il n'existe pas (redemande le nom)
-            } else{
-                const player = new Player();
-                player.name = playerName;
-                player.game = this.name;
-                player.idUser = user;
-                this.TableOfPlayers.push(player);
-
-                player.mission = await this.taskRandom(bdd); // on attribue sa mission pour le tuer
-            }   
-        }
-    }
-
-    async askName(i,rl){ // on demande le username du joueur à ajouter
-        let question = `quel est le nom du ${i+1} Joueur ? `;
-        return new Promise((resolve) => {
-            rl.question(question, (response) => resolve(response.trim()));
-        });
-    }
-
     async taskRandom(bdd) { // on attribue à un joueur sa mission pour le tuer, aléatoirement
         const result = await bdd.collections.Task.aggregate([
           { $sample: { size: 1 } }

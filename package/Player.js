@@ -2,7 +2,6 @@ class Player {
     
     constructor() {
       this.idPlayer = null;
-      this.idUser = null;
       this.name = null;
       this.game = null;
       this.target = null;

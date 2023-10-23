@@ -104,6 +104,7 @@ class BDD{
             const user = await this.collections.User.findOne({ username: playerName});
             return user;
         }
+        
         return false;
     }
 
@@ -162,11 +163,10 @@ class BDD{
         }
     }
 
-    
     /* -------------------------------------------------------------------------- */
     /*                                  Fonction                                  */
     /* -------------------------------------------------------------------------- */
-
+    
 
     async updateKill(name,game,target,dead){
         const killer = await this.collections.Players.findOne({ name: name, game: game}); // je cherche le killer dans la bdd grâce au nom et id de game

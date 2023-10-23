@@ -1,18 +1,4 @@
 
-async function main() {
-  
-    
-    const Question1 = "Combien de joueurs ? ";
-    const Question2 = "Quel joueur a été tué ? ";
-    const Question3 = "Username : "
-    const Question4 = "mdp : "
-    const Question5 = "tu veux crée un nuv joueur ? (y/n) : "
-    const Question6 = "nom de la partie : "
-    const Question7 = "temps de partie (en heures) ? "
-    const Question8 = "taper entrer pour terminer la partie "
-    const Question9 = "la partie existe t-elle déjà ? (y/n) :"
-
-
 
 /* -------------------------------------------------------------------------- */
 /*                              Déroulement Game                              */
@@ -36,7 +22,6 @@ async function main() {
 /*                              Cloture Game                                  */
 /* -------------------------------------------------------------------------- */
 
-
     game.displayGame();
     
     if(killed != 'q'){
@@ -50,12 +35,3 @@ async function main() {
         await ask(Question8); // attente de touche
         await bdd.closeBDD(game); // fermer bdd + suprimer élement superflu
     }
-    else{
-        console.log("sortie du jeu");
-        await bdd.client.close(); // fermer bdd
-    }
-
-    rl.close(); // fermer espace pour écrire
-}
-
-main();

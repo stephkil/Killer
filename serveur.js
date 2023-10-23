@@ -82,6 +82,7 @@ app.post('/register', async (req,res)=>{
     };
 });
 
+
 app.post('/load', async(req,res)=>{
     if(req.body.paramGame === ''){
         req.flash('error', "Vous n'avez pas tous bien renseigné  :(");
@@ -93,6 +94,7 @@ app.post('/load', async(req,res)=>{
 
         if(gameExist){
             await bdd.getGame(game);
+            console.log(game);
             res.redirect('/affi');
         } else {
             req.flash('error', "Cette partie n'existe pas  :(");
@@ -129,37 +131,44 @@ app.post('/init' ,async(req,res)=>{
     if(req.body.nameOfPlayer == '' || req.body.nameOfPlayer == undefined){
         res.redirect('/init');
     } else {
-        if(nbAdd < game.nbPlayer){
+        if(nbAdd <= game.nbPlayer){
             let playerName = req.body.nameOfPlayer;
             const user = await bdd.checkPlayer(playerName); // on vérifie si il existe
             
             if(user == false){
-                req.flash('error', "ce user n'existe pas, veuillez re-esayer");
+                req.flash('error', "ce joueur n'existe pas, veuillez re-esayer");
             } else{
-                req.flash('success', "User ajouté, au suivant : ");
+                req.flash('success', "Joueur ajouté, au suivant : ");
 
                 const player = new Player();
                 player.name = playerName;
                 player.game = game.name;
-                player.idUser = user;
                 game.TableOfPlayers.push(player);
 
                 player.mission = await game.taskRandom(bdd); // on attribue sa mission pour le tuer
                 
                 nbAdd ++;
-            } 
-            res.redirect('/init');
+            }
+
+            if(nbAdd > game.nbPlayer){
+                game.shuffleTableOfPlayers();
+                game.targetPlayer();
+
+                await bdd.sendGame(game); //envoie de la game
+                await bdd.sendPlayer(game); // envoie des joueurs
+
+                req.flash('success', "Partie crée, bonne game  :)");
+
+                nbAdd = 1;
+                
+                res.redirect('/');
+            } else {
+                res.redirect('/init');
+            }
+            
         } else {
-        
-        game.shuffleTableOfPlayers();
-        game.targetPlayer();
-
-        await bdd.sendGame(game); //envoie de la game
-        await bdd.sendPlayer(game); // envoie des joueurs
-
-        req.flash('success', "Partie crée, bonne game  :)");
-
-        res.redirect('/load');
+            req.flash('error', "Désolé, il y a eu une erreur dans la création de la partie, veuillez recommencer  :)");
+            res.redirect('/create');
         }
     }
 });
@@ -168,6 +177,10 @@ app.post('/init' ,async(req,res)=>{
 /* -------------------------------------------------------------------------- */
 
 app.get('/', async (req,res) =>{
+    paramGame = undefined;
+    paramPlayer = undefined;
+    gameExist = null;
+    nbAdd = 1;
     res.render('pages/index');
     paramGame = undefined;
 });
@@ -196,5 +209,4 @@ app.get('/register', (req,res) =>{
 app.listen(8080, async () => {
     await bdd.setupBDD(); // démarer la bdd
 });
-
 

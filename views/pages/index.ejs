@@ -29,5 +29,35 @@
 <a href= "/create" class="header item"> Create Game </a>
 <a href= "/load" class="header item"> Load Game </a>
 
+</div>
 
+<div class="ui main container"></div>
+
+<div class="ui comments">
+    
+<!-- ----------------------------------------------------------------------- -->
+<!--                              Message flash                              -->
+<!-- ----------------------------------------------------------------------- -->
+
+<% if(locals.flash && locals.flash.error){ %>
+
+    <div class="ui negative message">
+
+        <%= flash.error %>
+
+    </div>
+
+<% } %>
+
+<% if(locals.flash && locals.flash.success){ %>
+
+    <div class="ui positive message">
+    
+        <%= flash.success %>
+    
+    </div>
+    
+<% } %>
+
+</div>
 <% include ('footer') %>
