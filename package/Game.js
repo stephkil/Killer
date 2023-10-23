@@ -17,7 +17,7 @@ class Game {
 
 
     async initGame(rl,bdd){
-        await this.addPlayer(rl,bdd);
+        await game.addPlayer(bdd); // add player
         this.shuffleTableOfPlayers();
         this.targetPlayer();
     }

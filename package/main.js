@@ -15,27 +15,6 @@ async function main() {
 
 
 /* -------------------------------------------------------------------------- */
-/*                               Game existe pas                              */
-/* -------------------------------------------------------------------------- */
-
-
-    else {
-        let end,nb = null;
-
-        nb = Number(await ask(Question1)); // nb joueur
-        end = Number(await ask(Question7)); // tps partie
-
-        game.end_date = end;
-        game.nbPlayer = nb;
-
-        await bdd.sendGame(game); //envoie de la game
-
-        await game.initGame(rl,bdd); // init game
-        await bdd.sendPlayer(game); // envoie des joueurs
-    }
-    
-
-/* -------------------------------------------------------------------------- */
 /*                              Déroulement Game                              */
 /* -------------------------------------------------------------------------- */
 

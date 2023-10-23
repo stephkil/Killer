@@ -10,6 +10,7 @@ let session = require('express-session');
 
 let paramGame, paramPlayer;
 let gameExist = null;
+var nbAdd = 1;
 
 /* -------------------------------------------------------------------------- */
 /*                                package setup                               */
@@ -58,41 +59,6 @@ app.post('/', async(req,res)=>{
     res.redirect('/');
 });
 
-app.post('/load', async(req,res)=>{
-    if(req.body.paramGame === ''){
-        req.flash('error', "Vous n'avez pas posté de message  :(");
-        res.redirect('/');
-    } else {
-        game.name = req.body.paramGame;
-
-        gameExist = await bdd.gameExist(game);
-
-        if(gameExist){
-            await bdd.getGame(game);
-            res.redirect('/affi');
-        } else {
-            req.flash('error', "Cette partie n'existe pas  :(");
-            res.redirect('/load');
-        }
-    };
-});
-
-app.post('/create', async (req,res)=>{
-    if(req.body.paramGame[0] === '' || req.body.paramGame[1] === '' || req.body.paramGame[2] === '' ){
-        req.flash('error', "Vous n'avez pas tous bien renseigné  :(");
-        res.redirect('/create');
-    } else {
-        req.flash('success', "Votre Partie est bien enregistrer  :)");
-        game.name = req.body.paramGame[0];
-        game.end_date = req.body.paramGame[1];
-        game.nbPlayer = req.body.paramGame[2];
-
-        await bdd.sendGame(game); //envoie de la game
-
-        res.redirect('/affi');
-    };
-})
-
 app.post('/register', async (req,res)=>{
     if(req.body.paramPlayer[0] === '' || req.body.paramPlayer[1] === ''){
         req.flash('error', "Vous n'avez pas tous bien renseigné  :(");
@@ -116,6 +82,87 @@ app.post('/register', async (req,res)=>{
     };
 });
 
+app.post('/load', async(req,res)=>{
+    if(req.body.paramGame === ''){
+        req.flash('error', "Vous n'avez pas tous bien renseigné  :(");
+        res.redirect('/load');
+    } else {
+        game.name = req.body.paramGame;
+
+        gameExist = await bdd.gameExist(game);
+
+        if(gameExist){
+            await bdd.getGame(game);
+            res.redirect('/affi');
+        } else {
+            req.flash('error', "Cette partie n'existe pas  :(");
+            res.redirect('/load');
+        }
+    };
+});
+
+app.post('/create', async (req,res)=>{
+    if(req.body.paramGame[0] === '' || req.body.paramGame[1] === '' || req.body.paramGame[2] === '' ){
+        req.flash('error', "Vous n'avez pas tous bien renseigné  :(");
+        res.redirect('/create');
+    } else {
+
+        game.name = req.body.paramGame[0];
+
+        gameExist = await bdd.gameExist(game);
+
+        if(gameExist){
+            req.flash('error', "Cette partie existe déjà  :(");
+            res.redirect('/create');
+        } else {
+            req.flash('success', "Cette partie peut être crée. Maintenant renseignons les joueurs :)");
+            game.name = req.body.paramGame[0];
+            game.end_date = req.body.paramGame[1];
+            game.nbPlayer = req.body.paramGame[2];
+
+            res.redirect('/init');
+        }
+    };
+})
+
+app.post('/init' ,async(req,res)=>{
+    if(req.body.nameOfPlayer == '' || req.body.nameOfPlayer == undefined){
+        res.redirect('/init');
+    } else {
+        if(nbAdd < game.nbPlayer){
+            let playerName = req.body.nameOfPlayer;
+            const user = await bdd.checkPlayer(playerName); // on vérifie si il existe
+            
+            if(user == false){
+                req.flash('error', "ce user n'existe pas, veuillez re-esayer");
+            } else{
+                req.flash('success', "User ajouté, au suivant : ");
+
+                const player = new Player();
+                player.name = playerName;
+                player.game = game.name;
+                player.idUser = user;
+                game.TableOfPlayers.push(player);
+
+                player.mission = await game.taskRandom(bdd); // on attribue sa mission pour le tuer
+                
+                nbAdd ++;
+            } 
+            res.redirect('/init');
+        } else {
+        
+        game.shuffleTableOfPlayers();
+        game.targetPlayer();
+
+        await bdd.sendGame(game); //envoie de la game
+        await bdd.sendPlayer(game); // envoie des joueurs
+
+        req.flash('success', "Partie crée, bonne game  :)");
+
+        res.redirect('/load');
+        }
+    }
+});
 /* -------------------------------------------------------------------------- */
 /*                                 Routes  get                                */
 /* -------------------------------------------------------------------------- */
@@ -130,8 +177,12 @@ app.get('/create', (req,res) =>{
     paramGame = undefined;
 });
 
+app.get('/init', async(req,res)=>{
+    res.render('pages/init', {nbAdd: nbAdd});
+});
+
 app.get('/load', async (req,res) =>{
-    res.render('pages/load', { paramGame : paramGame});
+    res.render('pages/load');
 });
 
 app.get('/affi', (req,res) =>{
@@ -145,3 +196,5 @@ app.get('/register', (req,res) =>{
 app.listen(8080, async () => {
     await bdd.setupBDD(); // démarer la bdd
 });
+
+
