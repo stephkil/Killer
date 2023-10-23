@@ -8,7 +8,7 @@ let ejs =  require('ejs');
 let bodyParser = require('body-parser');
 let session = require('express-session');
 
-let paramGame, status;
+let paramGame, paramPlayer;
 let gameExist = null;
 
 /* -------------------------------------------------------------------------- */
@@ -21,7 +21,7 @@ const game = new Game();
 const BDD = require('./package/BDD');
 const bdd = new BDD();
 
-const Player = require('./package/Player')
+const Player = require('./package/Player');
 
 
 /* -------------------------------------------------------------------------- */
@@ -55,20 +55,24 @@ app.use(require('./middlewares/flash'));
 /* -------------------------------------------------------------------------- */
 
 app.post('/', async(req,res)=>{
+    res.redirect('/');
+});
+
+app.post('/load', async(req,res)=>{
     if(req.body.paramGame === ''){
         req.flash('error', "Vous n'avez pas posté de message  :(");
         res.redirect('/');
     } else {
-        await bdd.setupBDD(); // démarer la bdd
         game.name = req.body.paramGame;
 
         gameExist = await bdd.gameExist(game);
 
         if(gameExist){
             await bdd.getGame(game);
-            res.redirect('/load');
+            res.redirect('/affi');
         } else {
-            res.redirect('/create');
+            req.flash('error', "Cette partie n'existe pas  :(");
+            res.redirect('/load');
         }
     };
 });
@@ -85,28 +89,59 @@ app.post('/create', async (req,res)=>{
 
         await bdd.sendGame(game); //envoie de la game
 
-        res.redirect('/load');
+        res.redirect('/affi');
     };
 })
+
+app.post('/register', async (req,res)=>{
+    if(req.body.paramPlayer[0] === '' || req.body.paramPlayer[1] === ''){
+        req.flash('error', "Vous n'avez pas tous bien renseigné  :(");
+        res.redirect('/register');
+    } else {
+        console.log(req.body.paramPlayer);
+
+        let name,pwd,status = null;
+        name = req.body.paramPlayer[0]; // username
+        pwd = req.body.paramPlayer[1]; // password
+
+        status = await bdd.insertUser(name,pwd); // insérer un user unique
+        
+        if(status == true){
+            req.flash('success', "Votre Profil est bien enregistrer  :)"); 
+            res.redirect('/');
+        } else {
+            req.flash('error', "Ce Profil existe déjà  :(");
+            res.redirect('/register');
+        }
+    };
+});
 
 /* -------------------------------------------------------------------------- */
 /*                                 Routes  get                                */
 /* -------------------------------------------------------------------------- */
 
-app.get('/', (req,res) =>{
-    res.render('pages/index', { paramGame : paramGame, mode : ""});
+app.get('/', async (req,res) =>{
+    res.render('pages/index');
     paramGame = undefined;
-    status = undefined;
 });
 
 app.get('/create', (req,res) =>{
-    res.render('pages/index', { paramGame : paramGame, mode : "create", gameName : game.name});
+    res.render('pages/create', { paramGame : paramGame, gameName : game.name});
     paramGame = undefined;
 });
 
-app.get('/load', (req,res) =>{
-    res.render('pages/index', { paramGame : game, mode : "load"});
+app.get('/load', async (req,res) =>{
+    res.render('pages/load', { paramGame : paramGame});
 });
 
+app.get('/affi', (req,res) =>{
+    res.render('pages/affi', { paramGame : game});
+});
 
-app.listen(8080);
+app.get('/register', (req,res) =>{
+    res.render('pages/register', { paramPlayer : paramPlayer});
+});
+
+app.listen(8080, async () => {
+    await bdd.setupBDD(); // démarer la bdd
+});

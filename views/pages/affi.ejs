@@ -1,0 +1,88 @@
+<!-- ----------------------------------------------------------------------- -->
+<!--                                 header                                  -->
+<!-- ----------------------------------------------------------------------- -->
+
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title> AshGames_Killer </title>
+
+    <link rel="stylesheet" href="/assets/semantic/semantic.min.css">
+
+    <style>
+
+        .main.container{
+            margin-top: 7em;
+        }
+
+    </style>
+    
+</head>
+
+<body>
+
+<div class="ui fixed inverted menu">
+
+<a href = "/" class = "header item" > Killer </a>
+<a href= "/register" class="header item"> Nouveau profil </a>
+<a href= "/create" class="header item"> Create Game </a>
+<a href= "/load" class="header item"> Load Game </a>
+
+
+
+</div>
+
+<div class="ui main container">
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                              Message flash                              -->
+<!-- ----------------------------------------------------------------------- -->
+
+<% if(locals.flash && locals.flash.error){ %>
+
+    <div class="ui negative message">
+
+        <%= flash.error %>
+
+    </div>
+
+<% } %>
+
+<% if(locals.flash && locals.flash.success){ %>
+
+    <div class="ui positive message">
+    
+        <%= flash.success %>
+    
+    </div>
+    
+<% } %>
+
+<!-- ----------------------------------------------------------------------- -->
+<!--                                Affi game                                -->
+<!-- ----------------------------------------------------------------------- -->
+
+
+    <div class="ui comments">
+    
+        <h3 class="ui dividing header"> Information Game </h3>
+        
+        <div class="comment">
+
+            <div class="content">
+
+                <p> <%= "Nom de la partie : " + paramGame.name %> </p> 
+                <p> <%= "Durée de la partie : " + paramGame.end_date + " h" %> </p> 
+                <p> <%= "Nombre de Joueurs : " + paramGame.nbPlayer %> </p> 
+                
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+<% include ('footer') %>
