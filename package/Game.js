@@ -11,6 +11,14 @@ class Game {
         this.winner = undefined;
     }
     
+    destroy(){
+        this.name = '';
+        this.TableOfPlayers = [];
+        this.TableInGame = [];
+        this.nbPlayer = null;
+        this.end_date = null;
+        this.winner = undefined;
+    }
 
     /* -------------------------------------------------------------------------- */
     /*                                    Init                                    */

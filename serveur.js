@@ -196,17 +196,13 @@ app.post('/affi', async(req,res)=>{
 
 
 app.get('/', async (req,res) =>{
-    paramGame = undefined;
-    paramPlayer = undefined;
-    gameExist = null;
-    nbAdd = 1;
+    reload();
     res.render('pages/index');
-    paramGame = undefined;
 });
 
 app.get('/create', (req,res) =>{
+    reload();
     res.render('pages/create', { paramGame : paramGame, gameName : game.name});
-    paramGame = undefined;
 });
 
 app.get('/init', async(req,res)=>{
@@ -214,6 +210,7 @@ app.get('/init', async(req,res)=>{
 });
 
 app.get('/load', async (req,res) =>{
+    reload();
     res.render('pages/load');
 });
 
@@ -221,17 +218,24 @@ app.get('/affi', async (req,res) =>{
     res.render('pages/affi', { game : game, gameRunning: gameRunning});
 
     if(gameRunning == false){
-        //await bdd.closeBDD(game); // fermer bdd + suprimer élement superflu
+        await bdd.closeBDD(game); // fermer bdd + suprimer élement superflu
     }
 });
 
 app.get('/register', (req,res) =>{
-    res.render('pages/register', { paramPlayer : paramPlayer});
+    reload();
+    res.render('pages/register');
 });
 
 app.listen(8080, async () => {
     await bdd.setupBDD(); // démarer la bdd
 });
 
-
-
+async function reload(){
+    paramGame = undefined;
+    paramPlayer = undefined;
+    gameRunning = true;
+    gameExist = null;
+    nbAdd = 1;
+    game.destroy();
+}
