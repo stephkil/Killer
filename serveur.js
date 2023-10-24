@@ -114,7 +114,7 @@ app.post('/register', async (req,res)=>{
         req.flash('error', "Vous n'avez pas tous bien renseigné  :(");
         res.redirect('/register');
     } else {
-        console.log(req.body.paramPlayer);
+        //console.log(req.body.paramPlayer);
 
         let name,pwd,status = null;
         name = req.body.paramPlayer[0]; // username
@@ -259,7 +259,7 @@ app.post('/game/display', async(req,res)=>{
         gameRunning = await game.kill(killed,bdd); // update les joueurs après kill
 
         if(gameRunning == false){
-            console.log(game);
+            //console.log(game);
             req.flash('success', "GG " + game.winner + ", tu es le killer ultime !")
         } else {
             req.flash('succes', "Le joueur" + game.TableInGame[killed].name + " est mort !")

@@ -10,7 +10,7 @@ class BDD{
 
     constructor(){
         this.uri = `mongodb+srv://${secrets.db_username}:${secrets.db_password}@${secrets.cluster}.${secrets.domain}/${secrets.database}?retryWrites=true&w=majority`;        
-        console.log(this.uri);
+        //console.log(this.uri);
         this.client = new MongoClient(this.uri, { // création du client
             serverApi: {
               version: ServerApiVersion.v1,
@@ -59,7 +59,7 @@ class BDD{
         const cursor = this.collections.User.find(query).project(projection);//objet pour recup les données
         
         if(await cursor.hasNext()) { // si il y a une valeur après celle actuel (ici, si il y a une valeur) on sais que le usenername n'est pas dispo
-            console.log("username already taken");
+            //console.log("username already taken");
             return false;
         }
                 
@@ -69,7 +69,7 @@ class BDD{
             success : 0
         });
 
-        console.log(`profil is register with id : ${result.insertedId}`);
+        //console.log(`profil is register with id : ${result.insertedId}`);
         return true;
     }
 
@@ -118,18 +118,18 @@ class BDD{
             const user = await this.collections.User.findOne({ username: playerName});
 
             const valid = await bcrypt.compare(pwd, user.password);
-            console.log(valid);
+            //console.log(valid);
             
             if (!valid){
-                console.log("mauvais mdp  :(");
+                //console.log("mauvais mdp  :(");
                 return 'pwd';
             };
 
-            console.log("success for login :)");
+            //console.log("success for login :)");
             return true;
         }
         
-        console.log("ce user n'existe pas encore :(");
+        //console.log("ce user n'existe pas encore :(");
         return 'username';
     }
 
@@ -155,16 +155,16 @@ class BDD{
         const result = await this.collections.Games.findOne({ name: game.name});
 
         if(result) {
-            console.log("partie trouvé");
+            //console.log("partie trouvé");
             game.nbPlayer = result.nb_Player;
             game.end_date = result.heures_restante;
             game.winner = result.winner;
-            console.log(result);
+            //console.log(result);
 
             return true;
         }
         
-        console.log("partie non trouvé");
+        //console.log("partie non trouvé");
         return false;
     }
 
@@ -184,10 +184,10 @@ class BDD{
                 player.status = result.status;
 
                 game.TableInGame.push(player); 
-                console.log("game récupéré");  
+                //console.log("game récupéré");  
             }
             else {
-                console.log("erreur dans la récupération d'un ou plusieur joueurs")
+                //console.log("erreur dans la récupération d'un ou plusieur joueurs")
             }
         }
     }
