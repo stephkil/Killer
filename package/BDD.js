@@ -108,6 +108,33 @@ class BDD{
         return false;
     }
 
+    async loginUser(playerName,pwd){
+        this.collections.User.createIndex({username : "text"});
+        const query = {$text : {$search : playerName}};
+        const projection = {_id:1}
+        const cursor = this.collections.User.find(query).project(projection);
+        
+        if(await cursor.hasNext()) {
+            const user = await this.collections.User.findOne({ username: playerName});
+
+            const valid = await bcrypt.compare(pwd, user.password);
+            console.log(valid);
+            
+            if (!valid){
+                console.log("mauvais mdp  :(");
+                return 'pwd';
+            };
+
+            console.log("success for login :)");
+            return true;
+        }
+        
+        console.log("ce user n'existe pas encore :(");
+        return 'username';
+    }
+
+    
+
 
     /* -------------------------------------------------------------------------- */
     /*                                    Game                                    */

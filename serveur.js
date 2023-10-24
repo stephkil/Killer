@@ -1,8 +1,7 @@
-
 /* -------------------------------------------------------------------------- */
 /*                                serveur setup                               */
 /* -------------------------------------------------------------------------- */
-
+ 
 let express =  require('express');
 let app = express();
 let ejs =  require('ejs');
@@ -53,12 +52,45 @@ app.use(require('./middlewares/flash'));
 
 
 /* -------------------------------------------------------------------------- */
-/*                              Routes  post                                  */
+/*                              Routes post /                                 */
 /* -------------------------------------------------------------------------- */
 
 app.post('/', async(req,res)=>{
     res.redirect('/');
 });
+
+/* -------------------------------------------------------------------------- */
+/*                              Routes post User                              */
+/* -------------------------------------------------------------------------- */
+
+app.post('/login', async (req,res)=>{
+    if(req.body.loginPlayer[0] === '' || req.body.loginPlayer[1] === '' || req.body.loginPlayer === undefined){
+        res.redirect('/login');
+    } else {
+        let playerName = req.body.loginPlayer[0];
+        let pwd = req.body.loginPlayer[1];
+
+        let status = await bdd.loginUser(playerName, pwd);
+
+        if(status === 'username'){
+            req.flash('error', "Ce user n'existe pas encore  :(");
+            res.redirect('/login');  
+
+        }
+
+        else if(status === 'pwd'){
+            req.flash('error', "Mauvais mot de passe  :(");
+            res.redirect('/login');  
+
+        }
+
+        else if(status === true){
+            req.flash('success', "Salut bonne partie à toi  :)");
+            res.redirect('/');
+        }
+    }
+});
+
 
 app.post('/register', async (req,res)=>{
     if(req.body.paramPlayer[0] === '' || req.body.paramPlayer[1] === ''){
@@ -83,6 +115,9 @@ app.post('/register', async (req,res)=>{
     };
 });
 
+/* -------------------------------------------------------------------------- */
+/*                           Routes post chargement                           */
+/* -------------------------------------------------------------------------- */
 
 app.post('/load', async(req,res)=>{
     if(req.body.paramGame === ''){
@@ -102,6 +137,10 @@ app.post('/load', async(req,res)=>{
         }
     };
 });
+
+/* -------------------------------------------------------------------------- */
+/*                             Routes post create                             */
+/* -------------------------------------------------------------------------- */
 
 app.post('/create', async (req,res)=>{
     if(req.body.paramGame[0] === '' || req.body.paramGame[1] === '' || req.body.paramGame[2] === '' ){
@@ -126,6 +165,7 @@ app.post('/create', async (req,res)=>{
         }
     };
 })
+
 
 app.post('/init' ,async(req,res)=>{
     if(req.body.nameOfPlayer == '' || req.body.nameOfPlayer == undefined){
@@ -173,6 +213,9 @@ app.post('/init' ,async(req,res)=>{
     }
 });
 
+/* -------------------------------------------------------------------------- */
+/*                               Route post affi                              */
+/* -------------------------------------------------------------------------- */
 
 app.post('/affi', async(req,res)=>{
 
@@ -201,18 +244,28 @@ app.get('/', async (req,res) =>{
     res.render('pages/index');
 });
 
+app.get('/login', (req,res)=>{
+    reload();
+    res.render('pages/login', { bdd : bdd});
+});
+
+app.get('/register', (req,res) =>{
+    reload();
+    res.render('pages/register');
+});
+
 app.get('/create', (req,res) =>{
     reload();
     res.render('pages/create', { paramGame : paramGame, gameName : game.name});
 });
 
-app.get('/init', async(req,res)=>{
-    res.render('pages/init', {nbAdd: nbAdd});
-});
-
 app.get('/load', async (req,res) =>{
     reload();
     res.render('pages/load');
+});
+
+app.get('/init', async(req,res)=>{
+    res.render('pages/init', {nbAdd: nbAdd});
 });
 
 app.get('/affi', async (req,res) =>{
@@ -223,14 +276,14 @@ app.get('/affi', async (req,res) =>{
     }
 });
 
-app.get('/register', (req,res) =>{
-    reload();
-    res.render('pages/register');
-});
-
 app.listen(8080, async () => {
     await bdd.setupBDD(); // démarer la bdd
 });
+
+
+/* -------------------------------------------------------------------------- */
+/*                                  fonction                                  */
+/* -------------------------------------------------------------------------- */
 
 async function reload(){
     paramGame = undefined;

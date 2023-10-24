@@ -30,8 +30,6 @@
 <a href= "/create" class="header item"> Create Game </a>
 <a href= "/load" class="header item"> Load Game </a>
 
-
-
 </div>
 
 <div class="ui main container">
@@ -61,51 +59,27 @@
 <% } %>
 
 <!-- ----------------------------------------------------------------------- -->
-<!--                                Affi game                                -->
+<!--                                register                                 -->
 <!-- ----------------------------------------------------------------------- -->
 
+<form action="/login" method="post" class="ui form">
 
-    <div class="ui comments">
-    
-        <h3 class="ui dividing header"> Information Game </h3>
-
-        <div class="content">
-
-            <p> <%= "Nom de la partie : " + game.name %> </p> 
-            <p> <%= "Durée de la partie : " + game.end_date + " h" %> </p> 
-            <p> <%= "Nombre de Joueurs : " + game.nbPlayer %> </p> 
-
-            <p></p>
-            
-            <% if(gameRunning == false ){%>
-                <p> <%= "Winner => " + game.winner %> </p>
-            <% } %>
-
-            <p></p>
-
-            <% for (var i = 0; i < game.nbPlayer;  i++ ) { %>
-                <p>  ID :  <%=game.TableInGame[i].idPlayer%> - <%=game.TableInGame[i].name%> - Mission : <%=game.TableInGame[i].mission%> - Status : <%=game.TableInGame[i].status%> - Target : <%=game.TableInGame[i].target%> - Kill : <%=game.TableInGame[i].nbKill %>;  
-            <% } %>
-            
-        </div>
-
+    <div class="field">
+        <label for="loginPlayer"> Username </label>
+        <textarea name="loginPlayer" id="name" style="height: 0px; width: 200px;"></textarea>
     </div>
 
-    <%if(gameRunning == true){%>
-        <form action="/affi" method="post" class="ui form">
+    <div class="field">
+        <label for="loginPlayer"> Password </label>
+        <textarea name="loginPlayer" id="pwd" style="height: 0px; width: 200px;"></textarea>
+    </div>
+    
+    <button type="submit" class="ui blue labeled submit icon button">
 
-            <div class="field">
-                <label for="mort">Quel Joueur a été tué</label>
-                <textarea name="mort" id="mort" style="height: 0px; width: 200px;"></textarea>
-            </div>
-            
-            <button type="submit" class="ui blue labeled submit icon button">
+        <i class="icon edit"></i>Envoyer
 
-                <i class="icon edit"></i>Envoyer
+    </button>
 
-            </button>
-
-        </form>
-    <%}%>
+</form>
 
 <% include ('footer') %>
