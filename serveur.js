@@ -52,20 +52,30 @@ app.use(require('./middlewares/flash'));
 
 
 /* -------------------------------------------------------------------------- */
-/*                              Routes post /                                 */
+/*                                 Route /                                    */
 /* -------------------------------------------------------------------------- */
 
 app.post('/', async(req,res)=>{
     res.redirect('/');
 });
 
+app.get('/', async (req,res) =>{
+    reload();
+    res.render('index');
+});
+
 /* -------------------------------------------------------------------------- */
-/*                              Routes post User                              */
+/*                                  login                                     */
 /* -------------------------------------------------------------------------- */
 
-app.post('/login', async (req,res)=>{
+app.get('/auth/login', (req,res)=>{
+    reload();
+    res.render('auth/login', { bdd : bdd});
+});
+
+app.post('/auth/login', async (req,res)=>{
     if(req.body.loginPlayer[0] === '' || req.body.loginPlayer[1] === '' || req.body.loginPlayer === undefined){
-        res.redirect('/login');
+        res.redirect('/auth/login');
     } else {
         let playerName = req.body.loginPlayer[0];
         let pwd = req.body.loginPlayer[1];
@@ -74,13 +84,13 @@ app.post('/login', async (req,res)=>{
 
         if(status === 'username'){
             req.flash('error', "Ce user n'existe pas encore  :(");
-            res.redirect('/login');  
+            res.redirect('/auth/login');  
 
         }
 
         else if(status === 'pwd'){
             req.flash('error', "Mauvais mot de passe  :(");
-            res.redirect('/login');  
+            res.redirect('/auth/login');  
 
         }
 
@@ -90,7 +100,14 @@ app.post('/login', async (req,res)=>{
         }
     }
 });
+/* -------------------------------------------------------------------------- */
+/*                                  Register                                  */
+/* -------------------------------------------------------------------------- */
 
+app.get('/auth/register', (req,res) =>{
+    reload();
+    res.render('auth/register');
+});
 
 app.post('/register', async (req,res)=>{
     if(req.body.paramPlayer[0] === '' || req.body.paramPlayer[1] === ''){
@@ -116,13 +133,18 @@ app.post('/register', async (req,res)=>{
 });
 
 /* -------------------------------------------------------------------------- */
-/*                           Routes post chargement                           */
+/*                                    load                                    */
 /* -------------------------------------------------------------------------- */
 
-app.post('/load', async(req,res)=>{
+app.get('/game/load', async (req,res) =>{
+    reload();
+    res.render('game/load');
+});
+
+app.post('/game/load', async(req,res)=>{
     if(req.body.paramGame === ''){
         req.flash('error', "Vous n'avez pas tous bien renseigné  :(");
-        res.redirect('/load');
+        res.redirect('/game/load');
     } else {
         game.name = req.body.paramGame;
 
@@ -130,22 +152,27 @@ app.post('/load', async(req,res)=>{
 
         if(gameExist){
             await bdd.getGame(game);
-            res.redirect('/affi');
+            res.redirect('/game/affi');
         } else {
             req.flash('error', "Cette partie n'existe pas  :(");
-            res.redirect('/load');
+            res.redirect('/game/load');
         }
     };
 });
 
 /* -------------------------------------------------------------------------- */
-/*                             Routes post create                             */
+/*                                  Create                                    */
 /* -------------------------------------------------------------------------- */
 
-app.post('/create', async (req,res)=>{
+app.get('/game/create', (req,res) =>{
+    reload();
+    res.render('game/create', { paramGame : paramGame, gameName : game.name});
+});
+
+app.post('/game/create', async (req,res)=>{
     if(req.body.paramGame[0] === '' || req.body.paramGame[1] === '' || req.body.paramGame[2] === '' ){
         req.flash('error', "Vous n'avez pas tous bien renseigné  :(");
-        res.redirect('/create');
+        res.redirect('/game/create');
     } else {
 
         game.name = req.body.paramGame[0];
@@ -154,22 +181,29 @@ app.post('/create', async (req,res)=>{
 
         if(gameExist){
             req.flash('error', "Cette partie existe déjà  :(");
-            res.redirect('/create');
+            res.redirect('/game/create');
         } else {
             req.flash('success', "Cette partie peut être crée. Maintenant renseignons les joueurs :)");
             game.name = req.body.paramGame[0];
             game.end_date = req.body.paramGame[1];
             game.nbPlayer = req.body.paramGame[2];
 
-            res.redirect('/init');
+            res.redirect('/game/init');
         }
     };
 })
 
+/* -------------------------------------------------------------------------- */
+/*                                    init                                    */
+/* -------------------------------------------------------------------------- */
 
-app.post('/init' ,async(req,res)=>{
+app.get('/game/init', async(req,res)=>{
+    res.render('/game/init', {nbAdd: nbAdd});
+});
+
+app.post('/game/init' ,async(req,res)=>{
     if(req.body.nameOfPlayer == '' || req.body.nameOfPlayer == undefined){
-        res.redirect('/init');
+        res.redirect('/game/init');
     } else {
         if(nbAdd <= game.nbPlayer){
             let playerName = req.body.nameOfPlayer;
@@ -203,21 +237,21 @@ app.post('/init' ,async(req,res)=>{
                 
                 res.redirect('/');
             } else {
-                res.redirect('/init');
+                res.redirect('/game/init');
             }
             
         } else {
             req.flash('error', "Désolé, il y a eu une erreur dans la création de la partie, veuillez recommencer  :)");
-            res.redirect('/create');
+            res.redirect('/game/create');
         }
     }
 });
 
 /* -------------------------------------------------------------------------- */
-/*                               Route post affi                              */
+/*                                Display                                     */
 /* -------------------------------------------------------------------------- */
 
-app.post('/affi', async(req,res)=>{
+app.post('/game/display', async(req,res)=>{
 
     if(req.body.mort != '' && req.body.mort != undefined){
 
@@ -231,45 +265,12 @@ app.post('/affi', async(req,res)=>{
             req.flash('succes', "Le joueur" + game.TableInGame[killed].name + " est mort !")
         }
     }
-    res.redirect('/affi');
+    res.redirect('/game/display');
 });
 
-/* -------------------------------------------------------------------------- */
-/*                                 Routes  get                                */
-/* -------------------------------------------------------------------------- */
 
-
-app.get('/', async (req,res) =>{
-    reload();
-    res.render('pages/index');
-});
-
-app.get('/login', (req,res)=>{
-    reload();
-    res.render('pages/login', { bdd : bdd});
-});
-
-app.get('/register', (req,res) =>{
-    reload();
-    res.render('pages/register');
-});
-
-app.get('/create', (req,res) =>{
-    reload();
-    res.render('pages/create', { paramGame : paramGame, gameName : game.name});
-});
-
-app.get('/load', async (req,res) =>{
-    reload();
-    res.render('pages/load');
-});
-
-app.get('/init', async(req,res)=>{
-    res.render('pages/init', {nbAdd: nbAdd});
-});
-
-app.get('/affi', async (req,res) =>{
-    res.render('pages/affi', { game : game, gameRunning: gameRunning});
+app.get('/game/display', async (req,res) =>{
+    res.render('game/display', { game : game, gameRunning: gameRunning});
 
     if(gameRunning == false){
         await bdd.closeBDD(game); // fermer bdd + suprimer élement superflu

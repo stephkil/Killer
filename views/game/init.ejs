@@ -24,11 +24,11 @@
 
 <div class="ui fixed inverted menu">
 
-<a href = "/" class = "header item" > Killer </a>
-<a href= "/login" class="header item"> Connection </a>
-<a href= "/register" class="header item"> Nouveau profil </a>
-<a href= "/create" class="header item"> Create Game </a>
-<a href= "/load" class="header item"> Load Game </a>
+    <a href = "/" class = "header item" > Killer </a>
+    <a href= "/auth/login" class="header item"> Connection </a>
+    <a href= "/auth/register" class="header item"> Nouveau profil </a>
+    <a href= "/game/create" class="header item"> Create Game </a>
+    <a href= "/game/load" class="header item"> Load Game </a>
 
 </div>
 
@@ -56,30 +56,25 @@
     
     </div>
     
-<% } %>
+<% } %>>
 
 <!-- ----------------------------------------------------------------------- -->
-<!--                                register                                 -->
+<!--                                Init                                -->
 <!-- ----------------------------------------------------------------------- -->
 
-    <form action="/register" method="post" class="ui form">
+<form action="/game/init" method="post" class="ui form">
 
         <div class="field">
-            <label for="paramPlayerName"> Username </label>
-            <textarea name="paramPlayer" id="name" style="height: 0px; width: 200px;"></textarea>
-        </div>
-
-        <div class="field">
-            <label for="paramPlayerPwd"> Password </label>
-            <textarea name="paramPlayer" id="pwd" style="height: 0px; width: 200px;"></textarea>
+            <label for="nameOfPlayer">Nom du joueur <%= nbAdd %></label>
+            <textarea name="nameOfPlayer" id="name" style="height: 0px; width: 200px;"></textarea>
         </div>
         
-        <button type="submit" class="ui blue labeled submit icon button">
+    <button type="submit" class="ui blue labeled submit icon button">
 
-            <i class="icon edit"></i>Envoyer
+        <i class="icon edit"></i>Envoyer
 
-        </button>
+    </button>
 
-    </form>
+</form>
 
-<% include ('footer') %>
+<% include ('../footer.ejs') %>
