@@ -42,6 +42,14 @@ class BDD{
         await this.collections.Players.deleteMany({ game : game.name }); // on retire les joueur racroché a l'id de la game, de la bdd
         await this.collections.Games.deleteMany({ name : game.name }); // on retire la game de la bdd
 
+        for(let i = 0; i < game.nbPlayer; i++){
+            const user = await this.collections.User.findOne({ username: game.TableInGame[i].name});
+            await this.collections.User.updateOne({ _id: user._id }, {$inc: { game_played : 1 }}); // update nombre de partie jouer ou en cours
+        }
+
+        const user = await this.collections.User.findOne({username : game.winner});
+        await this.collections.User.updateOne({ _id: user._id }, {$inc: { game_win : 1 }});
+
         //await this.client.close(); // fermeture du client
     }
 
@@ -63,14 +71,41 @@ class BDD{
             return false;
         }
                 
-        const result = await this.collections.User.insertOne({ // inseré le user dans la bdd
+        const result = await this.collections.User.insertOne({ // inserer le user dans la bdd
             username : name,
             password : await bcrypt.hash(pwd, secrets.saltRounds), // hash du mdp
+            game_played : 0,
+            game_win : 0,
             success : 0
         });
 
         //console.log(`profil is register with id : ${result.insertedId}`);
         return true;
+    }
+
+    async loginUser(playerName,pwd){
+        this.collections.User.createIndex({username : "text"});
+        const query = {$text : {$search : playerName}};
+        const projection = {_id:1}
+        const cursor = this.collections.User.find(query).project(projection);
+        
+        if(await cursor.hasNext()) {
+            const user = await this.collections.User.findOne({ username: playerName});
+
+            const valid = await bcrypt.compare(pwd, user.password);
+            //console.log(valid);
+            
+            if (!valid){
+                //console.log("mauvais mdp  :(");
+                return 'pwd';
+            };
+
+            //console.log("success for login :)");
+            return true;
+        }
+        
+        //console.log("ce user n'existe pas encore :(");
+        return 'username';
     }
 
 
@@ -106,34 +141,7 @@ class BDD{
         }
         
         return false;
-    }
-
-    async loginUser(playerName,pwd){
-        this.collections.User.createIndex({username : "text"});
-        const query = {$text : {$search : playerName}};
-        const projection = {_id:1}
-        const cursor = this.collections.User.find(query).project(projection);
-        
-        if(await cursor.hasNext()) {
-            const user = await this.collections.User.findOne({ username: playerName});
-
-            const valid = await bcrypt.compare(pwd, user.password);
-            //console.log(valid);
-            
-            if (!valid){
-                //console.log("mauvais mdp  :(");
-                return 'pwd';
-            };
-
-            //console.log("success for login :)");
-            return true;
-        }
-        
-        //console.log("ce user n'existe pas encore :(");
-        return 'username';
-    }
-
-    
+    }  
 
 
     /* -------------------------------------------------------------------------- */

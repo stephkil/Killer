@@ -6,7 +6,9 @@ let express =  require('express');
 let app = express();
 let ejs =  require('ejs');
 let bodyParser = require('body-parser');
-let session = require('express-session');
+const session = require('express-session');
+const secrets = require("./secrets.json");
+
 
 let paramGame, paramPlayer;
 let gameExist = null;
@@ -42,10 +44,10 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 
 app.use(session({
-    secret: "chut",
+    secret: secrets.tokenKey,
     resave: false,
     saveUninitialized : true,
-    cookie: { secure: false }
+    cookie: { maxAge: 24 * 60 * 60 * 1000 } // le user n'aura pas besoin de se reconnecter pendant 24h jour
 }));
 
 app.use(require('./middlewares/flash'));
@@ -55,22 +57,34 @@ app.use(require('./middlewares/flash'));
 /*                                 Route /                                    */
 /* -------------------------------------------------------------------------- */
 
+app.get('/', async (req,res) =>{
+    if (req.session.user) {
+        reload();
+        res.render('index');
+    } else {
+        reload();
+        res.redirect('/auth/login');
+    }
+    
+});
+
 app.post('/', async(req,res)=>{
     res.redirect('/');
 });
 
-app.get('/', async (req,res) =>{
-    reload();
-    res.render('index');
-});
 
 /* -------------------------------------------------------------------------- */
 /*                                  login                                     */
 /* -------------------------------------------------------------------------- */
 
-app.get('/auth/login', (req,res)=>{
-    reload();
-    res.render('auth/login', { bdd : bdd});
+app.get('/auth/login', (req,res)=>{  
+    if (req.session.user) {
+        req.flash('success', "Vous êtes déja connecté  :)");
+        res.redirect('/');
+    } else {
+        reload();
+        res.render('auth/login', { bdd : bdd});
+    } 
 });
 
 app.post('/auth/login', async (req,res)=>{
@@ -96,10 +110,19 @@ app.post('/auth/login', async (req,res)=>{
 
         else if(status === true){
             req.flash('success', "Salut bonne partie à toi  :)");
+            
+            const userData = {
+                username : playerName
+            }
+            req.session.user = userData;
+
             res.redirect('/');
         }
     }
 });
+
+
+
 /* -------------------------------------------------------------------------- */
 /*                                  Register                                  */
 /* -------------------------------------------------------------------------- */
@@ -109,7 +132,7 @@ app.get('/auth/register', (req,res) =>{
     res.render('auth/register');
 });
 
-app.post('/register', async (req,res)=>{
+app.post('/auth/register', async (req,res)=>{
     if(req.body.paramPlayer[0] === '' || req.body.paramPlayer[1] === ''){
         req.flash('error', "Vous n'avez pas tous bien renseigné  :(");
         res.redirect('/register');
@@ -137,8 +160,15 @@ app.post('/register', async (req,res)=>{
 /* -------------------------------------------------------------------------- */
 
 app.get('/game/load', async (req,res) =>{
-    reload();
-    res.render('game/load');
+    if (req.session.user) {
+        reload();
+        res.render('game/load');
+    } else {
+        reload();
+        req.flash('error', "Vous n'êtes pas connecté :(");
+        res.redirect('/auth/login');
+    } 
+    
 });
 
 app.post('/game/load', async(req,res)=>{
@@ -152,7 +182,7 @@ app.post('/game/load', async(req,res)=>{
 
         if(gameExist){
             await bdd.getGame(game);
-            res.redirect('/game/affi');
+            res.redirect('/game/display');
         } else {
             req.flash('error', "Cette partie n'existe pas  :(");
             res.redirect('/game/load');
@@ -165,8 +195,14 @@ app.post('/game/load', async(req,res)=>{
 /* -------------------------------------------------------------------------- */
 
 app.get('/game/create', (req,res) =>{
-    reload();
-    res.render('game/create', { paramGame : paramGame, gameName : game.name});
+    if (req.session.user) {
+        reload();
+        res.render('game/create', { paramGame : paramGame, gameName : game.name});
+    } else {
+        reload();
+        req.flash('error', "Vous n'êtes pas connecté :(");
+        res.redirect('/auth/login');
+    } 
 });
 
 app.post('/game/create', async (req,res)=>{
@@ -198,7 +234,7 @@ app.post('/game/create', async (req,res)=>{
 /* -------------------------------------------------------------------------- */
 
 app.get('/game/init', async(req,res)=>{
-    res.render('/game/init', {nbAdd: nbAdd});
+    res.render('game/init', {nbAdd: nbAdd});
 });
 
 app.post('/game/init' ,async(req,res)=>{
@@ -251,6 +287,14 @@ app.post('/game/init' ,async(req,res)=>{
 /*                                Display                                     */
 /* -------------------------------------------------------------------------- */
 
+app.get('/game/display', async (req,res) =>{
+    res.render('game/display', { game : game, gameRunning: gameRunning});
+
+    if(gameRunning == false){
+        await bdd.closeBDD(game); // fermer bdd + suprimer élement superflu
+    }
+});
+
 app.post('/game/display', async(req,res)=>{
 
     if(req.body.mort != '' && req.body.mort != undefined){
@@ -268,14 +312,6 @@ app.post('/game/display', async(req,res)=>{
     res.redirect('/game/display');
 });
 
-
-app.get('/game/display', async (req,res) =>{
-    res.render('game/display', { game : game, gameRunning: gameRunning});
-
-    if(gameRunning == false){
-        await bdd.closeBDD(game); // fermer bdd + suprimer élement superflu
-    }
-});
 
 app.listen(8080, async () => {
     await bdd.setupBDD(); // démarer la bdd
