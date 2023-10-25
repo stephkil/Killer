@@ -47,7 +47,7 @@ app.use(session({
     secret: secrets.tokenKey,
     resave: false,
     saveUninitialized : true,
-    cookie: { maxAge: 24 * 60 * 60 * 1000 } // le user n'aura pas besoin de se reconnecter pendant 24h jour
+    cookie: { maxAge: 6 * 60 * 60 * 1000 } // le user n'aura pas besoin de se reconnecter pendant 4h (6-2)
 }));
 
 app.use(require('./middlewares/flash'));
@@ -57,15 +57,29 @@ app.use(require('./middlewares/flash'));
 /*                                 Route /                                    */
 /* -------------------------------------------------------------------------- */
 
+
 app.get('/', async (req,res) =>{
-    if (req.session.user) {
-        reload();
-        res.render('index');
-    } else {
-        reload();
-        res.redirect('/auth/login');
+
+    console.log(req.session);
+
+    if(req.session.user && (req.session.cookie.expires < new Date())){
+        req.session.destroy((err) => {
+            if (err) {
+              console.error('Erreur lors de la suppression de la session :', err);
+            }
+            else {
+              console.log("sessions suprimé");
+            }
+        });
     }
-    
+    else if (req.session.user) {
+            reload();
+            res.render('index');
+        } else {
+            reload();
+            res.redirect('/auth/login');
+        }
+        
 });
 
 app.post('/', async(req,res)=>{
@@ -81,6 +95,7 @@ app.get('/auth/login', (req,res)=>{
     if (req.session.user) {
         req.flash('success', "Vous êtes déja connecté  :)");
         res.redirect('/');
+        
     } else {
         reload();
         res.render('auth/login', { bdd : bdd});
@@ -114,7 +129,10 @@ app.post('/auth/login', async (req,res)=>{
             const userData = {
                 username : playerName
             }
-            req.session.user = userData;
+            if(!req.session.user){
+                req.session.user = userData;
+            }
+            
 
             res.redirect('/');
         }
@@ -224,6 +242,14 @@ app.post('/game/create', async (req,res)=>{
             game.end_date = req.body.paramGame[1];
             game.nbPlayer = req.body.paramGame[2];
 
+            const player = new Player();
+            player.name = req.session.user.username;
+            player.game = game.name;
+            game.TableOfPlayers.push(player);
+
+            player.mission = await game.taskRandom(bdd); // on attribue sa mission pour le tuer
+            nbAdd ++;
+
             res.redirect('/game/init');
         }
     };
@@ -238,6 +264,7 @@ app.get('/game/init', async(req,res)=>{
 });
 
 app.post('/game/init' ,async(req,res)=>{
+    
     if(req.body.nameOfPlayer == '' || req.body.nameOfPlayer == undefined){
         res.redirect('/game/init');
     } else {
