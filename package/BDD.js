@@ -141,7 +141,18 @@ class BDD{
         }
         
         return false;
-    }  
+    } 
+
+    async mainPlayerDisplay(gameName,playerName){
+        const user = await this.collections.Players.findOne({game : gameName, name: playerName});
+        return user.id_player;
+    }
+
+    async targetPlayerDisplay(gameName,playerName){
+        const user = await this.collections.Players.findOne({game : gameName, name: playerName});
+        const target = await this.collections.Players.findOne({game : gameName, name: user.target});
+        return target.id_player;
+    }
 
 
     /* -------------------------------------------------------------------------- */
@@ -210,11 +221,11 @@ class BDD{
         // je cherche le killer dans la bdd grâce au nom et id de game
         const killer = await this.collections.Players.findOne({ name: killerInGame.name, game: killerInGame.game}); 
         await this.collections.Players.updateOne({ _id: killer._id }, {$inc: { nombre_kill : 1 }}, {$set: { target : killedInGame.target}} ); // update Killer dans bdd
-       
+
          // de même pour le tué
         const killed = await this.collections.Players.findOne({ name: killedInGame.name, game: killedInGame.game});
         await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ status : "dead"}}); // update tué dans bdd
-        await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ target : "none" }}); // update tué dans bdd        
+        await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ target : "none" }}); // update tué dans bdd 
     }
 
     async updateGame(killer){

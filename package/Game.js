@@ -59,13 +59,13 @@ class Game {
     async kill(personkill,bdd){ // gestion du cas "kill"
         
         // Recherche du tué
-        let idx = this.TableInGame.findIndex(player => player.idPlayer == personkill);
+        let idx = await this.TableInGame.findIndex(player => player.idPlayer == personkill);
         let killed = this.TableInGame[idx];
 
         // Recherche du tueur
-        let idx2 = this.TableInGame.findIndex(player => player.target == killed.name);
+        let idx2 = await this.TableInGame.findIndex(player => player.target == killed.name);
         let killer = this.TableInGame[idx2];
-        
+
         await bdd.updateKill(killer,killed); // on va update les info dans la bdd après le kill
 
         killer.target = killed.target;

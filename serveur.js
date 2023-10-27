@@ -10,7 +10,8 @@ const session = require('express-session');
 const secrets = require("./secrets.json");
 
 
-let paramGame, paramPlayer;
+let paramGame;
+let paramPlayer;
 let gameExist = null;
 var gameRunning = true;
 var nbAdd = 1;
@@ -58,48 +59,23 @@ app.use(require('./middlewares/flash'));
 /* -------------------------------------------------------------------------- */
 
 
-app.get('/', async (req,res) =>{
-
-    console.log(req.session);
-
-    if(req.session.user && (req.session.cookie.expires < new Date())){
-        req.session.destroy((err) => {
-            if (err) {
-              console.error('Erreur lors de la suppression de la session :', err);
-            }
-            else {
-              console.log("sessions suprimé");
-            }
-        });
-    }
-    else if (req.session.user) {
-            reload();
-            res.render('index');
-        } else {
-            reload();
-            res.redirect('/auth/login');
-        }
-        
+app.get('/', (req,res) =>{
+    reload();
+    res.render('index', {data : req.session});
 });
 
-app.post('/', async(req,res)=>{
+app.post('/', (req,res)=>{
     res.redirect('/');
 });
 
-
+  
 /* -------------------------------------------------------------------------- */
 /*                                  login                                     */
 /* -------------------------------------------------------------------------- */
 
-app.get('/auth/login', (req,res)=>{  
-    if (req.session.user) {
-        req.flash('success', "Vous êtes déja connecté  :)");
-        res.redirect('/');
-        
-    } else {
-        reload();
-        res.render('auth/login', { bdd : bdd});
-    } 
+app.get('/auth/login', (req,res)=>{   
+    reload();
+    res.render('auth/login');
 });
 
 app.post('/auth/login', async (req,res)=>{
@@ -129,10 +105,8 @@ app.post('/auth/login', async (req,res)=>{
             const userData = {
                 username : playerName
             }
-            if(!req.session.user){
-                req.session.user = userData;
-            }
             
+            req.session.user = userData;
 
             res.redirect('/');
         }
@@ -140,14 +114,19 @@ app.post('/auth/login', async (req,res)=>{
 });
 
 
-
 /* -------------------------------------------------------------------------- */
 /*                                  Register                                  */
 /* -------------------------------------------------------------------------- */
 
 app.get('/auth/register', (req,res) =>{
-    reload();
-    res.render('auth/register');
+
+    if (req.session.user) {
+        reload();
+        res.render('auth/register', {data : true});   
+    } else {
+        reload();
+        res.render('auth/register', {data : false});   
+    } 
 });
 
 app.post('/auth/register', async (req,res)=>{
@@ -178,14 +157,13 @@ app.post('/auth/register', async (req,res)=>{
 /* -------------------------------------------------------------------------- */
 
 app.get('/game/load', async (req,res) =>{
-    if (req.session.user) {
+    
+    if (req.session.user && (req.session.cookie.expires > new Date())) {
         reload();
         res.render('game/load');
     } else {
-        reload();
-        req.flash('error', "Vous n'êtes pas connecté :(");
-        res.redirect('/auth/login');
-    } 
+        destroySession(req,res);
+    }
     
 });
 
@@ -213,14 +191,12 @@ app.post('/game/load', async(req,res)=>{
 /* -------------------------------------------------------------------------- */
 
 app.get('/game/create', (req,res) =>{
-    if (req.session.user) {
+    if (req.session.user && (req.session.cookie.expires > new Date())) {
         reload();
         res.render('game/create', { paramGame : paramGame, gameName : game.name});
     } else {
-        reload();
-        req.flash('error', "Vous n'êtes pas connecté :(");
-        res.redirect('/auth/login');
-    } 
+        destroySession(req,res);
+    }
 });
 
 app.post('/game/create', async (req,res)=>{
@@ -260,7 +236,12 @@ app.post('/game/create', async (req,res)=>{
 /* -------------------------------------------------------------------------- */
 
 app.get('/game/init', async(req,res)=>{
-    res.render('game/init', {nbAdd: nbAdd});
+    if (req.session.user && (req.session.cookie.expires > new Date())) {
+        res.render('game/init', {nbAdd: nbAdd});
+    } else {
+        destroySession(req,res);
+    }
+    
 });
 
 app.post('/game/init' ,async(req,res)=>{
@@ -313,30 +294,46 @@ app.post('/game/init' ,async(req,res)=>{
 /* -------------------------------------------------------------------------- */
 /*                                Display                                     */
 /* -------------------------------------------------------------------------- */
-
+ 
 app.get('/game/display', async (req,res) =>{
-    res.render('game/display', { game : game, gameRunning: gameRunning});
 
-    if(gameRunning == false){
-        await bdd.closeBDD(game); // fermer bdd + suprimer élement superflu
+    if (req.session.user && (req.session.cookie.expires > new Date())) {
+        //console.log(game.TableInGame);
+
+        let mainPlayer = await bdd.mainPlayerDisplay(game.name,req.session.user.username);
+        let targetPlayer =  await bdd.targetPlayerDisplay(game.name,req.session.user.username);
+
+        res.render('game/display', { game : game, gameRunning: gameRunning, mainPlayer : mainPlayer, targetPlayer : targetPlayer});
+
+        if(gameRunning == false){
+            await bdd.closeBDD(game); // fermer bdd + suprimer élement superflu
+        }
+    } else {
+        destroySession(req,res);
     }
+    
 });
 
 app.post('/game/display', async(req,res)=>{
+    if(gameRunning == true){
+        if(req.body.mort != '' && req.body.mort != undefined){
 
-    if(req.body.mort != '' && req.body.mort != undefined){
+            let killed = Number(req.body.mort); // mettre en forme  
+            gameRunning = await game.kill(killed,bdd); // update les joueurs après kill
 
-        let killed = Number(req.body.mort); // mettre en forme
-        gameRunning = await game.kill(killed,bdd); // update les joueurs après kill
-
-        if(gameRunning == false){
-            //console.log(game);
-            req.flash('success', "GG " + game.winner + ", tu es le killer ultime !")
-        } else {
-            req.flash('succes', "Le joueur" + game.TableInGame[killed].name + " est mort !")
+            if(gameRunning == false){
+                //console.log(game);
+                req.flash('success', "GG " + game.winner + ", tu es le killer ultime !")
+            } else {
+                req.flash('succes', "Le joueur" + game.TableInGame[killed].name + " est mort !")
+            }
         }
+        game.TableInGame = [];
+        await bdd.getGame(game);
+        res.redirect('/game/display');
+    } else {
+        res.redirect('/');
     }
-    res.redirect('/game/display');
 });
 
 
@@ -356,4 +353,24 @@ async function reload(){
     gameExist = null;
     nbAdd = 1;
     game.destroy();
+}
+
+function destroySession(req,res){
+    if(req.session.user != undefined){
+        req.session.destroy((err) => {
+            if (err) {
+            console.error('Erreur lors de la suppression de la session :', err);
+            }
+            else {
+            console.log("sessions suprimé");
+            }
+        });
+
+        if(req.session.user && (req.session.cookie.expires < new Date())) {  
+            destroySession(req);
+        }
+    }
+        reload();
+        req.flash('error', "Vous n'êtes pas connnecté  :(");
+        res.redirect('/auth/login');
 }
