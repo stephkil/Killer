@@ -78,20 +78,23 @@
             
             <% if(gameRunning == false ){%>
                 <p> <%= "Winner => " + game.winner %> </p>
-            <% } %>
 
-            <p></p>
+                <% for (var i = 0; i < game.nbPlayer;  i++ ) { %>
+                    <p> <%=game.TableInGame[i].name%> - Mission : <%=game.TableInGame[i].mission%> - Kill : <%=game.TableInGame[i].nbKill %> - Status : <%=game.TableInGame[i].status%> - Target : <%=game.TableInGame[i].target%>  
+                <% } %>
 
-            <% for (var i = 0; i < game.nbPlayer;  i++ ) { %>
-                <p>  ID :  <%=game.TableInGame[i].idPlayer%> - <%=game.TableInGame[i].name%> - Mission : <%=game.TableInGame[i].mission%> - Kill : <%=game.TableInGame[i].nbKill %> - Status : <%=game.TableInGame[i].status%> - Target : <%=game.TableInGame[i].target%>  
-            <% } %>
-            
-            <h3> You </h3>
-                <p>  <%=game.TableInGame[mainPlayer].name%> - Kill : <%=game.TableInGame[mainPlayer].nbKill %> - Status : <%=game.TableInGame[mainPlayer].status%> - Target : <%=game.TableInGame[mainPlayer].target%> 
+            <% } else { %>
+                <% for (var i = 0; i < game.nbPlayer;  i++ ) { %>
+                    <p>  ID :  <%=game.TableInGame[i].idPlayer%> - <%=game.TableInGame[i].name%> - Mission : <%=game.TableInGame[i].mission%> - Kill : <%=game.TableInGame[i].nbKill %> - Status : <%=game.TableInGame[i].status%> - Target : <%=game.TableInGame[i].target%>  
+                <% } %>
 
-            <h3> Your Target </h3>
-                <p>   <%=game.TableInGame[targetPlayer].name%> - Mission : <%=game.TableInGame[targetPlayer].mission%> 
-            
+                <h3> You </h3>
+                    <p>  <%=game.TableInGame[mainPlayer].name%> - Kill : <%=game.TableInGame[mainPlayer].nbKill %> - Status : <%=game.TableInGame[mainPlayer].status%> - Target : <%=game.TableInGame[mainPlayer].target%> 
+
+                <h3> Your Target </h3>
+                    <p>   <%=game.TableInGame[targetPlayer].name%> - Mission : <%=game.TableInGame[targetPlayer].mission%> 
+            <%}%>
+
         </div>
 
     </div>

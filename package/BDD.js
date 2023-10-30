@@ -81,13 +81,13 @@ class BDD{
 
         //console.log(`profil is register with id : ${result.insertedId}`);
         return true;
-    }
+    } 
 
     async loginUser(playerName,pwd){
-        this.collections.User.createIndex({username : "text"});
+        await this.collections.User.createIndex({username : "text"});
         const query = {$text : {$search : playerName}};
         const projection = {_id:1}
-        const cursor = this.collections.User.find(query).project(projection);
+        const cursor = await this.collections.User.find(query).project(projection);
         
         if(await cursor.hasNext()) {
             const user = await this.collections.User.findOne({ username: playerName});
@@ -148,12 +148,11 @@ class BDD{
         return user.id_player;
     }
 
-    async targetPlayerDisplay(gameName,playerName){
-        const user = await this.collections.Players.findOne({game : gameName, name: playerName});
-        const target = await this.collections.Players.findOne({game : gameName, name: user.target});
+    async targetPlayerDisplay(gameName,targetPlayer){
+        const target = await this.collections.Players.findOne({game : gameName, name : targetPlayer});
         return target.id_player;
     }
-
+ 
 
     /* -------------------------------------------------------------------------- */
     /*                                    Game                                    */
@@ -161,6 +160,8 @@ class BDD{
 
 
     async sendGame(game){ // envoie de la game sur la bdd
+        console.log(game);
+
         await this.collections.Games.insertOne({
             name : game.name,
             nb_Player : game.nbPlayer,
@@ -174,23 +175,29 @@ class BDD{
         const result = await this.collections.Games.findOne({ name: game.name});
 
         if(result) {
-            //console.log("partie trouvé");
-            game.nbPlayer = result.nb_Player;
-            game.end_date = result.heures_restante;
-            game.winner = result.winner;
-            //console.log(result);
-
-            return true;
+            if(result.winner == null){
+                console.log("partie trouvé");
+                game.nbPlayer = result.nb_Player;
+                game.end_date = result.heures_restante;
+                game.winner = result.winner;
+                return true;
+            } else {
+                console.log("partie trouvé mais déjà finis");
+                return false;
+            }  
         }
         
-        //console.log("partie non trouvé");
+        console.log("partie non trouvé");
         return false;
     }
 
     async getGame(game){ // si la game existe, on récupère les infos de la game
+        
+        game.TableInGame = [];
+
         for(let i=0; i<game.nbPlayer;i++){
             const result = await this.collections.Players.findOne({game : game.name, id_player : i});
-
+            //console.log(result);
             if(result){
                 const player = new Player();
 
@@ -201,12 +208,11 @@ class BDD{
                 player.mission = result.mission;
                 player.nbKill = result.nombre_kill;
                 player.status = result.status;
-
+ 
                 game.TableInGame.push(player); 
-                //console.log("game récupéré");  
             }
             else {
-                //console.log("erreur dans la récupération d'un ou plusieur joueurs")
+                console.log("erreur dans la récupération d'un ou plusieur joueurs")
             }
         }
     }
@@ -218,18 +224,24 @@ class BDD{
 
     async updateKill(killerInGame, killedInGame){
         
-        // je cherche le killer dans la bdd grâce au nom et id de game
-        const killer = await this.collections.Players.findOne({ name: killerInGame.name, game: killerInGame.game}); 
-        await this.collections.Players.updateOne({ _id: killer._id }, {$inc: { nombre_kill : 1 }}, {$set: { target : killedInGame.target}} ); // update Killer dans bdd
+        // je cherche le killer  et le killed dans la bdd grâce au nom et id de game
+        const killer = await this.collections.Players.findOne({ name: killerInGame.name, game: killerInGame.game});
+        const killed = await this.collections.Players.findOne({ name: killedInGame.name, game: killedInGame.game});
+
+        console.log(killer);
+        console.log(killed);
+
+        //update du killer
+        await this.collections.Players.updateOne({ _id: killer._id }, {$inc: { nombre_kill : 1 }});
+        await this.collections.Players.updateOne({ _id: killer._id }, {$set: { target : killedInGame.target }}); 
 
          // de même pour le tué
-        const killed = await this.collections.Players.findOne({ name: killedInGame.name, game: killedInGame.game});
-        await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ status : "dead"}}); // update tué dans bdd
-        await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ target : "none" }}); // update tué dans bdd 
+        await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ status : "dead"}});
+        await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ target : "none" }});
+        
     }
 
     async updateGame(killer){
-
          // de même pour le tué
         const result = await this.collections.Games.findOne({ name: killer.game});
         await this.collections.Games.updateOne({ _id: result._id }, { $set:{ winner : killer.name}}); // update winner dans bdd     

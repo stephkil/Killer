@@ -15,6 +15,7 @@ let paramPlayer;
 let gameExist = null;
 var gameRunning = true;
 var nbAdd = 1;
+var data = [];
 
 /* -------------------------------------------------------------------------- */
 /*                                package setup                               */
@@ -38,7 +39,7 @@ app.set('view engine', 'ejs');
 /* -------------------------------------------------------------------------- */
 /*                                 Middleware                                 */
 /* -------------------------------------------------------------------------- */
-
+ 
 
 app.use('/assets', express.static('public'))
 app.use(bodyParser.urlencoded({extended:false}));
@@ -178,9 +179,10 @@ app.post('/game/load', async(req,res)=>{
 
         if(gameExist){
             await bdd.getGame(game);
+            gameRunning = true;
             res.redirect('/game/display');
         } else {
-            req.flash('error', "Cette partie n'existe pas  :(");
+            req.flash('error', "Cette partie n'existe pas ou est déjà terminé  :(");
             res.redirect('/game/load');
         }
     };
@@ -208,8 +210,8 @@ app.post('/game/create', async (req,res)=>{
         game.name = req.body.paramGame[0];
 
         gameExist = await bdd.gameExist(game);
-
-        if(gameExist){
+ 
+        if(!gameExist){
             req.flash('error', "Cette partie existe déjà  :(");
             res.redirect('/game/create');
         } else {
@@ -296,44 +298,53 @@ app.post('/game/init' ,async(req,res)=>{
 /* -------------------------------------------------------------------------- */
  
 app.get('/game/display', async (req,res) =>{
-
-    if (req.session.user && (req.session.cookie.expires > new Date())) {
-        //console.log(game.TableInGame);
-
-        let mainPlayer = await bdd.mainPlayerDisplay(game.name,req.session.user.username);
-        let targetPlayer =  await bdd.targetPlayerDisplay(game.name,req.session.user.username);
-
-        res.render('game/display', { game : game, gameRunning: gameRunning, mainPlayer : mainPlayer, targetPlayer : targetPlayer});
-
-        if(gameRunning == false){
-            await bdd.closeBDD(game); // fermer bdd + suprimer élement superflu
-        }
-    } else {
-        destroySession(req,res);
-    }
-    
-});
-
-app.post('/game/display', async(req,res)=>{
-    if(gameRunning == true){
-        if(req.body.mort != '' && req.body.mort != undefined){
-
-            let killed = Number(req.body.mort); // mettre en forme  
-            gameRunning = await game.kill(killed,bdd); // update les joueurs après kill
-
-            if(gameRunning == false){
-                //console.log(game);
-                req.flash('success', "GG " + game.winner + ", tu es le killer ultime !")
+    if(gameRunning == true || gameRunning == false){
+        if (req.session.user && (req.session.cookie.expires > new Date())) {
+            gameExist = await bdd.gameExist(game);
+            if(!gameExist && gameRunning != null){
+                req.flash('error', "erreur dans le chargement de votre partie")
+                res.redirect('/game/load');
             } else {
-                req.flash('succes', "Le joueur" + game.TableInGame[killed].name + " est mort !")
+                await bdd.getGame(game);
+
+                data[1] = await bdd.mainPlayerDisplay(game.name,req.session.user.username); console.log(data[1]);
+                let targetPlayer = game.TableInGame[data[1]].target;
+                data[2] = await bdd.targetPlayerDisplay(game.name,targetPlayer); console.log(data[2]);
+
+                if (gameRunning == false){
+                    res.render('game/display', {gameRunning: gameRunning, game : game});
+                    await bdd.closeBDD(game); // fermer bdd + suprimer élement superflu
+                    gameRunning = null;
+                } else {
+                    res.render('game/display', { game : game, gameRunning: gameRunning, mainPlayer : data[1], targetPlayer : data[2]});
+                }
             }
+        } else {
+            destroySession(req,res);
         }
-        game.TableInGame = [];
-        await bdd.getGame(game);
-        res.redirect('/game/display');
     } else {
         res.redirect('/');
     }
+});
+
+app.post('/game/display', async(req,res)=>{
+    
+    if(req.body.mort != '' && req.body.mort != undefined){
+        
+        if(req.body.mort == 'kill'){
+            gameRunning = await game.kill(bdd,data); // update les joueurs après kill
+        }
+        if(gameRunning == false){
+            req.flash('success', "GG " + game.winner + ", tu es le killer ultime !")
+        } else {
+            if(req.body.mort != 'kill'){
+                req.flash('error', "Vous n'avez pas bien écrit 'kill'");
+            } else {
+                req.flash('succes', "Le joueur" + game.TableInGame[data[2]].name + " est mort !")
+            }
+        }
+    }
+    res.redirect('/game/display');
 });
 
 
@@ -352,9 +363,14 @@ async function reload(){
     gameRunning = true;
     gameExist = null;
     nbAdd = 1;
+    data = [];
     game.destroy();
 }
 
+async function updateData(game,data,req){
+   
+}
+ 
 function destroySession(req,res){
     if(req.session.user != undefined){
         req.session.destroy((err) => {
@@ -365,7 +381,7 @@ function destroySession(req,res){
             console.log("sessions suprimé");
             }
         });
-
+ 
         if(req.session.user && (req.session.cookie.expires < new Date())) {  
             destroySession(req);
         }
@@ -373,4 +389,4 @@ function destroySession(req,res){
         reload();
         req.flash('error', "Vous n'êtes pas connnecté  :(");
         res.redirect('/auth/login');
-}
+} 
