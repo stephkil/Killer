@@ -106,8 +106,9 @@ app.post('/auth/login', async (req,res)=>{
             const userData = {
                 username : playerName
             }
-            
             req.session.user = userData;
+
+            console.log(req.session.user);
 
             res.redirect('/');
         }
@@ -211,7 +212,7 @@ app.post('/game/create', async (req,res)=>{
 
         gameExist = await bdd.gameExist(game);
  
-        if(!gameExist){
+        if(gameExist){
             req.flash('error', "Cette partie existe déjà  :(");
             res.redirect('/game/create');
         } else {
@@ -298,24 +299,21 @@ app.post('/game/init' ,async(req,res)=>{
 /* -------------------------------------------------------------------------- */
  
 app.get('/game/display', async (req,res) =>{
-    if(gameRunning == true || gameRunning == false){
+    if(gameRunning == true){
         if (req.session.user && (req.session.cookie.expires > new Date())) {
             gameExist = await bdd.gameExist(game);
-            if(!gameExist && gameRunning != null){
+            if(!gameExist){
                 req.flash('error', "erreur dans le chargement de votre partie")
                 res.redirect('/game/load');
             } else {
                 await bdd.getGame(game);
 
-                data[1] = await bdd.mainPlayerDisplay(game.name,req.session.user.username); console.log(data[1]);
-                let targetPlayer = game.TableInGame[data[1]].target;
-                data[2] = await bdd.targetPlayerDisplay(game.name,targetPlayer); console.log(data[2]);
-
                 if (gameRunning == false){
-                    res.render('game/display', {gameRunning: gameRunning, game : game});
-                    await bdd.closeBDD(game); // fermer bdd + suprimer élement superflu
-                    gameRunning = null;
+                    res.redirect('/game/endScreen');
                 } else {
+                    data[1] = await bdd.mainPlayerDisplay(game.name,req.session.user.username); console.log(data[1]);
+                    let targetPlayer = game.TableInGame[data[1]].target;
+                    data[2] = await bdd.targetPlayerDisplay(game.name,targetPlayer); console.log(data[2]);
                     res.render('game/display', { game : game, gameRunning: gameRunning, mainPlayer : data[1], targetPlayer : data[2]});
                 }
             }
@@ -330,21 +328,35 @@ app.get('/game/display', async (req,res) =>{
 app.post('/game/display', async(req,res)=>{
     
     if(req.body.mort != '' && req.body.mort != undefined){
-        
         if(req.body.mort == 'kill'){
             gameRunning = await game.kill(bdd,data); // update les joueurs après kill
+            console.log("gameRunning : " + gameRunning)
         }
+         
         if(gameRunning == false){
-            req.flash('success', "GG " + game.winner + ", tu es le killer ultime !")
+            req.flash('success', "GG " + game.winner + ", tu es le killer ultime !");
+            res.redirect('/game/endScreen');
         } else {
             if(req.body.mort != 'kill'){
                 req.flash('error', "Vous n'avez pas bien écrit 'kill'");
             } else {
                 req.flash('succes', "Le joueur" + game.TableInGame[data[2]].name + " est mort !")
             }
+            res.redirect('/game/display');
         }
+    } else {
+        res.redirect('/game/display');
     }
-    res.redirect('/game/display');
+   
+});
+
+/* -------------------------------------------------------------------------- */
+/*                            Display end of screen                           */
+/* -------------------------------------------------------------------------- */
+
+app.get('/game/endScreen', async (req,res) =>{
+    res.render('game/endScreen', {game : game});
+    await bdd.closeBDD(game); // fermer bdd + suprimer élement superflu
 });
 
 
