@@ -233,14 +233,14 @@ app.post('/game/create', async (req,res)=>{
         }
     };
 })
-
+ 
 /* -------------------------------------------------------------------------- */
 /*                                    init                                    */
 /* -------------------------------------------------------------------------- */
 
 app.get('/game/init', async(req,res)=>{
     if (req.session.user && (req.session.cookie.expires > new Date())) {
-        res.render('game/init', {nbAdd: nbAdd});
+        res.render('game/init', {nbAdd: nbAdd, game: game});
     } else {
         destroySession(req,res);
     }
@@ -379,9 +379,6 @@ async function reload(){
     game.destroy();
 }
 
-async function updateData(game,data,req){
-   
-}
  
 function destroySession(req,res){
     if(req.session.user != undefined){

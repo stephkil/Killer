@@ -34,14 +34,13 @@ class Game {
       }
 
     shuffleTableOfPlayers(){ // On mélange la liste des joueur afin de pas target dans l'ordre d'ajout
-        const playersCopy = [...this.TableOfPlayers];
-        
-        for (let i = playersCopy.length - 1; i > 0; i--) {
+                
+        for (let i = TableOfPlayers.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [playersCopy[i], playersCopy[j]] = [playersCopy[j], playersCopy[i]];
+            [TableOfPlayers[i], TableOfPlayers[j]] = [TableOfPlayers[j], TableOfPlayers[i]];
         }
 
-        this.TableInGame = playersCopy;
+        this.TableInGame = TableOfPlayers;
     }
 
     targetPlayer(){ // avec la liste mélanger cela target le prochain joueur de la nouvelle liste
