@@ -267,7 +267,7 @@ app.post('/game/init' ,async(req,res)=>{
                 player.name = playerName;
                 player.game = game.name;
                 player.idPlayer = nbAdd;
-                
+
                 game.TableOfPlayers.push(player);
 
                 player.mission = await game.taskRandom(bdd); // on attribue sa mission pour le tuer
@@ -301,7 +301,7 @@ app.post('/game/init' ,async(req,res)=>{
 /* -------------------------------------------------------------------------- */
 /*                                Display                                     */
 /* -------------------------------------------------------------------------- */
- 
+  
 app.get('/game/display', async (req,res) =>{
     if(gameRunning == true){
         if (req.session.user && (req.session.cookie.expires > new Date())) {
@@ -359,8 +359,8 @@ app.post('/game/display', async(req,res)=>{
 /* -------------------------------------------------------------------------- */
 
 app.get('/game/endScreen', async (req,res) =>{
-    res.render('game/endScreen', {game : game});
     await bdd.closeBDD(game); // fermer bdd + suprimer élement superflu
+    res.render('game/endScreen', {game : game});
 });
 
 
