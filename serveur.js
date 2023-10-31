@@ -162,13 +162,15 @@ app.get('/game/load', async (req,res) =>{
     
     if (req.session.user && (req.session.cookie.expires > new Date())) {
         reload();
-        res.render('game/load');
+        let allGame = await bdd.allGame(req.session.user.username);
+        console.log("allGame : " + allGame);
+        res.render('game/load', {name : allGame});
     } else {
         destroySession(req,res);
     }
     
 });
-
+ 
 app.post('/game/load', async(req,res)=>{
     if(req.body.paramGame === ''){
         req.flash('error', "Vous n'avez pas tous bien renseigné  :(");

@@ -63,17 +63,18 @@
 <!-- ----------------------------------------------------------------------- -->
 
     <form action="/game/load" method="post" class="ui form">
-
-        <div class="field">
-            <label for="paramGameName">Nom de la Partie</label>
-            <textarea name="paramGame" id="name" style="height: 0px; width: 200px;"></textarea>
-        </div>
         
-        <button type="submit" class="ui blue labeled submit icon button">
+        Liste des Parties en cours : 
+        
+        <p></p>
+    
+        <% for (var i = 0; i < name.length;  i++ ) { %>
 
-            <i class="icon edit"></i>Envoyer
-
+        <button type="button" class="ui blue labeled submit icon button">
+            <i class="icon edit"></i> <%= name[i] %> 
         </button>
+
+        <% } %>
 
     </form>
 

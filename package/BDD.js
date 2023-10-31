@@ -108,36 +108,52 @@ class BDD{
         return 'username';
     }
 
+    async allGame(nameToFind){
 
-    /* -------------------------------------------------------------------------- */
-    /*                                   Player                                   */
-    /* -------------------------------------------------------------------------- */
+        var gameName = [];
+        let result = true
+
+        while(result){
+            result = await this.collections.Players.findOne({ name : nameToFind , game : { $nin: gameName }})
+            console.log(result)
+            if(result != null){
+                gameName.push(result.game)
+            }
+        }
+        return gameName
+    };
+    
 
 
-    async sendPlayer(game){ // pour chaque player, à la création de la game, on les envoie vers la bdd
-        game.TableInGame.forEach((p)=>
-            this.collections.Players.insertOne({
-                id_player : p.idPlayer,
-                name : p.name,
-                game : game.name,
-                init_target : p.target,
-                target : p.target,
-                mission : p.mission,
-                nombre_kill : p.nbKill,
-                status : p.status
-            })
-        );
-    }
+        /* -------------------------------------------------------------------------- */
+        /*                                   Player                                   */
+        /* -------------------------------------------------------------------------- */
 
-    async checkPlayer(playerName){ // on vérifie si le user existe avant de permettre de l'ajouter à la game
-        this.collections.User.createIndex({username : "text"});
-        const query = {$text : {$search : playerName}};
-        const projection = {_id:1}
-        const cursor = this.collections.User.find(query).project(projection);
-        
-        if(await cursor.hasNext()) {
-            const user = await this.collections.User.findOne({ username: playerName});
-            return user;
+
+        async sendPlayer(game){ // pour chaque player, à la création de la game, on les envoie vers la bdd
+            game.TableInGame.forEach((p)=>
+                this.collections.Players.insertOne({
+                    id_player : p.idPlayer,
+                    name : p.name,
+                    game : game.name,
+                    init_target : p.target,
+                    target : p.target,
+                    mission : p.mission,
+                    nombre_kill : p.nbKill,
+                    status : p.status
+                })
+            );
+        }
+
+        async checkPlayer(playerName){ // on vérifie si le user existe avant de permettre de l'ajouter à la game
+            this.collections.User.createIndex({username : "text"});
+            const query = {$text : {$search : playerName}};
+            const projection = {_id:1}
+            const cursor = this.collections.User.find(query).project(projection);
+            
+            if(await cursor.hasNext()) {
+                const user = await this.collections.User.findOne({ username: playerName});
+                return user;
         }
         
         return false;
