@@ -65,7 +65,7 @@
 <form action="/game/init" method="post" class="ui form">
 
         <% for (var i = 0; i < nbAdd-1;  i++ ) { %>
-            <p>  Joueur <%= nbAdd-2+i %> - <%=game.TableOfPlayers[i].name%> 
+            <p>  Joueur <%= game.TableOfPlayers[i].idPlayer %> - <%=game.TableOfPlayers[i].name%> 
         <% } %>
 
         <div class="field">

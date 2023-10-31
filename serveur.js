@@ -224,6 +224,8 @@ app.post('/game/create', async (req,res)=>{
             const player = new Player();
             player.name = req.session.user.username;
             player.game = game.name;
+            player.idPlayer = nbAdd;
+
             game.TableOfPlayers.push(player);
 
             player.mission = await game.taskRandom(bdd); // on attribue sa mission pour le tuer
@@ -264,6 +266,8 @@ app.post('/game/init' ,async(req,res)=>{
                 const player = new Player();
                 player.name = playerName;
                 player.game = game.name;
+                player.idPlayer = nbAdd;
+                
                 game.TableOfPlayers.push(player);
 
                 player.mission = await game.taskRandom(bdd); // on attribue sa mission pour le tuer
