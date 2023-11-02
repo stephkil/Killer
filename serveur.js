@@ -14,7 +14,6 @@ let paramGame;
 let paramPlayer;
 let gameExist = null;
 var gameRunning = true;
-var nbAdd = 1;
 var data = [];
 
 /* -------------------------------------------------------------------------- */
@@ -165,7 +164,7 @@ app.get('/friend', async (req,res)=> {
     if (req.session.user && (req.session.cookie.expires > new Date())) {
         reload();
         var friend =  await bdd.getFriend(req.session.user.username);
-        console.log("friend " + friend)
+        console.log("friend : " + friend)
         res.render('friend', {listOfFriend : friend});
     } else {
         destroySession(req,res);
@@ -247,18 +246,17 @@ app.post('/game/create', async (req,res)=>{
             req.flash('success', "Cette partie peut être crée. Maintenant renseignons les joueurs :)");
             game.name = req.body.paramGame[0];
             game.end_date = req.body.paramGame[1];
-            game.nbPlayer = req.body.paramGame[2];
+            game.nbPlayer++;
 
             const player = new Player();
             player.name = req.session.user.username;
             player.game = game.name;
-            player.idPlayer = nbAdd;
+            player.idPlayer = game.nbPlayer;
 
             game.TableOfPlayers.push(player);
 
             player.mission = await game.taskRandom(bdd); // on attribue sa mission pour le tuer
-            nbAdd ++;
-
+            
             res.redirect('/game/init');
         }
     };
@@ -270,7 +268,8 @@ app.post('/game/create', async (req,res)=>{
 
 app.get('/game/init', async(req,res)=>{
     if (req.session.user && (req.session.cookie.expires > new Date())) {
-        res.render('game/init', {nbAdd: nbAdd, game: game});
+        var friend =  await bdd.getFriend(req.session.user.username);
+        res.render('game/init', {game: game, listOfFriend : friend});
     } else {
         destroySession(req,res);
     }
@@ -279,50 +278,39 @@ app.get('/game/init', async(req,res)=>{
 
 app.post('/game/init' ,async(req,res)=>{
     
-    if(req.body.nameOfPlayer == '' || req.body.nameOfPlayer == undefined){
-        res.redirect('/game/init');
-    } else {
-        if(nbAdd <= game.nbPlayer){
-            let playerName = req.body.nameOfPlayer;
-            const user = await bdd.checkPlayer(playerName); // on vérifie si il existe
-            
-            if(user == false){
-                req.flash('error', "ce joueur n'existe pas, veuillez re-esayer");
-            } else{
-                req.flash('success', "Joueur ajouté, au suivant : ");
+    let answer = req.body.answer;
+    console.log("answer : " + answer);
 
-                const player = new Player();
-                player.name = playerName;
-                player.game = game.name;
-                player.idPlayer = nbAdd;
+    if(answer == 'start'){
+        game.shuffleTableOfPlayers();
+        game.targetPlayer();
 
-                game.TableOfPlayers.push(player);
+        await bdd.sendGame(game); //envoie de la game
+        await bdd.sendPlayer(game); // envoie des joueurs
 
-                player.mission = await game.taskRandom(bdd); // on attribue sa mission pour le tuer
-                
-                nbAdd ++;
-            }
+        req.flash('success', "Partie crée, bonne game  :)");
+        
+        res.redirect('/');
+    }
+    else {
+        const user = await bdd.checkPlayer(answer); // on vérifie si il existe
+        
+        if(user == false){
+            req.flash('error', "ce joueur n'existe pas/plus, veuillez re-esayer");
+        } else{
+            req.flash('success', "Joueur ajouté, au suivant : ");
 
-            if(nbAdd > game.nbPlayer){
-                game.shuffleTableOfPlayers();
-                game.targetPlayer();
+            const player = new Player();
+            player.name = answer;
+            player.game = game.name;
+            player.idPlayer = game.nbPlayer;
 
-                await bdd.sendGame(game); //envoie de la game
-                await bdd.sendPlayer(game); // envoie des joueurs
-
-                req.flash('success', "Partie crée, bonne game  :)");
-
-                nbAdd = 1;
-                
-                res.redirect('/');
-            } else {
-                res.redirect('/game/init');
-            }
-            
-        } else {
-            req.flash('error', "Désolé, il y a eu une erreur dans la création de la partie, veuillez recommencer  :)");
-            res.redirect('/game/create');
+            game.TableOfPlayers.push(player);
+            player.mission = await game.taskRandom(bdd); // on attribue sa mission pour le tuer
+    
+            game.nbPlayer ++;
         }
+        res.redirect('/game/init');
     }
 });
 
@@ -405,7 +393,6 @@ async function reload(){
     paramPlayer = undefined;
     gameRunning = true;
     gameExist = null;
-    nbAdd = 1;
     data = [];
     game.destroy();
 }

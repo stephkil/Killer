@@ -66,18 +66,27 @@
 
 <form action="/game/init" method="post" class="ui form">
 
-        <% for (var i = 0; i < nbAdd-1;  i++ ) { %>
-            <p>  Joueur <%= game.TableOfPlayers[i].idPlayer %> - <%=game.TableOfPlayers[i].name%> 
-        <% } %>
+    <% for (var i = 0; i < game.nbPlayer;  i++ ) { %>
+        <p>  Joueur <%= i+1 %> - <%=game.TableOfPlayers[i].name%> 
+    <% } %>
+    
+    <p></p>
 
-        <div class="field">
-            <label for="nameOfPlayer">Nom du joueur <%= nbAdd %></label>
-            <textarea name="nameOfPlayer" id="name" style="height: 0px; width: 200px;"></textarea>
-        </div>
+    Ami que vous pouvez ajouter à la partie :
+
+    <p></p>
+
+    <% for (var i = 0; i < listOfFriend.length; i++) { %>
+        <button type="submit" class="ui blue labeled submit icon button game-button" name="answer" value="<%= listOfFriend[i] %>">
+            <i class="icon edit"></i> <%= listOfFriend[i] %> 
+        </button>
+    <% } %>
+    
+    <p></p>
         
-    <button type="submit" class="ui blue labeled submit icon button">
+    <button type="submit" class="ui blue labeled submit icon button" name="answer" value='start'>
 
-        <i class="icon edit"></i>Envoyer
+        <i class="icon edit"></i> Start Game
 
     </button>
 

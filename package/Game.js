@@ -6,7 +6,7 @@ class Game {
         this.name = '';
         this.TableOfPlayers = [];
         this.TableInGame = [];
-        this.nbPlayer = null;
+        this.nbPlayer = 0;
         this.end_date = null;
         this.winner = undefined;
     }
