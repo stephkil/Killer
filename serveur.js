@@ -45,13 +45,7 @@ app.use('/assets', express.static('public'))
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 
-app.use(session({
-    secret: secrets.tokenKey,
-    resave: false,
-    saveUninitialized : true,
-    cookie: { maxAge: 6 * 60 * 60 * 1000 } // le user n'aura pas besoin de se reconnecter pendant 4h (6-2)
-}));
-
+app.use(require('./middlewares/session'));
 app.use(require('./middlewares/flash'));
 
 
@@ -134,7 +128,7 @@ app.get('/auth/register', (req,res) =>{
 app.post('/auth/register', async (req,res)=>{
     if(req.body.paramPlayer[0] === '' || req.body.paramPlayer[1] === ''){
         req.flash('error', "Vous n'avez pas tous bien renseigné  :(");
-        res.redirect('/register');
+        res.redirect('/auth/register');
     } else {
         //console.log(req.body.paramPlayer);
 
@@ -149,7 +143,7 @@ app.post('/auth/register', async (req,res)=>{
             res.redirect('/');
         } else {
             req.flash('error', "Ce Profil existe déjà  :(");
-            res.redirect('/register');
+            res.redirect('/auth/register');
         }
     };
 });
