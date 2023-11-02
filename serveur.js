@@ -53,8 +53,10 @@ app.use(require('./middlewares/flash'));
 /*                                 Route /                                    */
 /* -------------------------------------------------------------------------- */
 
-
 app.get('/', (req,res) =>{
+    if(req.session.user && (req.session.cookie.expires < new Date())) {  
+        destroySession(req,res);
+    }
     reload();
     res.render('index', {data : req.session});
 });
@@ -63,7 +65,15 @@ app.post('/', (req,res)=>{
     res.redirect('/');
 });
 
-  
+/* -------------------------------------------------------------------------- */
+/*                                Disconnect                                  */
+/* -------------------------------------------------------------------------- */
+
+app.get('/auth/disconnect', (req,res)=>{   
+    req.session.destroy();
+    res.redirect('/');
+});
+
 /* -------------------------------------------------------------------------- */
 /*                                  login                                     */
 /* -------------------------------------------------------------------------- */
@@ -85,13 +95,11 @@ app.post('/auth/login', async (req,res)=>{
         if(status === 'username'){
             req.flash('error', "Ce user n'existe pas encore  :(");
             res.redirect('/auth/login');  
-
         }
 
         else if(status === 'pwd'){
             req.flash('error', "Mauvais mot de passe  :(");
             res.redirect('/auth/login');  
-
         }
 
         else if(status === true){
@@ -157,7 +165,7 @@ app.get('/game/load', async (req,res) =>{
     if (req.session.user && (req.session.cookie.expires > new Date())) {
         reload();
         let allGame = await bdd.allGame(req.session.user.username);
-        console.log("allGame : " + allGame);
+        //console.log("allGame : " + allGame);
         res.render('game/load', {name : allGame});
     } else {
         destroySession(req,res);
@@ -166,23 +174,19 @@ app.get('/game/load', async (req,res) =>{
 });
  
 app.post('/game/load', async(req,res)=>{
-    if(req.body.paramGame === ''){
-        req.flash('error', "Vous n'avez pas tous bien renseigné  :(");
-        res.redirect('/game/load');
+    console.log("reponse du load : " + req.body.gameName);
+    
+    game.name = req.body.gameName;
+    gameExist = await bdd.gameExist(game);
+
+    if(gameExist){
+        await bdd.getGame(game);
+        gameRunning = true;
+        res.redirect('/game/display');
     } else {
-        game.name = req.body.paramGame;
-
-        gameExist = await bdd.gameExist(game);
-
-        if(gameExist){
-            await bdd.getGame(game);
-            gameRunning = true;
-            res.redirect('/game/display');
-        } else {
-            req.flash('error', "Cette partie n'existe pas ou est déjà terminé  :(");
-            res.redirect('/game/load');
-        }
-    };
+        req.flash('error', "Cette partie n'existe pas ou est déjà terminé  :(");
+        res.redirect('/game/load');
+    }
 });
 
 /* -------------------------------------------------------------------------- */
@@ -390,10 +394,6 @@ function destroySession(req,res){
             console.log("sessions suprimé");
             }
         });
- 
-        if(req.session.user && (req.session.cookie.expires < new Date())) {  
-            destroySession(req);
-        }
     }
         reload();
         req.flash('error', "Vous n'êtes pas connnecté  :(");

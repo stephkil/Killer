@@ -115,7 +115,7 @@ class BDD{
 
         while(result){
             result = await this.collections.Players.findOne({ name : nameToFind , game : { $nin: gameName }})
-            console.log(result)
+            //console.log(result)
             if(result != null){
                 gameName.push(result.game)
             }
