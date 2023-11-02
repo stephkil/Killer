@@ -76,7 +76,8 @@ class BDD{
             password : await bcrypt.hash(pwd, secrets.saltRounds), // hash du mdp
             game_played : 0,
             game_win : 0,
-            success : 0
+            success : 0,
+            friends : []
         });
 
         //console.log(`profil is register with id : ${result.insertedId}`);
@@ -261,6 +262,22 @@ class BDD{
          // de même pour le tué
         const result = await this.collections.Games.findOne({ name: killer.game});
         await this.collections.Games.updateOne({ _id: result._id }, { $set:{ winner : killer.name}}); // update winner dans bdd     
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                                   friend                                   */
+    /* -------------------------------------------------------------------------- */
+
+    async getFriend(name){
+        const result = await this.collections.User.findOne({username : name});
+        return result.friends
+    }
+
+    async addFriend(nameToAdd,name){
+        await this.collections.User.updateOne(
+            { username : name },
+            { $push: { friends: nameToAdd }},
+        );
     }
 
 }

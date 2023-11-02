@@ -156,6 +156,36 @@ app.post('/auth/register', async (req,res)=>{
     };
 });
 
+
+/* -------------------------------------------------------------------------- */
+/*                                   Friend                                   */
+/* -------------------------------------------------------------------------- */
+
+app.get('/friend', async (req,res)=> {
+    if (req.session.user && (req.session.cookie.expires > new Date())) {
+        reload();
+        var friend =  await bdd.getFriend(req.session.user.username);
+        console.log("friend " + friend)
+        res.render('friend', {listOfFriend : friend});
+    } else {
+        destroySession(req,res);
+    }
+});
+
+app.post('/friend', async (req,res)=> {
+    let friend = req.body.nameOfFriend;
+    const user = await bdd.checkPlayer(friend); // on vérifie si il existe
+
+    if(user == false){
+        req.flash('error', "ce joueur n'existe pas, veuillez re-esayer");
+    } else{
+        req.flash('success', "Joueur ajouté, au suivant : ");
+        await bdd.addFriend(friend,req.session.user.username);
+    }
+
+    res.redirect('/friend');
+});
+
 /* -------------------------------------------------------------------------- */
 /*                                    load                                    */
 /* -------------------------------------------------------------------------- */
@@ -174,8 +204,6 @@ app.get('/game/load', async (req,res) =>{
 });
  
 app.post('/game/load', async(req,res)=>{
-    console.log("reponse du load : " + req.body.gameName);
-    
     game.name = req.body.gameName;
     gameExist = await bdd.gameExist(game);
 
@@ -315,9 +343,9 @@ app.get('/game/display', async (req,res) =>{
                 if (gameRunning == false){
                     res.redirect('/game/endScreen');
                 } else {
-                    data[1] = await bdd.mainPlayerDisplay(game.name,req.session.user.username); console.log(data[1]);
+                    data[1] = await bdd.mainPlayerDisplay(game.name,req.session.user.username);
                     let targetPlayer = game.TableInGame[data[1]].target;
-                    data[2] = await bdd.targetPlayerDisplay(game.name,targetPlayer); console.log(data[2]);
+                    data[2] = await bdd.targetPlayerDisplay(game.name,targetPlayer);
                     res.render('game/display', { game : game, gameRunning: gameRunning, mainPlayer : data[1], targetPlayer : data[2]});
                 }
             }
@@ -334,7 +362,6 @@ app.post('/game/display', async(req,res)=>{
     if(req.body.mort != '' && req.body.mort != undefined){
         if(req.body.mort == 'kill'){
             gameRunning = await game.kill(bdd,data); // update les joueurs après kill
-            console.log("gameRunning : " + gameRunning)
         }
          
         if(gameRunning == false){

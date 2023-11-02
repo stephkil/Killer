@@ -34,7 +34,7 @@
 
 <div class="ui main container">
 
-<h1> Init Game </h1>
+<h1> Friends </h1>
 
 <!-- ----------------------------------------------------------------------- -->
 <!--                              Message flash                              -->
@@ -61,26 +61,30 @@
 <% } %>>
 
 <!-- ----------------------------------------------------------------------- -->
-<!--                                Init                                -->
+<!--                                Init                                     -->
 <!-- ----------------------------------------------------------------------- -->
 
-<form action="/game/init" method="post" class="ui form">
+<form action="/friend" method="post" class="ui form">
 
-        <% for (var i = 0; i < nbAdd-1;  i++ ) { %>
-            <p>  Joueur <%= game.TableOfPlayers[i].idPlayer %> - <%=game.TableOfPlayers[i].name%> 
-        <% } %>
+    <div class="field">
+        <label for="nameOfFriend"> Ajouter un ami </label>
+        <textarea name="nameOfFriend" id="name" style="height: 0px; width: 200px;"></textarea>
+    </div>
 
-        <div class="field">
-            <label for="nameOfPlayer">Nom du joueur <%= nbAdd %></label>
-            <textarea name="nameOfPlayer" id="name" style="height: 0px; width: 200px;"></textarea>
-        </div>
-        
     <button type="submit" class="ui blue labeled submit icon button">
 
         <i class="icon edit"></i>Envoyer
 
     </button>
 
+    <p></p>
+    <p></p>
+
+    Your friends : 
+    <p></p>
+        <% for (var i = 0; i < listOfFriend.length;  i++ ) { %>
+            <p>  - <%= listOfFriend[i] %> 
+        <% } %>
 </form>
 
-<% include ('../footer.ejs') %>
+<% include ('footer') %>
