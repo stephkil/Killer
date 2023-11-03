@@ -43,7 +43,7 @@ class BDD{
         // update les kill de la partie 
         const tab = [];
         for(let i=0; i<game.nbPlayer;i++){
-            tab[i] = game.TableInGame[i].name + "/" + game.TableInGame[i].mission + "/" + game.TableInGame[i].nbKill;
+            tab[i] = game.TableInGame[i].name + "/" + game.TableInGame[i].mission + "/" + game.TableInGame[i].nbKill + "/" + game.TableInGame[i].status;
         }
         await this.collections.Games.updateOne({name : game.name}, {$set:{allPlayer : tab}});
 
