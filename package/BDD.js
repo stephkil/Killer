@@ -18,7 +18,7 @@ class BDD{
               deprecationErrors: true,
             }
           });
-        this.collectionNames = ['User','Games','Players','Task']; // on renseigne le nom des collections présente dans la bdd
+        this.collectionNames = ['User','Games','Players','Historique','Task']; // on renseigne le nom des collections présente dans la bdd
         this.collections = {};
     }
 
@@ -39,8 +39,20 @@ class BDD{
     }
 
     async closeBDD(game) {
+
+        // update les kill de la partie 
+        const tab = [];
+        for(let i=0; i<game.nbPlayer;i++){
+            tab[i] = game.TableInGame[i].name + "/" + game.TableInGame[i].mission + "/" + game.TableInGame[i].nbKill;
+        }
+        await this.collections.Games.updateOne({name : game.name}, {$set:{allPlayer : tab}});
+
+        // on ajoute la partie dans l'historique
+        const result = await this.collections.Games.findOne({name:game.name});
+        await this.collections.Historique.insertOne(result);
+
         await this.collections.Players.deleteMany({ game : game.name }); // on retire les joueur racroché a l'id de la game, de la bdd
-        await this.collections.Games.deleteMany({ name : game.name }); // on retire la game de la bdd
+        await this.collections.Games.deleteOne({ name : game.name }); // on retire la game de la bdd
 
         for(let i = 0; i < game.nbPlayer; i++){
             const user = await this.collections.User.findOne({ username: game.TableInGame[i].name});
@@ -137,7 +149,6 @@ class BDD{
                     id_player : p.idPlayer,
                     name : p.name,
                     game : game.name,
-                    init_target : p.target,
                     target : p.target,
                     mission : p.mission,
                     nombre_kill : p.nbKill,
@@ -178,12 +189,18 @@ class BDD{
 
     async sendGame(game){ // envoie de la game sur la bdd
         console.log(game);
+        var tab = [];
 
+        for(let i=0; i < game.nbPlayer; i++){
+            tab[i] = (game.TableInGame[i].name)
+        }
+                
         await this.collections.Games.insertOne({
             name : game.name,
             nb_Player : game.nbPlayer,
             date_debut : new Date(),
-            heures_restante : game.end_date,
+            date_fin : game.end_date,
+            allPlayer : tab,
             winner : game.winner
         });
     }
@@ -195,7 +212,7 @@ class BDD{
             if(result.winner == null){
                 console.log("partie trouvé");
                 game.nbPlayer = result.nb_Player;
-                game.end_date = result.heures_restante;
+                game.end_date = result.date_fin;
                 game.winner = result.winner;
                 return true;
             } else {

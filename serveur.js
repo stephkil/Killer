@@ -374,6 +374,7 @@ app.post('/game/display', async(req,res)=>{
 /* -------------------------------------------------------------------------- */
 
 app.get('/game/endScreen', async (req,res) =>{
+    
     await bdd.closeBDD(game); // fermer bdd + suprimer élement superflu
     res.render('game/endScreen', {game : game});
 });
