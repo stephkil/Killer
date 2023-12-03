@@ -12,8 +12,47 @@
 
     <style>
 
+        .menu {
+            background-color: #000000;
+            display: flex;
+            padding: 10px;
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: #fff;
+            padding: 5px 20px;
+            background-color: #3e3e3e;
+        }
+
+        .menu a:hover {
+            background-color: #7a7a7a;
+        }
+        
+        .item {
+            margin: 0 10px;
+        }
+
         .main.container{
-            margin-top: 7em;
+            margin-top : 10em;
+        }
+
+        h1{
+            text-align: center;
+        }
+
+    
+        .flash{
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .negative{
+            color: rgb(243, 44, 44);
+        }
+        
+        .positive{
+            color: rgb(5, 132, 10);
         }
 
     </style>
@@ -22,7 +61,7 @@
 
 <body>
 
-<div class="ui fixed inverted menu">
+<div class="menu">
 
     <a href = "/" class = "header item" > Killer </a>
 
@@ -34,6 +73,8 @@
         <a href= "/friend" class="header item"> Friend </a>
         <a href= "/game/create" class="header item"> Create Game </a>
         <a href= "/game/load" class="header item"> Load Game </a>
+        <a href= "/game/historique" class="header item"> Historique</a>
+
     <%}%>
 </div>
 
@@ -44,10 +85,10 @@
 <!-- ----------------------------------------------------------------------- -->
 <!--                              Message flash                              -->
 <!-- ----------------------------------------------------------------------- -->
-
+<!--
 <% if(locals.flash && locals.flash.error){ %>
 
-    <div class="ui negative message">
+    <div class="negative">
 
         <%= flash.error %>
 
@@ -57,12 +98,12 @@
 
 <% if(locals.flash && locals.flash.success){ %>
 
-    <div class="ui positive message">
+    <div class="positive">
     
         <%= flash.success %>
     
     </div>
     
 <% } %>
-
+-->
 <% include ('footer') %>

@@ -12,8 +12,79 @@
 
     <style>
 
+        .menu {
+            background-color: #000000;
+            display: flex;
+            padding: 10px;
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: #fff;
+            padding: 5px 20px;
+            background-color: #3e3e3e;
+        }
+
+        .menu a:hover {
+            background-color: #7a7a7a;
+        }
+        
+        .item {
+            margin: 0 10px;
+        }
+
         .main.container{
-            margin-top: 7em;
+            margin-top : 10em;
+        }
+
+        h1{
+            text-align: center;
+        }
+
+        .form{
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+            margin-top: 30px;
+
+            background-color: #d7d6d6;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        .button{
+            width: 100%;
+            padding: 10px;
+            background-color: rgb(81, 76, 175);
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        .flash{
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .negative{
+            color: rgb(243, 44, 44);
+        }
+        
+        .positive{
+            color: rgb(5, 132, 10);
         }
 
     </style>
@@ -22,19 +93,11 @@
 
 <body>
 
-<div class="ui fixed inverted menu">
+<div class="menu">
 
     <a href = "/" class = "header item" > Killer </a>
-
-    <% if(data == false){ %>
-        <a href= "/auth/login" class="header item"> Connection </a>
-        <a href= "/auth/register" class="header item"> Nouveau profil </a>
-    <%}%>
-
-    <% if(data == true){ %>
-        <a href= "/game/create" class="header item"> Create Game </a>
-        <a href= "/game/load" class="header item"> Load Game </a>
-    <%}%>
+    <a href= "/auth/login" class="header item"> Connection </a>
+    <a href= "/auth/register" class="header item"> Nouveau profil </a>
     
 </div>
 
@@ -48,7 +111,7 @@
 
 <% if(locals.flash && locals.flash.error){ %>
 
-    <div class="ui negative message">
+    <div class="negative">
 
         <%= flash.error %>
 
@@ -58,7 +121,7 @@
 
 <% if(locals.flash && locals.flash.success){ %>
 
-    <div class="ui positive message">
+    <div class="positive">
     
         <%= flash.success %>
     
@@ -71,23 +134,17 @@
 <!-- ----------------------------------------------------------------------- -->
 
 
-    <form action="/auth/register" method="post" class="ui form">
+    <form action="/auth/register" method="post" class="form">
 
-        <div class="field">
-            <label for="paramPlayerName"> Username </label>
-            <textarea name="paramPlayer" id="name" style="height: 0px; width: 200px;"></textarea>
+        <div class="name">
+            <input name="paramPlayer" id="name" placeholder = "Username"></input>
         </div>
 
-        <div class="field">
-            <label for="paramPlayerPwd"> Password </label>
-            <textarea name="paramPlayer" id="pwd" style="height: 0px; width: 200px;"></textarea>
+        <div class="pwd">
+            <input name="paramPlayer" id="pwd" placeholder = "Password"></input>
         </div>
         
-        <button type="submit" class="ui blue labeled submit icon button">
-
-            <i class="icon edit"></i>Envoyer
-
-        </button>
+        <button type="submit" class="button">Envoyer</button>
 
     </form>
 

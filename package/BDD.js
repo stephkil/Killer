@@ -40,16 +40,27 @@ class BDD{
 
     async closeBDD(game) {
 
-        // update les kill de la partie 
-        const tab = [];
+        // update l'historique partie 
+        const tabName = [];
+        const tabTask = [];
+        const tabKill = [];
+        const tabStatus = [];
+
         for(let i=0; i<game.nbPlayer;i++){
-            tab[i] = game.TableInGame[i].name + "/" + game.TableInGame[i].mission + "/" + game.TableInGame[i].nbKill + "/" + game.TableInGame[i].status;
+            tabName[i]= game.TableInGame[i].name;
+            tabTask[i]= game.TableInGame[i].mission;
+            tabKill[i]= game.TableInGame[i].nbKill;
+            tabStatus[i]= game.TableInGame[i].status;
         }
-        await this.collections.Games.updateOne({name : game.name}, {$set:{allPlayer : tab}});
+        await this.collections.Games.updateOne({name : game.name}, {$set:{allName : tabName}});
+        await this.collections.Games.updateOne({name : game.name}, {$set:{allTask : tabTask}});
+        await this.collections.Games.updateOne({name : game.name}, {$set:{allKill : tabKill}});
+        await this.collections.Games.updateOne({name : game.name}, {$set:{allStatus : tabStatus}});
 
         // on ajoute la partie dans l'historique
         const result = await this.collections.Games.findOne({name:game.name});
-        await this.collections.Historique.insertOne(result);
+        let resultHisto = await this.collections.Historique.insertOne(result);
+        let histoId = resultHisto.insertedId;
 
         await this.collections.Players.deleteMany({ game : game.name }); // on retire les joueur racroché a l'id de la game, de la bdd
         await this.collections.Games.deleteOne({ name : game.name }); // on retire la game de la bdd
@@ -57,6 +68,7 @@ class BDD{
         for(let i = 0; i < game.nbPlayer; i++){
             const user = await this.collections.User.findOne({ username: game.TableInGame[i].name});
             await this.collections.User.updateOne({ _id: user._id }, {$inc: { game_played : 1 }}); // update nombre de partie jouer ou en cours
+            await this.collections.User.updateOne({ _id: user._id }, {$push: { historique : histoId }}); 
         }
 
         const user = await this.collections.User.findOne({username : game.winner});
@@ -89,7 +101,8 @@ class BDD{
             game_played : 0,
             game_win : 0,
             success : 0,
-            friends : []
+            friends : [],
+            historique : []
         });
 
         //console.log(`profil is register with id : ${result.insertedId}`);
@@ -165,7 +178,7 @@ class BDD{
             
             if(await cursor.hasNext()) {
                 const user = await this.collections.User.findOne({ username: playerName});
-                return user;
+                return user.username;
         }
         
         return false;
@@ -200,8 +213,8 @@ class BDD{
             nb_Player : game.nbPlayer,
             date_debut : new Date(),
             date_fin : game.end_date,
-            allPlayer : tab,
-            winner : game.winner
+            winner : game.winner,
+            allName : tab
         });
     }
 
@@ -295,6 +308,27 @@ class BDD{
             { username : name },
             { $push: { friends: nameToAdd }},
         );
+    }
+
+    /* -------------------------------------------------------------------------- */
+    /*                                 historique                                 */
+    /* -------------------------------------------------------------------------- */
+
+    async getHisto(name){
+        var tabGame = [];
+        var tabHisto = [];
+
+        let user = await this.collections.User.findOne({username : name});
+        tabHisto = user.historique;
+
+        //console.log("tabHisto : " + tabHisto);
+        
+        for(var i=0; i<=tabHisto.length;i++){
+            let result = await this.collections.Historique.findOne({_id : tabHisto[i]});
+            tabGame.push(result);
+        }
+        
+        return tabGame;
     }
 
 }

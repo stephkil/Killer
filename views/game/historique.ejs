@@ -36,7 +36,7 @@
 
 <div class="ui main container">
 
-<h1> Display End of Game </h1>
+<h1> Historique </h1>
 
 <!-- ----------------------------------------------------------------------- -->
 <!--                              Message flash                              -->
@@ -63,31 +63,36 @@
 <% } %>
 
 <!-- ----------------------------------------------------------------------- -->
-<!--                                Affi game                                -->
+<!--                                Affi Histo                               -->
 <!-- ----------------------------------------------------------------------- -->
 
-
+<% for(var i=0; i<games.length-1;i++){%>
 
     <div class="ui comments">
-    
-        <h3 class="ui dividing header"> Information Game </h3>
+        
+        <h3 class="ui dividing header"> Game : <%=games[i].name %> </h3>
 
         <div class="content">
 
-            <p> <%= "Nom de la partie : " + game.name %> </p> 
-            <p> <%= "Durée de la partie : " + game.end_date + " h" %> </p> 
-            <p> <%= "Nombre de Joueurs : " + game.nbPlayer %> </p> 
+            <p> <%= "Début de la partie : " + games[i].date_debut %> </p> 
+            <p> <%= "Fin de la partie : " + games[i].date_fin  %> </p> 
+            <p> <%= "Nombre de Joueurs : " + games[i].nb_Player %> </p> 
 
             <p></p>
-        
-            <p> <%= "Winner => " + game.winner %> </p>
+            <p> <%= "Gagnant : " + games[i].winner %> </p> 
+            <p></p>
 
-            <% for (var i = 0; i < game.nbPlayer;  i++ ) { %>
-                <p> <%=game.TableInGame[i].name%> - Mission : <%=game.TableInGame[i].mission%> - Kill : <%=game.TableInGame[i].nbKill %> - Status : <%=game.TableInGame[i].status%> - Target : <%=game.TableInGame[i].target%>  
-            <% } %>
+            <% for(var j=0; j<games[i].nb_Player; j++ ){ %>
+                <p> <%="=> "%> <%=games[i].allName[j]%> - Task : <%=games[i].allTask[j]%> - Status : <%=games[i].allStatus[j]%> - Kill : <%=games[i].allKill[j]%> </p>
+            <%}%>
 
+            <p></p>
+            <p></p>
+     
         </div>
 
     </div>
+
+<%}%>
 
     <% include ('../footer.ejs') %>

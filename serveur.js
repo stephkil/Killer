@@ -164,7 +164,7 @@ app.get('/friend', async (req,res)=> {
     if (req.session.user && (req.session.cookie.expires > new Date())) {
         reload();
         var friend =  await bdd.getFriend(req.session.user.username);
-        console.log("friend : " + friend)
+        //console.log("friend : " + friend)
         res.render('friend', {listOfFriend : friend});
     } else {
         destroySession(req,res);
@@ -179,7 +179,7 @@ app.post('/friend', async (req,res)=> {
         req.flash('error', "ce joueur n'existe pas, veuillez re-esayer");
     } else{
         req.flash('success', "Joueur ajouté, au suivant : ");
-        await bdd.addFriend(friend,req.session.user.username);
+        await bdd.addFriend(user,req.session.user.username);
     }
 
     res.redirect('/friend');
@@ -378,6 +378,33 @@ app.get('/game/endScreen', async (req,res) =>{
     res.render('game/endScreen', {game : game});
 });
 
+
+/* -------------------------------------------------------------------------- */
+/*                                 Historique                                 */
+/* -------------------------------------------------------------------------- */
+
+app.get('/game/historique', async (req,res) =>{
+    if (req.session.user && (req.session.cookie.expires > new Date())) {
+        var histo = []
+        histo = await bdd.getHisto(req.session.user.username);
+        if(histo == ''){
+            req.flash('error', "Vous n'avez pas encore joué de partie :(");
+            res.redirect('/')
+        } else {
+        //console.log("histo name : " + histo[0].name);
+        //console.log("histo name : " + histo[0].allName);
+
+        res.render('game/historique', {games: histo})
+        }
+    } else {
+        destroySession(req,res);
+    }
+});
+ 
+
+/* -------------------------------------------------------------------------- */
+/*                                   listen                                   */
+/* -------------------------------------------------------------------------- */
 
 app.listen(8080, async () => {
     await bdd.setupBDD(); // démarer la bdd
