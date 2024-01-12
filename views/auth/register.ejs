@@ -6,88 +6,9 @@
 <html>
 <head>
 
+    <link rel="stylesheet" type="text/css" href="/assets/test.css" />
+
     <title> AshGames_Killer </title>
-
-    <link rel="stylesheet" href="/assets/semantic/semantic.min.css">
-
-    <style>
-
-        .menu {
-            background-color: #000000;
-            display: flex;
-            padding: 10px;
-        }
-
-        .menu a {
-            text-decoration: none;
-            color: #fff;
-            padding: 5px 20px;
-            background-color: #3e3e3e;
-        }
-
-        .menu a:hover {
-            background-color: #7a7a7a;
-        }
-        
-        .item {
-            margin: 0 10px;
-        }
-
-        .main.container{
-            margin-top : 10em;
-        }
-
-        h1{
-            text-align: center;
-        }
-
-        .form{
-            max-width: 400px;
-            margin: 0 auto;
-            padding: 20px;
-            box-sizing: border-box;
-            margin-top: 30px;
-
-            background-color: #d7d6d6;
-            padding: 20px;
-            border-radius: 10px;
-        }
-
-        input {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 16px;
-            box-sizing: border-box;
-        }
-
-        .button{
-            width: 100%;
-            padding: 10px;
-            background-color: rgb(81, 76, 175);
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .button:hover {
-            background-color: #45a049;
-        }
-
-        .flash{
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .negative{
-            color: rgb(243, 44, 44);
-        }
-        
-        .positive{
-            color: rgb(5, 132, 10);
-        }
-
-    </style>
     
 </head>
 
@@ -137,11 +58,11 @@
     <form action="/auth/register" method="post" class="form">
 
         <div class="name">
-            <input name="paramPlayer" id="name" placeholder = "Username"></input>
+            <input type="text" name="paramPlayer" id="name" placeholder = "Username"></input>
         </div>
 
         <div class="pwd">
-            <input name="paramPlayer" id="pwd" placeholder = "Password"></input>
+            <input type="password" name="paramPlayer" id="pwd" placeholder = "Password"></input>
         </div>
         
         <button type="submit" class="button">Envoyer</button>

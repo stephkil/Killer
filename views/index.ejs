@@ -6,56 +6,12 @@
 <html>
 <head>
 
+    <link rel="stylesheet" type="text/css" href="/assets/test.css" />
+
     <title> AshGames_Killer </title>
 
-    <link rel="stylesheet" href="/assets/semantic/semantic.min.css">
-
-    <style>
-
-        .menu {
-            background-color: #000000;
-            display: flex;
-            padding: 10px;
-        }
-
-        .menu a {
-            text-decoration: none;
-            color: #fff;
-            padding: 5px 20px;
-            background-color: #3e3e3e;
-        }
-
-        .menu a:hover {
-            background-color: #7a7a7a;
-        }
-        
-        .item {
-            margin: 0 10px;
-        }
-
-        .main.container{
-            margin-top : 10em;
-        }
-
-        h1{
-            text-align: center;
-        }
-
-    
-        .flash{
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .negative{
-            color: rgb(243, 44, 44);
-        }
-        
-        .positive{
-            color: rgb(5, 132, 10);
-        }
-
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
 </head>
 
@@ -82,28 +38,4 @@
 
 <h1>  Home Page </h1>
 
-<!-- ----------------------------------------------------------------------- -->
-<!--                              Message flash                              -->
-<!-- ----------------------------------------------------------------------- -->
-<!--
-<% if(locals.flash && locals.flash.error){ %>
-
-    <div class="negative">
-
-        <%= flash.error %>
-
-    </div>
-
-<% } %>
-
-<% if(locals.flash && locals.flash.success){ %>
-
-    <div class="positive">
-    
-        <%= flash.success %>
-    
-    </div>
-    
-<% } %>
--->
 <% include ('footer') %>
