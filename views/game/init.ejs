@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-
+        <meta name="viewport" content="width=device-width, initial-scale=2.0">
         <title> AshGames_Killer </title>
         <link rel="stylesheet" href="/assets/semantic/semantic.min.css">
         
@@ -71,16 +71,33 @@
     Ami que vous pouvez ajouter à la partie :
 
     <p></p>
-
-    <% for (var i = 0; i < listOfFriend.length; i++) { %>
-        <button type="submit" class="ui blue labeled submit icon button game-button" name="answer" value="<%= listOfFriend[i] %>">
-            <i class="icon edit"></i> <%= listOfFriend[i] %> 
-        </button>
-    <% } %>
     
+    <div class="ui link cards">
+        <% for (var i = 0; i < listOfFriend.length;  i++ ) { %>
+    
+            <div class="card">
+                <div class="image">
+                <img src="">
+                </div>
+                <div class="content">
+                <div class="header"><%= listOfFriend[i] %></div>
+                <div class="meta">
+                    <a>titre</a>
+                </div>
+                </div>
+                <div class="extra content">
+                    <input type="hidden" name="del" value="<%= listOfFriend[i] %>">
+                    <button type="submit" class="ui mini blue labeled submit icon button" name="answer" value="<%= listOfFriend[i] %>">
+                        <i class="icon edit"></i>
+                        Ajouter
+                    </button>
+                </div>
+            </div>
+        <% } %>
+    </div>
     <p></p>
         
-    <button type="submit" class="ui blue labeled submit icon button" name="answer" value='start'>
+    <button type="submit" class="ui green labeled submit icon button" name="answer" value='start'>
 
         <i class="icon edit"></i> Start Game
 

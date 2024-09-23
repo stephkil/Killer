@@ -3,30 +3,59 @@
 <!-- ----------------------------------------------------------------------- -->
 
 <!DOCTYPE html>
-<html>
     <head>
-
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title> AshGames_Killer </title>
         <link rel="stylesheet" href="/assets/semantic/semantic.min.css">
         
+        <style>
+            
+            .image-container {
+                width: 33%; /* L'image s'adapte à la largeur de la carte */
+                overflow: hidden; /* Cache les parties dépassantes de l'image */
+            }
+            
+            .image-container img {
+                width: 95%; /* L'image remplit la largeur du conteneur */
+                height: 95%; /* Remplit la hauteur du conteneur */
+                object-fit: cover; /* Recadre l'image pour qu'elle remplisse l'espace sans déformation */
+            }
+
+            .bottom-menu {
+                position: sticky;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background-color: #ffffff;
+                display: flex;
+                justify-content: space-around;
+            }
+            
+            .ui.menu {
+                display: flex; /* Utilise flexbox pour l'alignement */
+                justify-content: space-around; /* Répartit les éléments uniformément */
+            }
+            
+            .ui.cards {
+                display: flex; /* Utilise Flexbox pour aligner les cartes */
+                flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
+            }
+            
+            .card {
+                width: 200%; /* Deux cartes par ligne avec un espace */
+                margin: 15px; /* Marge autour de chaque carte */
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Ombre pour les cartes */
+                border-radius: 5px; /* Coins arrondis */
+                overflow: hidden; /* Évite le débordement de contenu */
+            }
+
+        </style>
+
+
     </head>
-    
     <body>
     
-        <div class="menu">
-    
-            <div class="ui pointing menu">
-                <a href = "/" class="item"> Killer </a>
-                <a href= "/friend" class="active item"> Friend </a>
-                <a href= "/game/create" class="item"> Create Game </a>
-                <a href= "/game/load" class="item"> Load Game </a>
-                <a href= "/game/historique" class="item"> Historique</a>
-
-                <a href= "/auth/disconnect" class="right item"> Disconnect </a>
-            </div>
-              
-            <p></p>
-        </div>
+        
 
 <div class="ui main container">
 
@@ -54,7 +83,7 @@
     
     </div>
     
-<% } %>>
+<% } %>
 
 <!-- ----------------------------------------------------------------------- -->
 <!--                                Init                                     -->
@@ -87,12 +116,12 @@
 Your friends : 
 <p></p>
 
-<div class="ui link cards">
+<div class="ui cards">
     <% for (var i = 0; i < listOfFriend.length;  i++ ) { %>
 
         <div class="card">
-            <div class="image">
-            <img src="">
+            <div class="image-container">
+            <img src="/assets/picture/perso<%=i%>.png" >
             </div>
             <div class="content">
             <div class="header"><%= listOfFriend[i] %></div>
@@ -100,7 +129,7 @@ Your friends :
                 <a>titre</a>
             </div>
             <div class="description">
-                iogerkjlnfjzvnlijazlkndzkjnflkjngljenflzla
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum quas nisi nam, repellendus impedit asperiores maxime. Magnam assumenda amet voluptatem? Corporis possimus repudiandae exercitationem unde vitae molestias accusantium nobis ut.
             </div>
             </div>
             <div class="extra content">
@@ -115,11 +144,26 @@ Your friends :
             </span>
             <span>
                 <i class="user icon"></i>
-                75 Games
+                123 Games
             </span>
             </div>
         </div>
     <% } %>
 
+
+
+    <div class="bottom-menu">
+    
+        <div class="ui menu">
+            <a href = "/" class="item">  Killer </a>
+            <a href= "/friend" class="active item"> <img src="/assets/picture/addFriends.png"/> </a>
+            <a href= "/game/create" class="item"> <img src="/assets/picture/new.png"/> </a>
+            <a href= "/game/load" class="item"> <img src="/assets/picture/knife.png"/> </a>
+            <a href= "/game/historique" class="item"> <img src="/assets/picture/historique.png"/> </a>
+            <a href= "/auth/disconnect" class="item"> <img src="/assets/picture/disconnect.png"/> </a>
+        </div>
+          
+        <p></p>
+    </div>
 
 <% include ('footer') %>

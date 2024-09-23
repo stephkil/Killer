@@ -10,6 +10,7 @@ const session = require('express-session');
 const secrets = require("./secrets.json");
 
 
+
 let paramGame;
 let paramPlayer;
 let gameExist = null;
@@ -40,7 +41,7 @@ app.set('view engine', 'ejs');
 /* -------------------------------------------------------------------------- */
  
 
-app.use('/assets', express.static('public'))
+app.use('/assets', express.static('public'));
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 
@@ -177,9 +178,9 @@ app.post('/friend', async (req,res)=> {
     const user = await bdd.checkPlayer(friend); // on vérifie si il existe
     
     if(user == false){
-        req.flash('error', "ce joueur n'existe pas, veuillez re-esayer");
+        req.flash('error', "ce joueur n'existe pas, veuillez re-essayer");
     } else{
-        req.flash('success', "Joueur ajouté, au suivant : ");
+        req.flash('success', "Joueur ajouté ");
         await bdd.addFriend(user,req.session.user.username);
     }
     res.redirect('/friend');
@@ -188,8 +189,8 @@ app.post('/friend', async (req,res)=> {
 app.post('/delete-friend', async (req,res)=> {
 
     let del = req.body.del;
-    console.log(del);
-    
+    //console.log(del);
+
     req.flash('success', "Joueur suprimé");
     await bdd.delFriend(del,req.session.user.username);
 
