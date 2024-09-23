@@ -6,12 +6,8 @@
 <html>
 <head>
 
-    <link rel="stylesheet" type="text/css" href="/assets/test.css" />
-
+    <link rel="stylesheet" type="text/css" href="/assets/semantic/semantic.min.css" />
     <title> AshGames_Killer </title>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
 </head>
 
@@ -19,19 +15,22 @@
 
 <div class="menu">
 
-    <a href = "/" class = "header item" > Killer </a>
+    <div class="ui pointing menu">
+        <a href = "/" class="active item"> Killer </a>
 
-    <% if(data.user == undefined || data.user == ''){ %>
-        <a href= "/auth/login" class="header item"> Connection </a>
-        <a href= "/auth/register" class="header item"> Nouveau profil </a>
-    <%} else { %>
-        <a href= "/auth/disconnect" class="header item"> Disconnect </a>
-        <a href= "/friend" class="header item"> Friend </a>
-        <a href= "/game/create" class="header item"> Create Game </a>
-        <a href= "/game/load" class="header item"> Load Game </a>
-        <a href= "/game/historique" class="header item"> Historique</a>
-
-    <%}%>
+        <% if(data.user == undefined || data.user == ''){ %>
+            <a href= "/auth/login" class="item"> Login</a>
+        <%} else { %>
+            <a href= "/friend" class="item"> Friend </a>
+            <a href= "/game/create" class="item"> Create Game </a>
+            <a href= "/game/load" class="item"> Load Game </a>
+            <a href= "/game/historique" class="item"> Historique</a>
+            
+            <a href= "/auth/disconnect" class="right item"> Disconnect </a>
+        <%}%>
+    </div>
+      
+    <p></p>
 </div>
 
 <div class="ui main container"></div>

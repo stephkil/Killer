@@ -2,34 +2,21 @@
 <!--                                 header                                  -->
 <!-- ----------------------------------------------------------------------- -->
 
-<!DOCTYPE html>
-<html>
-<head>
 
-    <title> AshGames_Killer </title>
-
-    <link rel="stylesheet" href="/assets/semantic/semantic.min.css">
-
-    <style>
-
-        .main.container{
-            margin-top: 7em;
-        }
-
-    </style>
+    <div class="menu">
     
-</head>
-
-<body>
-
-<div class="ui fixed inverted menu">
-
-<a href = "/" class = "header item" > Killer </a>
-<a href= "/register" class="header item"> Nouveau profil </a>
-<a href= "/create" class="header item"> Create Game </a>
-<a href= "/load" class="header item"> Load Game </a>
-
-</div>
+        <div class="ui pointing menu">
+            <a href = "/" class="item"> Killer </a>
+            <a href= "/friend" class="active item"> Friend </a>
+            <a href= "/game/create" class="item"> Create Game </a>
+            <a href= "/game/load" class="item"> Load Game </a>
+            
+            <a href= "/game/historique" class="right item"> Historique</a>
+            <a href= "/auth/disconnect" class="right item"> Disconnect </a>
+        </div>
+          
+        <p></p>
+    </div>
 
 <div class="ui main container"></div>
 
@@ -60,3 +47,4 @@
 <% } %>
 
 </div>
+

@@ -6,8 +6,7 @@
 <html>
 <head>
   
-    <link rel="stylesheet" type="text/css" href="/assets/test.css" />
-   
+    <link rel="stylesheet" type="text/css" href="/assets/semantic/semantic.min.css" />
     <title> AshGames_Killer </title>
 
 </head>
@@ -16,10 +15,18 @@
 
 <div class="menu">
 
-    <a href = "/" class = "header item" > Killer </a>
-    <a href= "/auth/login" class="header item"> Connection </a>
-    <a href= "/auth/register" class="header item"> Nouveau profil </a>
+  <div class="ui pointing menu">
+    <a href = "/" class="item">
+      Killer
+    </a>
 
+    <a href= "/auth/login" class="active item">
+      Login
+    </a>
+
+  </div>
+  
+  <p></p>
 </div>
 
 <div class="ui main container">
@@ -46,22 +53,48 @@
         
     <% } %>
 </div>
-<!-- ----------------------------------------------------------------------- -->
-<!--                                login                                    -->
-<!-- ----------------------------------------------------------------------- -->
-
 
 <form action="/auth/login" method="post" class="form">
 
-    <div class="name">
-        <input type="text" name="loginPlayer" placeholder = "Username"></input>
-    </div>
+  <div class="ui placeholder segment">
+  
+    <div class="ui form">
 
-    <div class="pwd">
-        <input type="password" name="loginPlayer" placeholder = "Password"></input>
+      <div class="field">
+        <label>Username</label>
+        <div class="ui left icon input">
+          <i class="user icon"></i>
+          <input type="text" 
+          name="loginPlayer" 
+          placeholder = "Username">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <div class="ui left icon input">
+          <i class="lock icon"></i>
+          <input type="password" 
+          name="loginPlayer" 
+          placeholder = "Password">
+        </div>
+      </div>
+
+      <button type="submit" class="ui blue submit button">Login</button>
+          
+      <div class="ui horizontal divider">
+        Or
+      </div>
+
+      <div class="middle aligned column">
+        <div class="ui big button">
+          <i class="signup icon"></i>
+          <a href= "/auth/register"> Sign up </a>
+        </div>
+      </div>
+
     </div>
-    
-    <button type="submit" class="button">Envoyer</button>
+  </div>
 
 </form>
 
