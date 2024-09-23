@@ -173,14 +173,25 @@ app.get('/friend', async (req,res)=> {
 
 app.post('/friend', async (req,res)=> {
     let friend = req.body.nameOfFriend;
+  
     const user = await bdd.checkPlayer(friend); // on vérifie si il existe
-
+    
     if(user == false){
         req.flash('error', "ce joueur n'existe pas, veuillez re-esayer");
     } else{
         req.flash('success', "Joueur ajouté, au suivant : ");
         await bdd.addFriend(user,req.session.user.username);
     }
+    res.redirect('/friend');
+});
+
+app.post('/delete-friend', async (req,res)=> {
+
+    let del = req.body.del;
+    console.log(del);
+    
+    req.flash('success', "Joueur suprimé");
+    await bdd.delFriend(del,req.session.user.username);
 
     res.redirect('/friend');
 });

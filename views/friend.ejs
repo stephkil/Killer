@@ -62,25 +62,64 @@
 
 <form action="/friend" method="post" class="ui form">
 
-    <div class="field">
-        <label for="nameOfFriend"> Ajouter un ami </label>
-        <textarea name="nameOfFriend" id="name" style="height: 0px; width: 200px;"></textarea>
+    <div class="ui form">
+        <div class="field">
+            <label> Ajouter un nouvel ami </label>
+            <div class="ui left icon input">
+                <i class="user icon"></i>
+                <input type="text" 
+                name="nameOfFriend" 
+                placeholder = "Username">
+            </div>
+        </div>
+        
+        <button type="submit" class="ui blue labeled submit icon button">
+
+            <i class="icon edit"></i> Ajouter
+
+        </button>
     </div>
-
-    <button type="submit" class="ui blue labeled submit icon button">
-
-        <i class="icon edit"></i>Envoyer
-
-    </button>
-
-    <p></p>
-    <p></p>
-
-    Your friends : 
-    <p></p>
-        <% for (var i = 0; i < listOfFriend.length;  i++ ) { %>
-            <p>  - <%= listOfFriend[i] %> 
-        <% } %>
 </form>
+
+<p></p>
+<p></p>
+
+Your friends : 
+<p></p>
+
+<div class="ui link cards">
+    <% for (var i = 0; i < listOfFriend.length;  i++ ) { %>
+
+        <div class="card">
+            <div class="image">
+            <img src="">
+            </div>
+            <div class="content">
+            <div class="header"><%= listOfFriend[i] %></div>
+            <div class="meta">
+                <a>titre</a>
+            </div>
+            <div class="description">
+                iogerkjlnfjzvnlijazlkndzkjnflkjngljenflzla
+            </div>
+            </div>
+            <div class="extra content">
+            <span class="right floated">
+                <form action="/delete-friend" method="post">
+                    <input type="hidden" name="del" value="<%= listOfFriend[i] %>">
+                    <button type="submit" class="ui mini red labeled submit icon button">
+                        <i class="icon edit"></i>
+                        supprimer
+                    </button>
+                </form>
+            </span>
+            <span>
+                <i class="user icon"></i>
+                75 Games
+            </span>
+            </div>
+        </div>
+    <% } %>
+
 
 <% include ('footer') %>

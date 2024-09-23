@@ -310,6 +310,13 @@ class BDD{
         );
     }
 
+    async delFriend(nameToDel,name){
+        await this.collections.User.updateOne(
+            { username : name },
+            { $pull: { friends: nameToDel }},
+        );
+    }
+
     /* -------------------------------------------------------------------------- */
     /*                                 historique                                 */
     /* -------------------------------------------------------------------------- */
