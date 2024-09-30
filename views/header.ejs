@@ -1,50 +1,19 @@
 <!-- ----------------------------------------------------------------------- -->
 <!--                                 header                                  -->
 <!-- ----------------------------------------------------------------------- -->
-
-
-    <div class="menu">
+<!DOCTYPE html>
+<html>
     
-        <div class="ui pointing menu">
-            <a href = "/" class="item"> Killer </a>
-            <a href= "/friend" class="active item"> Friend </a>
-            <a href= "/game/create" class="item"> Create Game </a>
-            <a href= "/game/load" class="item"> Load Game </a>
-            
-            <a href= "/game/historique" class="right item"> Historique</a>
-            <a href= "/auth/disconnect" class="right item"> Disconnect </a>
-        </div>
-          
-        <p></p>
-    </div>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/assets/semantic/semantic.min.css" />
+    <link rel="stylesheet" href="/assets/menu.css">
+    <title> AshGames_Killer </title>
 
-<div class="ui main container"></div>
+</head>
 
-<div class="ui comments">
-    
-<!-- ----------------------------------------------------------------------- -->
-<!--                              Message flash                              -->
-<!-- ----------------------------------------------------------------------- -->
+<body>
 
-<% if(locals.flash && locals.flash.error){ %>
+<div class="ui main container">
 
-    <div class="ui negative message">
-
-        <%= flash.error %>
-
-    </div>
-
-<% } %>
-
-<% if(locals.flash && locals.flash.success){ %>
-
-    <div class="ui positive message">
-    
-        <%= flash.success %>
-    
-    </div>
-    
-<% } %>
-
-</div>
 

@@ -2,59 +2,11 @@
 <!--                                 header                                  -->
 <!-- ----------------------------------------------------------------------- -->
 
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="/assets/semantic/semantic.min.css" />
-        <title> AshGames_Killer </title>
-    
-    </head>
-    
-    <body>
-    
-    <div class="menu">
-    
-      <div class="ui pointing menu">
-        <a href = "/" class="item">
-          Killer
-        </a>
-    
-        <a href= "/auth/login" class="active item">
-          Login
-        </a>
-      </div>
-      
-      <p></p>
-    </div>
-
-<div class="ui main container">
+<%- include('../header.ejs') %>
 
 <h1> Register </h1>
 
-<!-- ----------------------------------------------------------------------- -->
-<!--                              Message flash                              -->
-<!-- ----------------------------------------------------------------------- -->
-
-<% if(locals.flash && locals.flash.error){ %>
-
-    <div class="negative">
-
-        <%= flash.error %>
-
-    </div>
-
-<% } %>
-
-<% if(locals.flash && locals.flash.success){ %>
-
-    <div class="positive">
-    
-        <%= flash.success %>
-    
-    </div>
-    
-<% } %>
+<%- include('../flash.ejs') %>
 
 <!-- ----------------------------------------------------------------------- -->
 <!--                                register                                 -->
@@ -75,4 +27,13 @@
 
     </form>
 
+    <div class="bottom-menu">
+    
+        <div class="ui menu">
+            <a href = "/" class="item">  Killer </a>
+            <a href= "/auth/login" class="active item"> <img src="/assets/picture/connexion.png"/></a>
+          </div>
+        <p></p>
+    </div>
+      
     <% include ('../footer.ejs') %>

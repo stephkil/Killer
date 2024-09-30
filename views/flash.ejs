@@ -1,0 +1,23 @@
+<!-- ----------------------------------------------------------------------- -->
+<!--                              Message flash                              -->
+<!-- ----------------------------------------------------------------------- -->
+
+<div class = "flash">
+    <% if(locals.flash && locals.flash.error){ %>
+
+        <div type="text" class="negative">
+            <%= flash.error %>
+        </div>
+
+    <% } %>
+
+    <% if(locals.flash && locals.flash.success){ %>
+
+        <div class="positive">
+            <%= flash.success %>
+        </div>
+        
+    <% } %>
+</div>
+
+<p></p>

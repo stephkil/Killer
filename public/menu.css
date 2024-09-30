@@ -1,0 +1,16 @@
+      
+            .bottom-menu {
+                position: sticky;
+                bottom: 0;
+                margin: -2%;
+                width: 50%;
+                background-color: #ffffff;
+                display: flex;
+                justify-content: space-around;
+            }
+            
+            .ui.menu {
+                display: flex; /* Utilise flexbox pour l'alignement */
+                justify-content: space-around; /* Répartit les éléments uniformément */
+            }
+        

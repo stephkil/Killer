@@ -2,60 +2,11 @@
 <!--                                 header                                  -->
 <!-- ----------------------------------------------------------------------- -->
 
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title> AshGames_Killer </title>
-        <link rel="stylesheet" href="/assets/semantic/semantic.min.css">
-        
-    </head>
-    
-    <body>
-    
-        <div class="menu">
-    
-            <div class="ui pointing menu">
-                <a href = "/" class="item"> Killer </a>
-                <a href= "/friend" class="item"> Friend </a>
-                <a href= "/game/create" class="item"> Create Game </a>
-                <a href= "/game/load" class="item"> Load Game </a>
-                <a class="active item"> <%= game.name %> </a>
-                <a href= "/game/historique" class="item"> Historique</a>
-
-                <a href= "../auth/disconnect" class="right item"> Disconnect </a>
-            </div>
-              
-            <p></p>
-        </div>
-
-<div class="ui main container">
+<%- include('../header.ejs') %>
 
 <h1> Display End of Game </h1>
 
-<!-- ----------------------------------------------------------------------- -->
-<!--                              Message flash                              -->
-<!-- ----------------------------------------------------------------------- -->
-
-<% if(locals.flash && locals.flash.error){ %>
-
-    <div class="ui negative message">
-
-        <%= flash.error %>
-
-    </div>
-
-<% } %>
-
-<% if(locals.flash && locals.flash.success){ %>
-
-    <div class="ui positive message">
-    
-        <%= flash.success %>
-    
-    </div>
-    
-<% } %>
+<%- include('../flash.ejs') %>
 
 <!-- ----------------------------------------------------------------------- -->
 <!--                                Affi game                                -->
@@ -85,4 +36,6 @@
 
     </div>
 
-    <% include ('../footer.ejs') %>
+    <%- include ('../menu.ejs') %>
+
+    <%- include ('../footer.ejs') %>
