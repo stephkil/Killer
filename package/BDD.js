@@ -207,11 +207,20 @@ class BDD{
         for(let i=0; i < game.nbPlayer; i++){
             tab[i] = (game.TableInGame[i].name)
         }
-                
+        
+        const maintenant = new Date();
+        const jour = maintenant.getDate(); 
+        const mois = maintenant.getMonth() + 1;
+        const annee = maintenant.getFullYear(); 
+        const heure = maintenant.getHours(); 
+        const minute = maintenant.getMinutes();
+
+        const date = jour + "-" + mois + "-" + annee + "-" + heure + "-" + minute;
+
         await this.collections.Games.insertOne({
             name : game.name,
             nb_Player : game.nbPlayer,
-            date_debut : new Date(),
+            date_debut : date,
             date_fin : game.end_date,
             winner : game.winner,
             allName : tab

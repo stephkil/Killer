@@ -1,65 +1,67 @@
-<!-- ----------------------------------------------------------------------- -->
-<!--                                 header                                  -->
-<!-- ----------------------------------------------------------------------- -->
-
 <%- include('../header.ejs') %>
 
 <h1> Display Game </h1>
 
 <%- include('../flash.ejs') %>
 
-<!-- ----------------------------------------------------------------------- -->
-<!--                                Affi game                                -->
-<!-- ----------------------------------------------------------------------- -->
-
-
-
-    <div class="ui comments">
+<div class="ui comments">
     
-        <h3 class="ui dividing header"> Information Game </h3>
+    <h3 class="ui dividing header"> Information Game </h3>
 
-        <div class="content">
+    <div class="content">
 
-            <p> <%= "Nom de la partie : " + game.name %> </p> 
-            <p> <%= "Durée de la partie : " + game.end_date + " h" %> </p> 
-            <p> <%= "Nombre de Joueurs : " + game.nbPlayer %> </p> 
-
-            <p></p>
+        <p> <%= "Nom de la partie : " + game.name %> </p> 
+        <p> <%= "Fin de la partie : " + game.end_date %> </p> 
+        <p> <%= "Nombre de Joueurs : " + game.nbPlayer %> </p> 
      
-            
-            <!-- Dev
-            <% for (var i = 0; i < game.nbPlayer;  i++ ) { %>
-                <p>  ID :  <%=game.TableInGame[i].idPlayer%> - <%=game.TableInGame[i].name%> - Mission : <%=game.TableInGame[i].mission%> - Kill : <%=game.TableInGame[i].nbKill %> - Status : <%=game.TableInGame[i].status%> - Target : <%=game.TableInGame[i].target%>  
+        <div class="ui two column grid">
+            <% for (var i = 0; i < game.nbPlayer; i++) { %>
+                <div class="column">
+                    <div class="ui card">
+                        <div class="content">
+                            
+                            <% if(game.TableInGame[i].status == "life"){ %>
+                                <img class="right floated mini ui image" src="/assets/picture/life.png">
+                            <% } else { %>
+                                <img src="/assets/picture/dead.png" alt="Mort">
+                            <% } %>
+                        
+                        
+                            <div class="header">
+                                <%= game.TableInGame[i].name %>
+                            </div>
+                            <div class="meta">
+                                sub Name
+                            </div>
+                            <div class="description">
+                                Kill : <%= game.TableInGame[i].nbKill %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             <% } %>
-            -->
-
-            <h3> You </h3>
-                <p>  <%=game.TableInGame[mainPlayer].name%> - Kill : <%=game.TableInGame[mainPlayer].nbKill %> - Status : <%=game.TableInGame[mainPlayer].status%> 
-
-            <h3> Your Target </h3>
-                <p>   <%=game.TableInGame[targetPlayer].name%> - Mission : <%=game.TableInGame[targetPlayer].mission%> 
-
         </div>
+
+        <h3> You </h3>
+        <p><%= game.TableInGame[mainPlayer].name %> - Kill : <%= game.TableInGame[mainPlayer].nbKill %> - Status : <%= game.TableInGame[mainPlayer].status %></p>
+
+        <h3> Your Target </h3>
+        <p><%= game.TableInGame[targetPlayer].name %> - Mission : <%= game.TableInGame[targetPlayer].mission %></p>
 
     </div>
 
+</div>
+
+<form action="/game/display" method="post" class="ui form">
+    <div class="field">
+        <label for="mort">Quel Joueur a été tué</label>
+        <textarea name="mort" id="mort" style="height: 0px; width: 200px;"></textarea>
+    </div>
     
-    <form action="/game/display" method="post" class="ui form">
+    <button type="submit" class="ui blue labeled submit icon button">
+        <i class="icon edit"></i>Envoyer
+    </button>
+</form>
 
-        <div class="field">
-            <label for="mort">Quel Joueur a été tué</label>
-            <textarea name="mort" id="mort" style="height: 0px; width: 200px;"></textarea>
-        </div>
-        
-        <button type="submit" class="ui blue labeled submit icon button">
-
-            <i class="icon edit"></i>Envoyer
-
-        </button>
-
-    </form>
-    
-
-<%- include ('../menu.ejs') %>
-
-<%- include ('../footer.ejs') %>
+<%- include('../menu.ejs') %>
+<%- include('../footer.ejs') %>

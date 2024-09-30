@@ -18,7 +18,7 @@
 }
 
 .card {
-    width: 200%; /* Deux cartes par ligne avec un espace */
+    width: 100%; /* Deux cartes par ligne avec un espace */
     margin: 15px; /* Marge autour de chaque carte */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Ombre pour les cartes */
     border-radius: 5px; /* Coins arrondis */

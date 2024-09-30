@@ -16,14 +16,18 @@
         
         Liste des Parties en cours :
 
-        <p></p>
+        <div class="ui cards">
+            <div class="card">
+                <% for (var i = 0; i < name.length; i++) { %>
+                    <button type="submit" class="ui blue labeled submit icon button game-button" name="gameName" value="<%= name[i] %>">
+                        <i class="icon edit"></i> <%= name[i] %> 
+                    </button>
+                    
+                    <p></p>
 
-        <% for (var i = 0; i < name.length; i++) { %>
-            <button type="submit" class="ui blue labeled submit icon button game-button" name="gameName" value="<%= name[i] %>">
-                <i class="icon edit"></i> <%= name[i] %> 
-            </button>
-        <% } %>
-
+                <% } %>
+            </div>
+        </div>
     </form>
 
 

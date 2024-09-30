@@ -13,23 +13,62 @@
 <!-- ----------------------------------------------------------------------- -->
     
     <form action="/game/create" method="post" class="ui form">
+      <div class="ui form">
+
+        <h3> Nom de la Partie </h3>
 
         <div class="field">
-            <label for="paramGameName">Nom de la Partie</label>
-            <textarea name="paramGame" id="name" style="height: 0px; width: 200px;"></textarea>
+            <div class="ui left icon input">
+              <input type="text" 
+              name="paramGame" 
+              placeholder = "name">
+            </div>
+        </div>
+
+        <h3> Date de fin </h3>
+
+        <div class="field">
+            <div class="ui left icon input">
+              <input type="text" 
+              name="paramDate" 
+              placeholder = "day">
+            </div>
+        </div>
+        <div class="field">
+            <div class="ui left icon input">
+              <input type="text" 
+              name="paramDate" 
+              placeholder = "month">
+            </div>
+        </div>
+        <div class="field">
+            <div class="ui left icon input">
+              <input type="text" 
+              name="paramDate" 
+              placeholder = "year">
+            </div>
         </div>
 
         <div class="field">
-            <label for="paramGameTps">Temps Partie</label>
-            <textarea name="paramGame" id="tps" style="height: 0px; width: 200px;"></textarea>
+            <div class="ui left icon input">
+              <input type="text" 
+              name="paramDate" 
+              placeholder = "hour">
+            </div>
+        </div>
+        <div class="field">
+            <div class="ui left icon input">
+              <input type="text" 
+              name="paramDate" 
+              placeholder = "min">
+            </div>
         </div>
 
-        <button type="submit" class="ui blue labeled submit icon button">
+        <p></p>
 
-            <i class="icon edit"></i>Envoyer
-       
-        </button>
+        <button type="submit" class="ui blue submit button"> Suivant </button>
 
+      </div>
     </form>
 
 

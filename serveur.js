@@ -240,12 +240,13 @@ app.get('/game/create', (req,res) =>{
 });
 
 app.post('/game/create', async (req,res)=>{
-    if(req.body.paramGame[0] === '' || req.body.paramGame[1] === '' || req.body.paramGame[2] === '' ){
+    console.log(req.body);
+
+    if(req.body.paramGame == '' || req.body.paramDate[0] === '' || req.body.paramDate[1] === '' || req.body.paramDate[2] === '' || req.body.paramDate[3] === '' || req.body.paramDate[4] === '' ){
         req.flash('error', "Vous n'avez pas tous bien renseigné  :(");
         res.redirect('/game/create');
     } else {
-
-        game.name = req.body.paramGame[0];
+        game.name = req.body.paramGame;
 
         gameExist = await bdd.gameExist(game);
  
@@ -253,10 +254,28 @@ app.post('/game/create', async (req,res)=>{
             req.flash('error', "Cette partie existe déjà  :(");
             res.redirect('/game/create');
         } else {
-            req.flash('success', "Cette partie peut être crée. Maintenant renseignons les joueurs :)");
-            game.name = req.body.paramGame[0];
-            game.end_date = req.body.paramGame[1];
+            req.flash('success', "Cette partie peut être crée :)");
+            game.name = req.body.paramGame;
             game.nbPlayer++;
+            
+            gameDay = req.body.paramDate[0];
+            if(gameDay.length==1){
+                gameDay = "0" + gameDay;
+            }
+            gameMonth = req.body.paramDate[1];
+            gameYear = req.body.paramDate[2];
+
+            gameHour = req.body.paramDate[3];
+            if(gameHour.length==1){
+                gameHour = "0" + gameHour;
+            }
+            gameMin = req.body.paramDate[4];
+            if(gameMin.length==1){
+                gameMin = "0" + gameMin;
+            }
+            
+            gameEnd = gameDay + "-" + gameMonth + "-" + gameYear + "-" +  gameHour + "-" + gameMin;
+            game.end_date = gameEnd;
 
             const player = new Player();
             player.name = req.session.user.username;
@@ -271,12 +290,14 @@ app.post('/game/create', async (req,res)=>{
         }
     };
 })
- 
+
+
 /* -------------------------------------------------------------------------- */
 /*                                    init                                    */
 /* -------------------------------------------------------------------------- */
 
 app.get('/game/init', async(req,res)=>{
+    console.log(game.TableOfPlayers);
     if (req.session.user && (req.session.cookie.expires > new Date())) {
         var friend =  await bdd.getFriend(req.session.user.username);
         res.render('game/init', {game: game, listOfFriend : friend});
