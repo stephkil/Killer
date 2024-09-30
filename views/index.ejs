@@ -4,9 +4,86 @@
 
 <%- include('./header.ejs') %>
 
-<h1>  Home Page </h1>
+<h1>  Killer's Legacy - Règles du Jeu </h1>
 
 <%- include ('./flash.ejs') %>
+
+
+<div class="container">
+    
+    <h2>Concept</h2>
+    <p>
+        <strong>Le jeu du Killer</strong> est un jeu de stratégie et de ruse où chaque joueur doit éliminer une cible désignée tout en évitant d'être éliminé lui-même.
+    </p>
+
+    <h2>Comment jouer</h2>
+    <ol>
+        <li>
+            <strong>Distribution des cibles :</strong>
+            <p>
+                Chaque joueur reçoit, de manière aléatoire et secrète, le nom d'un autre joueur à éliminer.
+            </p>
+        </li>
+        <li>
+            <strong>Éliminations :</strong>
+            <p>
+                Les joueurs doivent "tuer" leur cible en utilisant des gestes, des messages ou des interactions. 
+                Lorsqu'un joueur élimine sa cible, il reçoit immédiatement une nouvelle cible à éliminer.
+            </p>
+        </li>
+        <li>
+            <strong>Stratégie :</strong>
+            <p>
+                Utilisez la discrétion et la stratégie pour éviter d'être repéré par les autres joueurs tout en tentant d'éliminer votre cible.
+            </p>
+        </li>
+        <li>
+            <strong>Victoire :</strong>
+            <p>
+                3 types de victoires :
+            </p>
+
+            <ol>
+                Vous êtes encore en vie, félicitation vous êtes un <strong>Survivant</strong>
+            </ol>
+
+            <p></p>
+
+            <ol>
+                Vous avez le plus grand nombre de kill, alors vous êtes un <strong>Killer</strong>
+            </ol>
+
+            <ol>
+                Il s'agit du titre le plus prestigieux ;)
+            </ol>
+
+            <p></p>
+
+            <ol>
+                Vous êtes encore en vie et vous avez le plus grand nombre de kill, vous êtes désormais le <strong>Killer Suprême</strong>
+            </ol>
+            
+            <p></p>
+
+            <p>
+                Si vous n'êtes pas top Killer de la partie, mais que vous êtes top killer des vivants je vous accorde le titre de <strong>Petit Killer</strong>
+            </p>
+
+        </li>
+    </ol>
+
+    <h2>Caractéristiques</h2>
+    <ul>
+        <li><strong>Jouabilité en temps réel :</strong> Les éliminations et interactions se font instantanément.</li>
+        <li><strong>Jeux IRL :</strong> Communiquez avec les autres joueurs pour comploter ou bluffer.</li>
+    </ul>
+
+    <h2>Consignes de Sécurité</h2>
+    <p>
+        Respectez les autres joueurs et jouez dans un esprit de camaraderie.
+    </p>
+</div>
+
 
 <% if(data.user == undefined || data.user == ''){ %>
     <%- include('./menu_off.ejs') %>

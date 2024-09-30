@@ -2,11 +2,11 @@
     .bottom-menu {
         position: fixed;
         bottom: 2%;
-        margin: -2%;
-        width: 50%;
+        margin: -3%;
+        width: 100%;
         background-color: #ffffff;
         display: flex;
-        justify-content: space-around;
+        justify-content: center;
     }
     
     .ui.menu {
