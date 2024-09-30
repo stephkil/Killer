@@ -4,35 +4,10 @@
 
 <%- include('./header.ejs') %>
 
-    <style>
-        .image-container {
-            width: 33%; /* L'image s'adapte à la largeur de la carte */
-            overflow: hidden; /* Cache les parties dépassantes de l'image */
-        }
-        
-        .image-container img {
-            width: 95%; /* L'image remplit la largeur du conteneur */
-            height: 95%; /* Remplit la hauteur du conteneur */
-            object-fit: cover; /* Recadre l'image pour qu'elle remplisse l'espace sans déformation */
-        }
-
-        .ui.cards {
-            display: flex; /* Utilise Flexbox pour aligner les cartes */
-            flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
-        }
-        
-        .card {
-            width: 200%; /* Deux cartes par ligne avec un espace */
-            margin: 15px; /* Marge autour de chaque carte */
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Ombre pour les cartes */
-            border-radius: 5px; /* Coins arrondis */
-            overflow: hidden; /* Évite le débordement de contenu */
-        }
-    </style>
-
 <h1> Friends </h1>
 
 <%- include('./flash.ejs') %>
+
 
 <!-- ----------------------------------------------------------------------- -->
 <!--                                Init                                     -->
