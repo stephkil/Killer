@@ -9,8 +9,6 @@ let bodyParser = require('body-parser');
 const session = require('express-session');
 const secrets = require("./secrets.json");
 
-
-
 let paramGame;
 let paramPlayer;
 let gameExist = null;
@@ -103,7 +101,7 @@ app.post('/auth/login', async (req,res)=>{
         }
 
         else if(status === true){
-            req.flash('success', "Salut bonne partie à toi  :)");
+            //req.flash('success', "Salut bonne partie à toi  :)");
             
             const userData = {
                 username : playerName

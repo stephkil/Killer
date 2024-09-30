@@ -1,3 +1,4 @@
+
 .image-container {
     width: 33%; /* L'image s'adapte à la largeur de la carte */
     overflow: hidden; /* Cache les parties dépassantes de l'image */
@@ -13,6 +14,7 @@
     display: flex; /* Utilise Flexbox pour aligner les cartes */
     flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
     justify-content: center;
+    margin : 0;
 }
 
 .card {

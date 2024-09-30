@@ -12,34 +12,30 @@
 <!--                                Affi Histo                               -->
 <!-- ----------------------------------------------------------------------- -->
 
-<% for(var i=0; i<games.length-1;i++){%>
+<div class="ui cards">
+    <% for(var i=0; i<games.length-1;i++){%>
 
-    <div class="ui comments">
-        
-        <h3 class="ui dividing header"> Game : <%=games[i].name %> </h3>
+        <div class="card">
+            
+            <h3 class="ui dividing header"> Game : <%=games[i].name %> </h3>
 
-        <div class="content">
+                <p> <%= "Début de la partie : " + games[i].date_debut %> </p> 
+                <p> <%= "Durée de la partie : " + games[i].date_fin + " h" %> </p> 
+                <p> <%= "Nombre de Joueurs : " + games[i].nb_Player %> </p> 
+                <p> <%= "Gagnant : " + games[i].winner %> </p>
 
-            <p> <%= "Début de la partie : " + games[i].date_debut %> </p> 
-            <p> <%= "Fin de la partie : " + games[i].date_fin  %> </p> 
-            <p> <%= "Nombre de Joueurs : " + games[i].nb_Player %> </p> 
+            <div class="ui dividing content">
 
-            <p></p>
-            <p> <%= "Gagnant : " + games[i].winner %> </p> 
-            <p></p>
-
-            <% for(var j=0; j<games[i].nb_Player; j++ ){ %>
-                <p> <%="=> "%> <%=games[i].allName[j]%> - Task : <%=games[i].allTask[j]%> - Status : <%=games[i].allStatus[j]%> - Kill : <%=games[i].allKill[j]%> </p>
-            <%}%>
-
-            <p></p>
-            <p></p>
-     
+                <% for(var j=0; j<games[i].nb_Player; j++ ){ %>
+                    <li> <%=games[i].allName[j]%> : <%=games[i].allStatus[j]%> - Kill : <%=games[i].allKill[j]%> </li>
+                    <p>  -> Task : <%=games[i].allTask[j]%></p>
+                <%}%>
+                <p></p>
+                <p></p>
+                </div>
         </div>
-
-    </div>
-
-<%}%>
+    <%}%>
+</div>
 
 <%- include ('../menu.ejs') %>
 
