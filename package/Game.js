@@ -7,6 +7,7 @@ class Game {
         this.TableOfPlayers = [];
         this.TableInGame = [];
         this.nbPlayer = 0;
+        this.start_date = null;
         this.end_date = null;
         this.winner = undefined;
     }
@@ -16,6 +17,7 @@ class Game {
         this.TableOfPlayers = [];
         this.TableInGame = [];
         this.nbPlayer = null;
+        this.start_date = null;
         this.end_date = null;
         this.winner = undefined;
     }

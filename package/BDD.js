@@ -207,20 +207,11 @@ class BDD{
         for(let i=0; i < game.nbPlayer; i++){
             tab[i] = (game.TableInGame[i].name)
         }
-        
-        const maintenant = new Date();
-        const jour = maintenant.getDate(); 
-        const mois = maintenant.getMonth() + 1;
-        const annee = maintenant.getFullYear(); 
-        const heure = maintenant.getHours(); 
-        const minute = maintenant.getMinutes();
-
-        const date = jour + "-" + mois + "-" + annee + "-" + heure + "-" + minute;
 
         await this.collections.Games.insertOne({
             name : game.name,
             nb_Player : game.nbPlayer,
-            date_debut : date,
+            date_debut : new Date(),
             date_fin : game.end_date,
             winner : game.winner,
             allName : tab
@@ -232,13 +223,14 @@ class BDD{
 
         if(result) {
             if(result.winner == null){
-                console.log("partie trouvé");
+                //console.log("partie trouvé");
                 game.nbPlayer = result.nb_Player;
+                game.start_date = result.date_debut;
                 game.end_date = result.date_fin;
                 game.winner = result.winner;
                 return true;
             } else {
-                console.log("partie trouvé mais déjà finis");
+                //console.log("partie trouvé mais déjà finis");
                 return false;
             }  
         }

@@ -24,29 +24,41 @@
 
     <p></p>
     
-    <div class="ui link cards">
+    <div class="ui two column grid">
         <% for (var i = 0; i < listOfFriend.length;  i++ ) { %>
-    
-            <div class="card">
-                <div class="image">
-                <img src="">
-                </div>
-                <div class="content">
-                <div class="header"><%= listOfFriend[i] %></div>
-                <div class="meta">
-                    <a>titre</a>
-                </div>
-                </div>
-                <div class="extra content">
-                    <input type="hidden" name="del" value="<%= listOfFriend[i] %>">
-                    <button type="submit" class="ui mini blue labeled submit icon button" name="answer" value="<%= listOfFriend[i] %>">
-                        <i class="icon edit"></i>
-                        Ajouter
-                    </button>
+            
+            <% var friend = listOfFriend[i]; %>
+            <% var alreadyInGame = game.TableOfPlayers.some(player => player.name === friend);%>
+            
+            <div class="column">
+                <div class="ui card">
+                    <div class="content">
+                        <div class="header">
+                            <%= listOfFriend[i] %>
+                        </div>
+
+                        <div class="meta">
+                            <a>sub name</a>
+                        </div>
+                    </div>
+                    
+                    <div class="extra content">
+                        <input type="hidden" name="del" value="<%= listOfFriend[i] %>">
+                        
+                        <% if(alreadyInGame){ %>
+                            Déja dans la partie
+                        <% } else { %>
+                            <button type="submit" class="ui mini blue labeled submit icon button" name="answer" value="<%= listOfFriend[i] %>">
+                                <i class="icon edit"></i>
+                                Ajouter
+                            </button>
+                        <% } %>
+                    </div>
                 </div>
             </div>
         <% } %>
     </div>
+
     <p></p>
         
     <button type="submit" class="ui green labeled submit icon button" name="answer" value='start'>

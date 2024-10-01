@@ -1,67 +1,193 @@
 <%- include('../header.ejs') %>
 
-<h1> Display Game </h1>
+<h1> <%= "Nom partie: " + game.name %> </h1> 
 
 <%- include('../flash.ejs') %>
 
+<% 
+  const rawDate = game.end_date;
+
+  const date = new Date(rawDate);
+  
+  const options = {
+    weekday: undefined,
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  };
+  const formattedDate = date.toLocaleDateString('fr-FR', options);
+%>
+
+
 <div class="ui comments">
     
-    <h3 class="ui dividing header"> Information Game </h3>
-
     <div class="content">
 
-        <p> <%= "Nom de la partie : " + game.name %> </p> 
-        <p> <%= "Fin de la partie : " + game.end_date %> </p> 
-        <p> <%= "Nombre de Joueurs : " + game.nbPlayer %> </p> 
-     
+        <h3 class="ui dividing header"> Progression </h3>
+
+        <div class="ui indicating progress" id="progressBar" data-value="0" data-total="100">
+            
+            <% if ((remaining < 10) && (remaining >= 0)) { %> 
+                <div class="bar" style="width: 0%;"></div>
+
+            <% } else if ((remaining < 20) && (remaining >= 10)) { %> 
+                <div class="bar" style="width: 10%;"></div>
+
+            <% } else if ((remaining < 30) && (remaining >= 20)) { %> 
+                <div class="bar" style="width: 20%;"></div>
+
+            <% } else if ((remaining < 40) && (remaining >= 30)) { %> 
+                <div class="bar" style="width: 30%;"></div>
+
+            <% } else if ((remaining < 50) && (remaining >= 40)) { %> 
+                <div class="bar" style="width: 40%;"></div>
+
+            <% } else if ((remaining < 60) && (remaining >= 50)) { %> 
+                <div class="bar" style="width: 50%;"></div>
+
+            <% } else if ((remaining < 70) && (remaining >= 60)) { %> 
+                <div class="bar" style="width: 60%;"></div>
+
+            <% } else if ((remaining < 80) && (remaining >= 70)) { %> 
+                <div class="bar" style="width: 70%;"></div>
+
+            <% } else if ((remaining < 90) && (remaining >= 80)) { %> 
+                <div class="bar" style="width: 80%;"></div>
+
+            <% } else if ((remaining < 100) && (remaining >= 90)) { %> 
+                <div class="bar" style="width: 90%;"></div>
+
+            <% } else if (remaining >= 100){ %> 
+                <div class="bar" style="width: 10%;"></div>
+            <% } %>
+    
+
+            <div class="label" id="progressLabel"> Fin de la partie le : <%= formattedDate%></div>
+        </div>
+        
+
+        <h3 class="ui dividing header"> Participants </h3>
+
         <div class="ui two column grid">
             <% for (var i = 0; i < game.nbPlayer; i++) { %>
                 <div class="column">
-                    <div class="ui card">
-                        <div class="content">
+
+                    <% if(TableShuffle[i].name == username){%>
+                        <div class="ui card" style="border: 2px solid black;">
+                    <% }else{ %>
+                        <div class="ui card">
+                    <% } %>
+                            <div class="content">
+                                
+                                <% if(TableShuffle[i].status == "life"){ %>
+                                    <img class="right floated mini ui image" src="/assets/picture/life.png">
+                                <% } else { %>
+                                    <img class="right floated mini ui image" src="/assets/picture/dead.png">
+                                <% } %>
                             
-                            <% if(game.TableInGame[i].status == "life"){ %>
-                                <img class="right floated mini ui image" src="/assets/picture/life.png">
-                            <% } else { %>
-                                <img class="right floated mini ui image" src="/assets/picture/dead.png">
-                            <% } %>
-                        
-                        
-                            <div class="header">
-                                <%= game.TableInGame[i].name %>
-                            </div>
-                            <div class="meta">
-                                sub Name
-                            </div>
-                            <div class="description">
-                                Kill : <%= game.TableInGame[i].nbKill %>
+                            
+                                <div class="header">
+                                    <%= TableShuffle[i].name %>
+                                </div>
+                                <div class="meta">
+                                    sub Name
+                                </div>
+                                <div class="description">
+                                    Kill : <%= TableShuffle[i].nbKill %>
+                                </div>
+
                             </div>
                         </div>
-                    </div>
                 </div>
             <% } %>
         </div>
 
-        <h3> You </h3>
-        <p><%= game.TableInGame[mainPlayer].name %> - Kill : <%= game.TableInGame[mainPlayer].nbKill %> - Status : <%= game.TableInGame[mainPlayer].status %></p>
+        <h3 class="ui dividing header"> Votre Mission </h3> 
 
-        <h3> Your Target </h3>
-        <p><%= game.TableInGame[targetPlayer].name %> - Mission : <%= game.TableInGame[targetPlayer].mission %></p>
+        <div class="ui card reveal">
+    <div class="content">
+        <div class="ui small fade reveal image">
+            <img class="visible content" src="/assets/picture/couteau.jpg" alt="Couteau">
+        </div>
+        
+        <div class="header">
+            <%= game.TableInGame[targetPlayer].name %>
+        </div>
+        <div class="meta">
+            sub Name
+        </div>
 
+        <div class="description">
+            <%= game.TableInGame[targetPlayer].mission %>
+        </div>
     </div>
-
 </div>
 
-<form action="/game/display" method="post" class="ui form">
-    <div class="field">
-        <label for="mort">Quel Joueur a été tué</label>
-        <textarea name="mort" id="mort" style="height: 0px; width: 200px;"></textarea>
+        <p style="text-align: center;"><small>Click on the Knife to reveal</small></p>
+
     </div>
-    
-    <button type="submit" class="ui blue labeled submit icon button">
-        <i class="icon edit"></i>Envoyer
-    </button>
+</div>
+
+
+<!-- Formulaire -->
+<form id="confirmationForm" class="ui form">
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <button type="button" class="ui dark red labeled submit icon button">
+            <i class="bullseye icon"></i>
+            J'ai tué ma cible
+        </button>
+    </div>
 </form>
+
+<!-- Modal -->
+<div class="ui basic modal" id="myModal">
+    <div class="ui icon header">
+        <img src="/assets/picture/dead-blanc.png">
+        Confirmation
+    </div>
+    <div class="content">
+        <p>Êtes-vous sûr de vouloir confirmer que tu as tué ta cible ?</p>
+        <p>Cette action sera irreversible !</p>
+        <p>Je t'invite à voir avec lui/elle avant de confirmer cette élimination</p>
+    </div>
+    <div class="actions">
+        <div class="ui red basic cancel inverted button">
+            <i class="remove icon"></i>
+            Annuler
+        </div>
+        <div class="ui green ok inverted button">
+            <i class="checkmark icon"></i>
+            Éliminer
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Écouteur d'événement pour le bouton
+        $('.ui.dark.red.labeled.submit.icon.button').on('click', function() {
+            // Affiche la modale
+            $('#myModal').modal('show');
+        });
+
+        // Action pour le bouton "Non"
+        $('.cancel.button').on('click', function() {
+            $('#myModal').modal('hide');
+        });
+
+        // Action pour le bouton "Oui"
+        $('.ok.button').on('click', function() {
+            // Soumettre le formulaire
+            $('#confirmationForm').submit();
+        });
+    });
+</script>
+
 
 <%- include('../menu.ejs') %>
 <%- include('../footer.ejs') %>

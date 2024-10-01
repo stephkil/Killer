@@ -242,7 +242,7 @@ app.get('/game/create', (req,res) =>{
 app.post('/game/create', async (req,res)=>{
     console.log(req.body);
 
-    if(req.body.paramGame == '' || req.body.paramDate[0] === '' || req.body.paramDate[1] === '' || req.body.paramDate[2] === '' || req.body.paramDate[3] === '' || req.body.paramDate[4] === '' ){
+    if(req.body.paramGame == '' || req.body.paramDate === ''){
         req.flash('error', "Vous n'avez pas tous bien renseigné  :(");
         res.redirect('/game/create');
     } else {
@@ -258,24 +258,7 @@ app.post('/game/create', async (req,res)=>{
             game.name = req.body.paramGame;
             game.nbPlayer++;
             
-            gameDay = req.body.paramDate[0];
-            if(gameDay.length==1){
-                gameDay = "0" + gameDay;
-            }
-            gameMonth = req.body.paramDate[1];
-            gameYear = req.body.paramDate[2];
-
-            gameHour = req.body.paramDate[3];
-            if(gameHour.length==1){
-                gameHour = "0" + gameHour;
-            }
-            gameMin = req.body.paramDate[4];
-            if(gameMin.length==1){
-                gameMin = "0" + gameMin;
-            }
-            
-            gameEnd = gameDay + "-" + gameMonth + "-" + gameYear + "-" +  gameHour + "-" + gameMin;
-            game.end_date = gameEnd;
+            game.end_date = req.body.paramDate;
 
             const player = new Player();
             player.name = req.session.user.username;
@@ -362,10 +345,38 @@ app.get('/game/display', async (req,res) =>{
                 if (gameRunning == false){
                     res.redirect('/game/endScreen');
                 } else {
+
+                    const now = new Date(); // Date actuelle
+                    const startDate = new Date(game.start_date); // Date de début du jeu
+                    const endDate = new Date(game.end_date); // Date de fin du jeu
+
+                    const totalMillisecondsInGame = endDate - startDate; // Durée totale du jeu en millisecondes
+                    const millisecondsElapsed = now - startDate; // Millisecondes écoulées depuis le début du jeu
+
+                    const progression = (millisecondsElapsed / totalMillisecondsInGame) * 100;
+                    
+                    console.log(now);
+                    console.log(startDate);
+                    console.log(endDate);
+
+                    console.log(progression);
+
+                    let TableShuffle = shuffle([...game.TableInGame]);
+                    
                     data[1] = await bdd.mainPlayerDisplay(game.name,req.session.user.username);
                     let targetPlayer = game.TableInGame[data[1]].target;
                     data[2] = await bdd.targetPlayerDisplay(game.name,targetPlayer);
-                    res.render('game/display', { game : game, gameRunning: gameRunning, mainPlayer : data[1], targetPlayer : data[2]});
+
+                    //console.log(targetPlayer);
+
+                    res.render('game/display', { 
+                        game : game, 
+                        gameRunning: gameRunning, 
+                        mainPlayer : data[1], targetPlayer : data[2],  
+                        TableShuffle : TableShuffle,
+                        username : req.session.user.username,
+                        remaining : progression
+                    });
                 }
             }
         } else {
@@ -422,8 +433,7 @@ app.get('/game/historique', async (req,res) =>{
             req.flash('error', "Vous n'avez pas encore joué de partie :(");
             res.redirect('/')
         } else {
-        //console.log("histo name : " + histo[0].name);
-        //console.log("histo name : " + histo[0].allName);
+    
 
         res.render('game/historique', {games: histo})
         }
@@ -471,3 +481,12 @@ function destroySession(req,res){
         req.flash('error', "Vous n'êtes pas connnecté  :(");
         res.redirect('/auth/login');
 } 
+
+function shuffle(TableInGame) {
+    TableShuffle = TableInGame;
+    for (let i = TableShuffle.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [TableShuffle[i], TableShuffle[j]] = [TableShuffle[j], TableShuffle[i]]; // Échange des éléments
+    }
+    return TableShuffle;
+}
