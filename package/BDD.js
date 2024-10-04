@@ -113,27 +113,22 @@ class BDD{
     } 
 
     async loginUser(playerName,pwd){
-        await this.collections.User.createIndex({username : "text"});
-        const query = {$text : {$search : playerName}};
-        const projection = {_id:1}
-        const cursor = await this.collections.User.find(query).project(projection);
-        
-        if(await cursor.hasNext()) {
-            const user = await this.collections.User.findOne({ username: playerName});
 
+        const user = await this.collections.User.findOne({ username: playerName});
+
+        if(user){
             const valid = await bcrypt.compare(pwd, user.password);
-            //console.log(valid);
             
             if (!valid){
-                //console.log("mauvais mdp  :(");
+                console.log("mauvais mdp  :(");
                 return 'pwd';
             };
 
-            //console.log("success for login :)");
+            console.log("success for login :)");
             return true;
         }
         
-        //console.log("ce user n'existe pas encore :(");
+        console.log("ce user n'existe pas encore :(");
         return 'username';
     }
 
@@ -174,6 +169,17 @@ class BDD{
         }
 
         async checkPlayer(playerName){ // on vérifie si le user existe avant de permettre de l'ajouter à la game
+            
+            // Trouver l'utilisateur avec le nom exact, sensible à la casse et aux caractères spéciaux
+            const user = await this.collections.User.findOne({ username: playerName });
+            console.log("friend found : ", user);
+
+            if (user) {
+                console.log("friend name : ", user.username);
+                return user;
+            }
+
+            /*
             this.collections.User.createIndex({username : "text"});
             const query = {$text : {$search : playerName}};
             const projection = {_id:1}
@@ -182,7 +188,7 @@ class BDD{
             if(await cursor.hasNext()) {
                 const user = await this.collections.User.findOne({ username: playerName});
                 return user.username;
-        }
+            }*/
         
         return false;
     } 

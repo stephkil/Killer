@@ -173,13 +173,28 @@ app.get('/friend', async (req,res)=> {
 app.post('/friend', async (req,res)=> {
     let friend = req.body.nameOfFriend;
   
-    const user = await bdd.checkPlayer(friend); // on vérifie si il existe
+    const user = await bdd.checkPlayer(friend);
     
-    if(user == false){
-        req.flash('error', "ce joueur n'existe pas, veuillez re-essayer");
-    } else{
-        req.flash('success', "Joueur ajouté ");
-        await bdd.addFriend(user,req.session.user.username);
+    if(user.username == req.session.user.username){
+        req.flash('error', "Vous ne pouvez pas vous ajouter vous même ;)");
+    } else {
+
+        if(user == false){
+            req.flash('error', "ce joueur n'existe pas");
+        } else{
+
+            var friends =  await bdd.getFriend(req.session.user.username);
+            let exist = friends.includes(user.username);
+
+            if(exist){
+                console.log("deja ami");
+                req.flash('error', "ce joueur est déjà parmis vos amis");
+            } else {
+                console.log("nouvel ami");
+                await bdd.addFriend(user.username,req.session.user.username);
+                req.flash('success', "Joueur ajouté ");
+            }
+        }
     }
     res.redirect('/friend');
 });
@@ -402,7 +417,7 @@ app.post('/game/display', async(req,res)=>{
 
     if(req.body.mort != '' && req.body.mort != undefined){
         if(req.body.mort == 'kill'){
-            gameRunning = await game.kill(bdd,data); // update les joueurs après kill
+            gameRunning = await game.kill(bdd,data);
         }
          
         if(gameRunning == false){
@@ -410,7 +425,7 @@ app.post('/game/display', async(req,res)=>{
             res.redirect('/game/endScreen');
         } else {
             if(req.body.mort != 'kill'){
-                req.flash('error', "Vous n'avez pas bien écrit 'kill'");
+                req.flash('error', "erreur durant le kill, re-esayer");
             } else {
                 req.flash('succes', "Le joueur" + game.TableInGame[data[2]].name + " est mort !")
             }
