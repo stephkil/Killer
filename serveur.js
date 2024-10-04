@@ -320,7 +320,7 @@ app.post('/game/init' ,async(req,res)=>{
 
         req.flash('success', "Partie crée, bonne game  :)");
         
-        res.redirect('/');
+        res.redirect('/game/load');
     }
     else {
         const user = await bdd.checkPlayer(answer); // on vérifie si il existe
