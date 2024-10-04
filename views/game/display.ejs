@@ -49,7 +49,7 @@
 
             <% } else if ((remaining < 70) && (remaining >= 60)) { %> 
                 <div class="bar" style="width: 60%;"></div>
-
+                
             <% } else if ((remaining < 80) && (remaining >= 70)) { %> 
                 <div class="bar" style="width: 70%;"></div>
 
@@ -152,12 +152,17 @@
         <p>Cette action sera irreversible !</p>
         <p>Je t'invite à voir avec lui/elle avant de confirmer cette élimination</p>
     </div>
+
+    <form id="eliminateForm" action="/game/display" method="POST" style="display:none;">
+        <input type="hidden" name="mort" value="kill">
+    </form>
+
     <div class="actions">
         <div class="ui red basic cancel inverted button">
             <i class="remove icon"></i>
             Annuler
         </div>
-        <div class="ui green ok inverted button">
+        <div class="ui green ok inverted button" id="confirmEliminate">
             <i class="checkmark icon"></i>
             Éliminer
         </div>
@@ -169,21 +174,20 @@
 
 <script>
     $(document).ready(function() {
-        // Écouteur d'événement pour le bouton
+        // Ouvre la modale au clic du bouton
         $('.ui.dark.red.labeled.submit.icon.button').on('click', function() {
-            // Affiche la modale
             $('#myModal').modal('show');
         });
 
-        // Action pour le bouton "Non"
+        // Action pour le bouton "Annuler"
         $('.cancel.button').on('click', function() {
             $('#myModal').modal('hide');
         });
 
-        // Action pour le bouton "Oui"
-        $('.ok.button').on('click', function() {
+        // Action pour le bouton "Éliminer"
+        $('#confirmEliminate').on('click', function() {
             // Soumettre le formulaire
-            $('#confirmationForm').submit();
+            $('#eliminateForm').submit();
         });
     });
 </script>

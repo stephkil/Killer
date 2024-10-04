@@ -72,8 +72,11 @@ class BDD{
         }
 
         const user = await this.collections.User.findOne({username : game.winner});
-        await this.collections.User.updateOne({ _id: user._id }, {$inc: { game_win : 1 }});
-
+        console.log("winner : ", user);
+        if(user){
+            await this.collections.User.updateOne({ _id: user._id }, {$inc: { game_win : 1 }});
+        }
+        
         //await this.client.close(); // fermeture du client
     }
 

@@ -108,7 +108,7 @@ app.post('/auth/login', async (req,res)=>{
             }
             req.session.user = userData;
 
-            console.log(req.session.user);
+            console.log("session.user : ", req.session.user);
 
             res.redirect('/');
         }
@@ -204,7 +204,6 @@ app.get('/game/load', async (req,res) =>{
     if (req.session.user && (req.session.cookie.expires > new Date())) {
         reload();
         let allGame = await bdd.allGame(req.session.user.username);
-        //console.log("allGame : " + allGame);
         res.render('game/load', {name : allGame});
     } else {
         destroySession(req,res);
@@ -218,8 +217,10 @@ app.post('/game/load', async(req,res)=>{
 
     if(gameExist){
         await bdd.getGame(game);
-        gameRunning = true;
+
+        gameRunning = true;    
         res.redirect('/game/display');
+
     } else {
         req.flash('error', "Cette partie n'existe pas ou est déjà terminé  :(");
         res.redirect('/game/load');
@@ -342,13 +343,21 @@ app.get('/game/display', async (req,res) =>{
             } else {
                 await bdd.getGame(game);
 
+                const now = new Date();
+                const endDate = new Date(game.end_date);
+                const isFinish = endDate - now;
+
+                console.log("isFinish : ", isFinish);
+
+                if(isFinish <= 0){
+                    gameRunning = false;
+                }
+
                 if (gameRunning == false){
                     res.redirect('/game/endScreen');
                 } else {
 
-                    const now = new Date(); // Date actuelle
                     const startDate = new Date(game.start_date); // Date de début du jeu
-                    const endDate = new Date(game.end_date); // Date de fin du jeu
 
                     const totalMillisecondsInGame = endDate - startDate; // Durée totale du jeu en millisecondes
                     const millisecondsElapsed = now - startDate; // Millisecondes écoulées depuis le début du jeu
@@ -389,6 +398,8 @@ app.get('/game/display', async (req,res) =>{
 
 app.post('/game/display', async(req,res)=>{
     
+    console.log("req.body :", req.body);
+
     if(req.body.mort != '' && req.body.mort != undefined){
         if(req.body.mort == 'kill'){
             gameRunning = await game.kill(bdd,data); // update les joueurs après kill
@@ -416,7 +427,7 @@ app.post('/game/display', async(req,res)=>{
 /* -------------------------------------------------------------------------- */
 
 app.get('/game/endScreen', async (req,res) =>{
-    await bdd.closeBDD(game); // fermer bdd + suprimer élement superflu
+    await bdd.closeBDD(game);
     res.render('game/endScreen', {game : game});
 });
 
@@ -434,7 +445,6 @@ app.get('/game/historique', async (req,res) =>{
             res.redirect('/')
         } else {
     
-
         res.render('game/historique', {games: histo})
         }
     } else {

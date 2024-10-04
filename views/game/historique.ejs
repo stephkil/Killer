@@ -13,27 +13,28 @@
 <!-- ----------------------------------------------------------------------- -->
 
 <div class="ui cards">
-    <% for(var i=0; i<games.length-1;i++){%>
+    <% for(var i=games.length-1; i>=0; i--){%>
+        <% if(games[i]){ %>
+            <div class="card">
+                
+                <h3 class="ui dividing header"> Game : <%=games[i].name %> </h3>
 
-        <div class="card">
-            
-            <h3 class="ui dividing header"> Game : <%=games[i].name %> </h3>
+                    <p> <%= "Début de la partie : " + games[i].date_debut %> </p> 
+                    <p> <%= "Fin de la partie : " + games[i].date_fin %> </p> 
+                    <p> <%= "Nombre de Joueurs : " + games[i].nb_Player %> </p> 
+                    <p> <%= "Gagnant : " + games[i].winner %> </p>
 
-                <p> <%= "Début de la partie : " + games[i].date_debut %> </p> 
-                <p> <%= "Fin de la partie : " + games[i].date_fin %> </p> 
-                <p> <%= "Nombre de Joueurs : " + games[i].nb_Player %> </p> 
-                <p> <%= "Gagnant : " + games[i].winner %> </p>
+                <div class="ui dividing content">
 
-            <div class="ui dividing content">
-
-                <% for(var j=0; j<games[i].nb_Player; j++ ){ %>
-                    <li> <%=games[i].allName[j]%> : <%=games[i].allStatus[j]%> - Kill : <%=games[i].allKill[j]%> </li>
-                    <p>  -> Task : <%=games[i].allTask[j]%></p>
-                <%}%>
-                <p></p>
-                <p></p>
-                </div>
-        </div>
+                    <% for(var j=0; j<games[i].nb_Player; j++ ){ %>
+                        <li> <%=games[i].allName[j]%> : <%=games[i].allStatus[j]%> - Kill : <%=games[i].allKill[j]%> </li>
+                        <p>  -> Task : <%=games[i].allTask[j]%></p>
+                    <%}%>
+                    <p></p>
+                    <p></p>
+                    </div>
+            </div>
+        <%}%>
     <%}%>
 </div>
 
