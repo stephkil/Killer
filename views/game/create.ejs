@@ -18,13 +18,31 @@
         <h3> Nom de la Partie </h3>
 
         <div class="field">
-            <div class="ui left icon input">
+          <div class="ui left icon input">
               <input type="text" 
-              name="paramGame" 
-              placeholder = "name"
-              required>
-            </div>
-        </div>
+                     name="paramGame" 
+                     id="gameName"
+                     placeholder="name"
+                     maxlength="40"
+                     required
+                     oninput="updateGameNameCount()">
+          </div>
+          <p><small>Caractères restants : <span id="gameCharCount">40</span></small></p>
+      </div>
+      
+
+        <script>
+          function updateGameNameCount() {
+              const maxLength = 40;
+              const inputField = document.getElementById('gameName');
+              const charCount = document.getElementById('gameCharCount');
+              
+              const remainingChars = maxLength - inputField.value.length;
+              
+              // Mise à jour du compteur de caractères restants
+              charCount.textContent = remainingChars;
+          }
+      </script>
 
         <h3> Date de fin </h3>
 

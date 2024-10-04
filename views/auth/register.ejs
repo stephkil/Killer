@@ -33,11 +33,27 @@
                     <div class="ui left icon input">
                         <i class="user icon"></i>
                         <input type="text" 
-                        name="paramPlayer"
-                        id = "name"
-                        placeholder = "Username">
+                               name="paramPlayer"
+                               id="name"
+                               placeholder="Username"
+                               maxlength="20"
+                               oninput="updateCharacterCount()"> 
                     </div>
+                    <p><small>Caractères restants : <span id="charCount">20</span></small></p> 
                 </div>
+
+                <script>
+                    function updateCharacterCount() {
+                        const maxLength = 20;
+                        const inputField = document.getElementById('name');
+                        const charCount = document.getElementById('charCount');
+                        
+                        const remainingChars = maxLength - inputField.value.length;
+                        
+                        // Mise à jour du compteur de caractères restants
+                        charCount.textContent = remainingChars;
+                    }
+                </script>
 
                 <div class="field">
                     <label>Password</label>

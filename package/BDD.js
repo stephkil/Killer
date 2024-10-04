@@ -40,6 +40,7 @@ class BDD{
 
     async closeBDD(game) {
 
+        console.log("update bdd : ", game);
         // update l'historique partie 
         const tabName = [];
         const tabTask = [];
@@ -50,7 +51,7 @@ class BDD{
             tabName[i]= game.TableInGame[i].name;
             tabTask[i]= game.TableInGame[i].mission;
             tabKill[i]= game.TableInGame[i].nbKill;
-            tabStatus[i]= game.TableInGame[i].status;
+            tabStatus[i]()= game.TableInGame[i].status;
         }
         await this.collections.Games.updateOne({name : game.name}, {$set:{allName : tabName}});
         await this.collections.Games.updateOne({name : game.name}, {$set:{allTask : tabTask}});
