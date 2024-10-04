@@ -62,10 +62,26 @@
                       <input type="password" 
                       name="paramPlayer" 
                       id="pwd"
-                      placeholder = "Password">
+                      placeholder = "Password"
+                      maxlength="20"
+                      oninput="updateCharacterCountMdp()">
                     </div>
+                    <p><small>Caractères restants : <span id="MdpCharCount">20</span></small></p> 
                 </div>
-            
+                
+                <script>
+                    function updateCharacterCountMdp() {
+                        const maxLength = 20;
+                        const inputField = document.getElementById('pwd');
+                        const charCount = document.getElementById('MdpCharCount');
+                        
+                        const remainingChars = maxLength - inputField.value.length;
+                        
+                        // Mise à jour du compteur de caractères restants
+                        charCount.textContent = remainingChars;
+                    }
+                </script>
+
                 <button type="submit" class="ui blue submit button">Envoyer</button>
         
             </div>
