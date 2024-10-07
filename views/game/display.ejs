@@ -98,6 +98,13 @@
                                     Kill : <%= TableShuffle[i].nbKill %>
                                 </div>
 
+                                <form action="/game/display" method="POST" style="position: absolute; bottom: 10px; right: 10px;">
+                                    <button type="submit" class="ui mini button">
+                                        ajouter
+                                    </button>
+                                    <input type="hidden" name="add_friend_inGame" value="<%= TableShuffle[i].name %>">
+                                </form>
+            
                             </div>
                         </div>
                 </div>

@@ -10,6 +10,8 @@ const session = require('express-session');
 const secrets = require("./secrets.json");
 
 let paramGame;
+let TableShuffle;
+let ShuffleGame = true;
 let paramPlayer;
 let gameExist = null;
 var gameRunning = true;
@@ -88,29 +90,34 @@ app.post('/auth/login', async (req,res)=>{
         let playerName = req.body.loginPlayer[0];
         let pwd = req.body.loginPlayer[1];
 
-        let status = await bdd.loginUser(playerName, pwd);
+        if(playerName.length > 20 || pwd.length > 20){
+            req.flash('error', "nom ou mot de passe trop long");
+            res.redirect('/auth/login');
+        } else {
+            let status = await bdd.loginUser(playerName, pwd);
 
-        if(status === 'username'){
-            req.flash('error', "Ce user n'existe pas encore  :(");
-            res.redirect('/auth/login');  
-        }
-
-        else if(status === 'pwd'){
-            req.flash('error', "Mauvais mot de passe  :(");
-            res.redirect('/auth/login');  
-        }
-
-        else if(status === true){
-            //req.flash('success', "Salut bonne partie à toi  :)");
-            
-            const userData = {
-                username : playerName
+            if(status === 'username'){
+                req.flash('error', "Ce user n'existe pas encore  :(");
+                res.redirect('/auth/login');  
             }
-            req.session.user = userData;
 
-            console.log("session.user : ", req.session.user);
+            else if(status === 'pwd'){
+                req.flash('error', "Mauvais mot de passe  :(");
+                res.redirect('/auth/login');  
+            }
 
-            res.redirect('/');
+            else if(status === true){
+                //req.flash('success', "Salut bonne partie à toi  :)");
+                
+                const userData = {
+                    username : playerName
+                }
+                req.session.user = userData;
+
+                console.log("session.user : ", req.session.user);
+
+                res.redirect('/');
+            }
         }
     }
 });
@@ -142,14 +149,19 @@ app.post('/auth/register', async (req,res)=>{
         name = req.body.paramPlayer[0]; // username
         pwd = req.body.paramPlayer[1]; // password
 
-        status = await bdd.insertUser(name,pwd); // insérer un user unique
-        
-        if(status == true){
-            req.flash('success', "Votre Profil est bien enregistrer  :)"); 
-            res.redirect('/');
-        } else {
-            req.flash('error', "Ce Profil existe déjà  :(");
+        if(name.length > 20 || pwd.length > 20){
+            req.flash('error', "nom ou mot de passe trop long");
             res.redirect('/auth/register');
+        } else {
+            status = await bdd.insertUser(name,pwd);
+            
+            if(status == true){
+                req.flash('success', "Votre Profil est bien enregistrer  :)"); 
+                res.redirect('/auth.login');
+            } else {
+                req.flash('error', "Ce Profil existe déjà  :(");
+                res.redirect('/auth/register');
+            }
         }
     };
 });
@@ -172,27 +184,33 @@ app.get('/friend', async (req,res)=> {
 
 app.post('/friend', async (req,res)=> {
     let friend = req.body.nameOfFriend;
-  
-    const user = await bdd.checkPlayer(friend);
     
-    if(user.username == req.session.user.username){
-        req.flash('error', "Vous ne pouvez pas vous ajouter vous même ;)");
+    if(friend.length > 20 ){
+        req.flash('error', "nom trop long");
+        res.redirect('/auth/friend');
     } else {
 
-        if(user == false){
-            req.flash('error', "ce joueur n'existe pas");
-        } else{
+        const user = await bdd.checkPlayer(friend);
+        
+        if(user.username == req.session.user.username){
+            req.flash('error', "Vous ne pouvez pas vous ajouter vous même ;)");
+        } else {
 
-            var friends =  await bdd.getFriend(req.session.user.username);
-            let exist = friends.includes(user.username);
+            if(user == false){
+                req.flash('error', "ce joueur n'existe pas");
+            } else{
 
-            if(exist){
-                console.log("deja ami");
-                req.flash('error', "ce joueur est déjà parmis vos amis");
-            } else {
-                console.log("nouvel ami");
-                await bdd.addFriend(user.username,req.session.user.username);
-                req.flash('success', "Joueur ajouté ");
+                var friends =  await bdd.getFriend(req.session.user.username);
+                let exist = friends.includes(user.username);
+
+                if(exist){
+                    console.log("deja ami");
+                    req.flash('error', "ce joueur est déjà parmis vos amis");
+                } else {
+                    console.log("nouvel ami");
+                    await bdd.addFriend(user.username,req.session.user.username);
+                    req.flash('success', "Joueur ajouté ");
+                }
             }
         }
     }
@@ -262,30 +280,35 @@ app.post('/game/create', async (req,res)=>{
         req.flash('error', "Vous n'avez pas tous bien renseigné  :(");
         res.redirect('/game/create');
     } else {
-        game.name = req.body.paramGame;
-
-        gameExist = await bdd.gameExist(game);
- 
-        if(gameExist){
-            req.flash('error', "Cette partie existe déjà  :(");
-            res.redirect('/game/create');
+        
+        if(req.body.paramGame > 40){
+            req.flash('error', "nom ou mot de passe trop long");
+            res.redirect('/auth/create');
         } else {
-            req.flash('success', "Cette partie peut être crée :)");
             game.name = req.body.paramGame;
-            game.nbPlayer++;
-            
-            game.end_date = req.body.paramDate;
+            gameExist = await bdd.gameExist(game);
+    
+            if(gameExist){
+                req.flash('error', "Cette partie existe déjà  :(");
+                res.redirect('/game/create');
+            } else {
+                req.flash('success', "Cette partie peut être crée :)");
+                game.name = req.body.paramGame;
+                game.nbPlayer++;
+                
+                game.end_date = req.body.paramDate;
 
-            const player = new Player();
-            player.name = req.session.user.username;
-            player.game = game.name;
-            player.idPlayer = game.nbPlayer;
+                const player = new Player();
+                player.name = req.session.user.username;
+                player.game = game.name;
+                player.idPlayer = game.nbPlayer;
 
-            game.TableOfPlayers.push(player);
+                game.TableOfPlayers.push(player);
 
-            player.mission = await game.taskRandom(bdd); // on attribue sa mission pour le tuer
-            
-            res.redirect('/game/init');
+                player.mission = await game.taskRandom(bdd); // on attribue sa mission pour le tuer
+                
+                res.redirect('/game/init');
+            }
         }
     };
 })
@@ -385,7 +408,14 @@ app.get('/game/display', async (req,res) =>{
 
                     console.log(progression);
 
-                    let TableShuffle = shuffle([...game.TableInGame]);
+                    console.log("ShuffleGame : ", ShuffleGame);
+                    if(ShuffleGame == true){
+                        console.log("shuffle display");
+                        TableShuffle = shuffle([...game.TableInGame]);
+                    } else {
+                        console.log("NOT shuffle display");
+                        ShuffleGame = true;
+                    }
                     
                     data[1] = await bdd.mainPlayerDisplay(game.name,req.session.user.username);
                     let targetPlayer = game.TableInGame[data[1]].target;
@@ -415,26 +445,43 @@ app.post('/game/display', async(req,res)=>{
     
     console.log("req.body :", req.body);
 
-    if(req.body.mort != '' && req.body.mort != undefined){
-        if(req.body.mort == 'kill'){
-            gameRunning = await game.kill(bdd,data);
-        }
-         
-        if(gameRunning == false){
-            req.flash('success', "GG " + game.winner + ", tu es le killer ultime !");
-            res.redirect('/game/endScreen');
+    if(req.body.add_friend_inGame != ''){
+        console.log("add friend in game");
+
+        let friends =  await bdd.getFriend(req.session.user.username);
+
+        if(req.body.add_friend_inGame == req.session.user.username || friends.includes(req.body.add_friend_inGame)){
+            console.log("erreur ajout friend in game");
+            req.flash('error', "le joueur n'a pas pu être ajouté");
         } else {
-            if(req.body.mort != 'kill'){
-                req.flash('error', "erreur durant le kill, re-esayer");
-            } else {
-                req.flash('succes', "Le joueur" + game.TableInGame[data[2]].name + " est mort !")
+            await bdd.addFriend(req.body.add_friend_inGame,req.session.user.username);
+            console.log("nouvel ami in game");
+            req.flash('error', "joueur ajouté à vos amis");
+
+        }
+        ShuffleGame = false;
+        res.redirect('/game/display');
+    } else {
+        if(req.body.mort != '' && req.body.mort != undefined){
+            if(req.body.mort == 'kill'){
+                gameRunning = await game.kill(bdd,data);
             }
+            
+            if(gameRunning == false){
+                req.flash('success', "GG " + game.winner + ", tu es le killer ultime !");
+                res.redirect('/game/endScreen');
+            } else {
+                if(req.body.mort != 'kill'){
+                    req.flash('error', "erreur durant le kill, re-esayer");
+                } else {
+                    req.flash('succes', "Le joueur" + game.TableInGame[data[2]].name + " est mort !")
+                }
+                res.redirect('/game/display');
+            }
+        } else {
             res.redirect('/game/display');
         }
-    } else {
-        res.redirect('/game/display');
     }
-   
 });
 
 /* -------------------------------------------------------------------------- */
