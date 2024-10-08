@@ -149,7 +149,7 @@ app.post('/auth/register', async (req,res)=>{
         name = req.body.paramPlayer[0]; // username
         pwd = req.body.paramPlayer[1]; // password
 
-        if(name.length > 20 || pwd.length > 20){
+        if(name.length > 20 || pwd.length > 40){
             req.flash('error', "nom ou mot de passe trop long");
             res.redirect('/auth/register');
         } else {

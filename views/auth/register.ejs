@@ -63,16 +63,16 @@
                       name="paramPlayer" 
                       id="pwd"
                       placeholder = "Password"
-                      maxlength="20"
+                      maxlength="40"
                       oninput="updateCharacterCountMdp()">
                     </div>
-                    <p><small>Caractères restants : <span id="MdpCharCount">20</span></small></p> 
+                    <p><small>Caractères restants : <span id="MdpCharCount">40</span></small></p> 
                 </div>
                 
                 
                 <script>
                     function updateCharacterCountMdp() {
-                        const maxLength = 20;
+                        const maxLength = 40;
                         const inputField = document.getElementById('pwd');
                         const charCount = document.getElementById('MdpCharCount');
                         
