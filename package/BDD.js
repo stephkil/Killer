@@ -286,8 +286,8 @@ class BDD{
         const killer = await this.collections.Players.findOne({ name: killerInGame.name, game: killerInGame.game});
         const killed = await this.collections.Players.findOne({ name: killedInGame.name, game: killedInGame.game});
 
-        console.log(killer);
-        console.log(killed);
+        console.log("killer : ", killer);
+        console.log("killed : ", killed);
 
         //update du killer
         await this.collections.Players.updateOne({ _id: killer._id }, {$inc: { nombre_kill : 1 }});
@@ -311,9 +311,42 @@ class BDD{
 
     async getFriend(name){
         const result = await this.collections.User.findOne({username : name});
-        return result.friends
-    }
+        let friends = result.friends;
+        console.log(result.friends);
+        
+        var info = [];
 
+        for(var i=0; i<friends.length;i++){
+            var tab = [];
+            
+            const friend = await this.collections.User.findOne({username : friends[i]});
+        
+            tab[0] = friend.username;  
+            tab[1] = friend.surname;
+            
+            tab[2] = friend.game_played;
+            tab[3] = friend.game_survivant;
+            tab[4] = friend.game_topKiller;
+            tab[5] = friend.game_killerAlpha;
+            tab[6] = friend.game_killerSupreme;
+
+
+            tab[7] = friend.kill;
+            tab[8] = friend.success;
+
+            info[i] = tab;
+        }
+        
+        //console.log(info);
+        return info;
+    }
+    
+    async getListOfFriend(name){
+        const result = await this.collections.User.findOne({username : name});
+        console.log(result.friends);
+        return result.friends;
+    }
+    
     async addFriend(nameToAdd,name){
         await this.collections.User.updateOne(
             { username : name },

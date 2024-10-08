@@ -174,9 +174,8 @@ app.post('/auth/register', async (req,res)=>{
 app.get('/friend', async (req,res)=> {
     if (req.session.user && (req.session.cookie.expires > new Date())) {
         reload();
-        var friend =  await bdd.getFriend(req.session.user.username);
-        //console.log("friend : " + friend)
-        res.render('friend', {listOfFriend : friend});
+        var friends =  await bdd.getFriend(req.session.user.username);
+        res.render('friend', {listOfFriend : friends});
     } else {
         destroySession(req,res);
     }
@@ -220,7 +219,7 @@ app.post('/friend', async (req,res)=> {
 app.post('/delete-friend', async (req,res)=> {
 
     let del = req.body.del;
-    //console.log(del);
+    console.log("delete friend : ", del);
 
     req.flash('success', "Joueur suprimé");
     await bdd.delFriend(del,req.session.user.username);
@@ -321,7 +320,7 @@ app.post('/game/create', async (req,res)=>{
 app.get('/game/init', async(req,res)=>{
     console.log(game.TableOfPlayers);
     if (req.session.user && (req.session.cookie.expires > new Date())) {
-        var friend =  await bdd.getFriend(req.session.user.username);
+        var friend =  await bdd.getListOfFriend(req.session.user.username);
         res.render('game/init', {game: game, listOfFriend : friend});
     } else {
         destroySession(req,res);
@@ -423,13 +422,15 @@ app.get('/game/display', async (req,res) =>{
 
                     //console.log(targetPlayer);
 
+                    let friends =  await bdd.getListOfFriend(req.session.user.username);
                     res.render('game/display', { 
                         game : game, 
                         gameRunning: gameRunning, 
                         mainPlayer : data[1], targetPlayer : data[2],  
                         TableShuffle : TableShuffle,
                         username : req.session.user.username,
-                        remaining : progression
+                        remaining : progression,
+                        friends : friends
                     });
                 }
             }
@@ -445,10 +446,10 @@ app.post('/game/display', async(req,res)=>{
     
     console.log("req.body :", req.body);
 
-    if(req.body.add_friend_inGame != ''){
+    if(req.body.add_friend_inGame != '' && req.body.mort != "kill"){
         console.log("add friend in game");
 
-        let friends =  await bdd.getFriend(req.session.user.username);
+        let friends =  await bdd.getListOfFriend(req.session.user.username);
 
         if(req.body.add_friend_inGame == req.session.user.username || friends.includes(req.body.add_friend_inGame)){
             console.log("erreur ajout friend in game");

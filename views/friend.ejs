@@ -51,25 +51,31 @@ Your friends :
                 -->
                 
                 <div class="content">
-                    <div class="header"><%= listOfFriend[i] %></div>
+                    <div class="header"><%= listOfFriend[i][0] %></div>
                     <div class="meta">
-                        <a>titre</a>
+                        <a><%= listOfFriend[i][1] %></a>
                     </div>
                     <div class="description">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum quas nisi nam, repellendus impedit asperiores maxime.
+                        Survivant :  <%= listOfFriend[i][3] %> <br> 
+                        Top Killer :  <%= listOfFriend[i][4] %> <br> 
+                        Killer Alpha :  <%= listOfFriend[i][5] %> <br> 
+                        Killer Suprême :  <%= listOfFriend[i][6] %> <br>  
+                        <br>
+                        Nombre de kill :  <%= listOfFriend[i][7] %> <br> 
+                        Nombre succes :  <%= listOfFriend[i][8] %> <br> 
                     </div>
                 </div>
 
                 <div class="extra content" style="display: flex; justify-content: space-between; align-items: center;">
                     <span>
-                        <i class="user icon"></i>
-                        123 <br>
+                        <i class="game icon"></i>
+                        <%= listOfFriend[i][2] %> <br>
                         Games
                     </span>
 
                     <span style="margin-left: auto;">
                         <form action="/delete-friend" method="post">
-                            <input type="hidden" name="del" value="<%= listOfFriend[i] %>">
+                            <input type="hidden" name="del" value="<%= listOfFriend[i][0] %>">
                             <button type="submit" class="ui mini red button">
                                 Delete
                             </button>
