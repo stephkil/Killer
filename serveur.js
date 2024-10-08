@@ -333,16 +333,11 @@ app.post('/game/init' ,async(req,res)=>{
     let answer = req.body.answer;
     console.log("answer : " + answer);
 
-    if(answer == 'start'){
+    if(answer == 'next'){
         game.shuffleTableOfPlayers();
         game.targetPlayer();
-
-        await bdd.sendGame(game); //envoie de la game
-        await bdd.sendPlayer(game); // envoie des joueurs
-
-        req.flash('success', "Partie crée, bonne game  :)");
         
-        res.redirect('/game/load');
+        res.redirect('/game/task');
     }
     else {
         const user = await bdd.checkPlayer(answer); // on vérifie si il existe
@@ -358,11 +353,43 @@ app.post('/game/init' ,async(req,res)=>{
             player.idPlayer = game.nbPlayer;
 
             game.TableOfPlayers.push(player);
-            player.mission = await game.taskRandom(bdd); // on attribue sa mission pour le tuer
     
             game.nbPlayer ++;
         }
         res.redirect('/game/init');
+    }
+});
+
+
+
+/* -------------------------------------------------------------------------- */
+/*                                 Task                                       */
+/* -------------------------------------------------------------------------- */
+
+app.get('/game/task', async(req,res)=>{
+    console.log(game.TableOfPlayers);
+    if (req.session.user && (req.session.cookie.expires > new Date())) {
+        
+        res.render('game/task', {game: game, nbList : 5});
+    } else {
+        destroySession(req,res);
+    }
+    
+});
+
+app.post('/game/task' ,async(req,res)=>{
+    let answer = req.body.answer;
+    console.log("answer : " + answer);
+
+    if(answer = 'start'){
+        await game.taskRandom(bdd); // on attribue sa mission pour le tuer
+        await bdd.sendGame(game); //envoie de la game
+        await bdd.sendPlayer(game); // envoie des joueurs
+
+        req.flash('success', "Partie crée, bonne game  :)");
+        res.redirect('/game/load');
+    } else {
+        res.redirect('/game/task');
     }
 });
 

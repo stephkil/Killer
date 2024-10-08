@@ -33,7 +33,7 @@ class Game {
         ]).next();
   
         return result.task;
-      }
+    }
 
     shuffleTableOfPlayers(){ // On mélange la liste des joueur afin de pas target dans l'ordre d'ajout
         

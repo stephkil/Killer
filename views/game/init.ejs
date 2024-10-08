@@ -14,15 +14,12 @@
 
 <form action="/game/init" method="post" class="ui form">
 
+    <h3 class="ui dividing header">  Joueur </h3>
     <% for (var i = 0; i < game.nbPlayer;  i++ ) { %>
         <p>  Joueur <%= i+1 %> - <%=game.TableOfPlayers[i].name%> 
     <% } %>
-    
-    <p></p>
 
-    Ami que vous pouvez ajouter à la partie :
-
-    <p></p>
+    <h3 class="ui dividing header"> Ami que vous pouvez ajouter à la partie </h3>
     
     <div class="ui two column grid">
         <% for (var i = 0; i < listOfFriend.length;  i++ ) { %>
@@ -35,10 +32,6 @@
                     <div class="content">
                         <div class="header">
                             <%= listOfFriend[i] %>
-                        </div>
-
-                        <div class="meta">
-                            <a>sub name</a>
                         </div>
                     </div>
                     
@@ -61,9 +54,9 @@
 
     <p></p>
         
-    <button type="submit" class="ui green labeled submit icon button" name="answer" value='start'>
+    <button type="submit" class="ui green labeled submit icon button" name="answer" value='next'>
 
-        <i class="icon edit"></i> Start Game
+        <i class="icon edit"></i> Suivant
 
     </button>
 
