@@ -368,6 +368,7 @@ app.get('/game/task', async(req,res)=>{
     console.log(game.TableOfPlayers);
     if (req.session.user && (req.session.cookie.expires > new Date())) {
         const Lists = await game.getDistinctLists(bdd);
+        console.log("lists : ", Lists);
         res.render('game/task', {game: game, nbList : Lists.count, list: Lists.lists});
     } else {
         destroySession(req,res);

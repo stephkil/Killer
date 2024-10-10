@@ -115,39 +115,44 @@
             <% } %>
         </div>
 
-        <h3 class="ui dividing header"> Votre Mission </h3> 
+        <% if(game.TableInGame[mainPlayer].status == 'dead'){ %>
 
-        <div class="ui card reveal">
-    <div class="content">
-        <div class="ui small fade reveal image">
-            <img class="visible content" src="/assets/picture/couteau.jpg" alt="Couteau">
-        </div>
+            <h3 class="ui dividing header"> Vous avez été tué </h3>
         
-        <div class="header">
-            <%= game.TableInGame[targetPlayer].name %>
-        </div>
+        <% } else { %>
+            <h3 class="ui dividing header"> Votre Mission </h3> 
 
-        <div class="description">
-            <%= game.TableInGame[targetPlayer].mission %>
-        </div>
+        
+            <div class="ui card reveal">
+                <div class="content">
+                    <div class="ui small fade reveal image">
+                        <img class="visible content" src="/assets/picture/couteau.jpg" alt="Couteau">
+                    </div>
+                    
+                    <div class="header">
+                        <%= game.TableInGame[targetPlayer].name %>
+                    </div>
+
+                    <div class="description">
+                        <%= game.TableInGame[targetPlayer].mission %>
+                    </div>
+                </div>
+            </div>
+
+            <p style="text-align: center;"><small>Click on the Knife to reveal</small></p>
     </div>
 </div>
 
-        <p style="text-align: center;"><small>Click on the Knife to reveal</small></p>
+            <form id="confirmationForm" class="ui form">
+                <div style="display: flex; justify-content: center; align-items: center;">
+                    <button type="button" class="ui dark red labeled submit icon button">
+                        <i class="bullseye icon"></i>
+                        J'ai tué ma cible
+                    </button>
+                </div>
+            </form>
 
-    </div>
-</div>
-
-
-<!-- Formulaire -->
-<form id="confirmationForm" class="ui form">
-    <div style="display: flex; justify-content: center; align-items: center;">
-        <button type="button" class="ui dark red labeled submit icon button">
-            <i class="bullseye icon"></i>
-            J'ai tué ma cible
-        </button>
-    </div>
-</form>
+        <% } %>
 
 <!-- Modal -->
 <div class="ui basic modal" id="myModal">

@@ -201,7 +201,11 @@ class BDD{
 
     async targetPlayerDisplay(gameName,targetPlayer){
         const target = await this.collections.Players.findOne({game : gameName, name : targetPlayer});
-        return target.id_player;
+        if(target){
+            return target.id_player;
+        } else{
+            return "none";
+        }
     }
  
 
