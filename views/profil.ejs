@@ -1,0 +1,42 @@
+<!-- ----------------------------------------------------------------------- -->
+<!--                                 header                                  -->
+<!-- ----------------------------------------------------------------------- -->
+
+<%- include('./header.ejs') %>
+
+<h1>  Profil : <%= username %> </h1>
+
+<%- include ('./flash.ejs') %>
+
+
+<div class="content">
+    <div class="header"><%= infoPlayer[0] %></div>
+    <div class="meta">
+        <a><%= infoPlayer[1] %></a>
+    </div>
+    <div class="description">
+        Nombre de Game :  <%= infoPlayer[2] %>
+        Survivant :  <%= infoPlayer[3] %> <br> 
+        Top Killer :  <%= infoPlayer[4] %> <br> 
+        Killer Alpha :  <%= infoPlayer[5] %> <br> 
+        Killer Suprême :  <%= infoPlayer[6] %> <br>  
+        <br>
+        Nombre de kill :  <%= infoPlayer[7] %> <br> 
+        Nombre succes :  <%= infoPlayer[8] %> <br> 
+    </div>
+</div>
+
+
+
+<form action="/profil" method="post" class="ui form">
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <button type="submit" class="ui dark red labeled submit icon button">
+            <i class="close  icon"></i>
+            Déconnection
+        </button>
+    </div>
+</form>
+
+<%- include('./menu.ejs') %>
+
+<%- include('./footer.ejs') %>

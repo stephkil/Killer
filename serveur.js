@@ -550,6 +550,29 @@ app.get('/game/historique', async (req,res) =>{
 });
  
 
+
+/* -------------------------------------------------------------------------- */
+/*                                   profil                                   */
+/* -------------------------------------------------------------------------- */
+
+app.get('/profil', async (req,res) =>{
+    
+    if (req.session.user && (req.session.cookie.expires > new Date())) {
+        var user = await bdd.getUser(req.session.user.username);
+        res.render('profil', {username: req.session.user.username, infoPlayer: user});
+    } else {
+        destroySession(req,res);
+    }
+    
+});
+ 
+app.post('/profil', async(req,res)=>{
+    
+    
+    res.redirect('/auth/disconnect');
+});
+
+
 /* -------------------------------------------------------------------------- */
 /*                                   listen                                   */
 /* -------------------------------------------------------------------------- */

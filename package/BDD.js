@@ -133,6 +133,30 @@ class BDD{
         return 'username';
     }
 
+    async getUser(name){
+
+        const user = await this.collections.User.findOne({username : name});
+        
+        var tab = [];
+        
+        if(user){
+            tab[0] = user.username;  
+            tab[1] = user.surname;
+            
+            tab[2] = user.game_played;
+            tab[3] = user.game_survivant;
+            tab[4] = user.game_topKiller;
+            tab[5] = user.game_killerAlpha;
+            tab[6] = user.game_killerSupreme;
+
+
+            tab[7] = user.kill;
+            tab[8] = user.success;
+        }
+
+        return tab;
+    }
+
     async allGame(nameToFind){
 
         var gameName = [];
@@ -192,7 +216,7 @@ class BDD{
             }*/
         
         return false;
-    } 
+        } 
 
     async mainPlayerDisplay(gameName,playerName){
         const user = await this.collections.Players.findOne({game : gameName, name: playerName});
