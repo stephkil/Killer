@@ -367,8 +367,8 @@ app.post('/game/init' ,async(req,res)=>{
 app.get('/game/task', async(req,res)=>{
     console.log(game.TableOfPlayers);
     if (req.session.user && (req.session.cookie.expires > new Date())) {
-        
-        res.render('game/task', {game: game, nbList : 5});
+        const Lists = await game.getDistinctLists(bdd);
+        res.render('game/task', {game: game, nbList : Lists.count, list: Lists.lists});
     } else {
         destroySession(req,res);
     }

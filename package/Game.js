@@ -27,6 +27,30 @@ class Game {
     /* -------------------------------------------------------------------------- */
 
 
+    async getDistinctLists(bdd) {
+        const result = await bdd.collections.Task.aggregate([
+            {
+                // Regrouper par le champ 'list' pour obtenir des valeurs uniques
+                $group: {
+                    _id: "$list"
+                }
+            },
+            {
+                // Projeter uniquement le nom des listes (l'id est le nom du champ 'list')
+                $project: {
+                    _id: 0,
+                    list: "$_id"
+                }
+            }
+        ]).toArray();
+    
+        // Retourner le nombre de listes distinctes et leurs noms
+        return {
+            count: result.length,
+            lists: result.map(item => item.list)
+        };
+    }
+    
     async taskRandom(bdd, taskType) {
         let matchCondition;
     

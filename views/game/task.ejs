@@ -16,10 +16,10 @@
     <% for(var i = 0; i < nbList; i++){ %>
         <div class="switch-container">
             <label class="switch">
-                <input type="checkbox" name="toggle" value="test"/>
+                <input type="checkbox" name="toggle" value=<%=list[i]%>/>
                 <span></span>
             </label>
-            <span>Texte à droite du switch</span>
+            <span><%=list[i]%></span>
         </div>
         <br>
     <% } %>
