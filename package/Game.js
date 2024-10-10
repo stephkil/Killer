@@ -27,13 +27,27 @@ class Game {
     /* -------------------------------------------------------------------------- */
 
 
-    async taskRandom(bdd) { // on attribue à un joueur sa mission pour le tuer, aléatoirement
+    async taskRandom(bdd, taskType) {
+        let matchCondition;
+    
+        if (Array.isArray(taskType)) {
+            // Si taskType est un tableau, on utilise $in pour filtrer
+            matchCondition = { list: { $in: taskType } };
+        } else {
+            // Si taskType n'est pas un tableau, on utilise une égalité simple
+            matchCondition = { list: taskType };
+        }
+    
+        // Effectuer l'agrégation avec le match conditionnel
         const result = await bdd.collections.Task.aggregate([
-          { $sample: { size: 1 } }
+            { $match: matchCondition },
+            { $sample: { size: 1 } }
         ]).next();
-  
-        return result.task;
+    
+        return result ? result.task : null; // Retourne la tâche si elle existe, sinon null
     }
+    
+    
 
     shuffleTableOfPlayers(){ // On mélange la liste des joueur afin de pas target dans l'ordre d'ajout
         

@@ -303,8 +303,6 @@ app.post('/game/create', async (req,res)=>{
                 player.idPlayer = game.nbPlayer;
 
                 game.TableOfPlayers.push(player);
-
-                player.mission = await game.taskRandom(bdd); // on attribue sa mission pour le tuer
                 
                 res.redirect('/game/init');
             }
@@ -378,11 +376,19 @@ app.get('/game/task', async(req,res)=>{
 });
 
 app.post('/game/task' ,async(req,res)=>{
+
     let answer = req.body.answer;
     console.log("answer : " + answer);
 
+    var toggles = req.body.toggle;
+    console.log('Toggles sélectionnés:', toggles);
+
+    
     if(answer = 'start'){
-        await game.taskRandom(bdd); // on attribue sa mission pour le tuer
+        for(var i = 0; i< game.nbPlayer; i++){
+            game.TableOfPlayers[i].mission = await game.taskRandom(bdd,toggles); // on attribue sa mission pour le tuer
+        }
+
         await bdd.sendGame(game); //envoie de la game
         await bdd.sendPlayer(game); // envoie des joueurs
 

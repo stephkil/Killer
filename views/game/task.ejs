@@ -10,34 +10,30 @@
 
 <h3 class="ui dividing header"> Ajouter les différents thème de mission </h3><br>
 
-<form action="/game/task" method="post" class="ui form"></form>
-    
+
+<form action="/game/task" method="post" class="ui form">
+
     <% for(var i = 0; i < nbList; i++){ %>
         <div class="switch-container">
             <label class="switch">
-                <input type="checkbox" test/>
+                <input type="checkbox" name="toggle" value="test"/>
                 <span></span>
             </label>
             <span>Texte à droite du switch</span>
         </div>
         <br>
     <% } %>
-    
-    
-</form>
 
-<script>
-    $(document).ready(function() {
-      $('.ui.checkbox').checkbox();
-    });
-</script>
-  
-<br>
-
-<h3 class="ui dividing header"> Lancer la partie </h3><br>
-
-<form action="/game/task" method="post" class="ui form">
+    <script>
+        $(document).ready(function() {
+        $('.ui.checkbox').checkbox();
+        });
+    </script>
     
+    <br>
+
+    <h3 class="ui dividing header"> Lancer la partie </h3><br>
+
     
     <button type="submit" class="ui green labeled submit icon button" name="answer" value='start'>
         <i class="icon edit"></i> Start Game
