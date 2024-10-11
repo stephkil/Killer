@@ -9,6 +9,7 @@ let bodyParser = require('body-parser');
 const session = require('express-session');
 const secrets = require("./secrets.json");
 
+
 let paramGame;
 let TableShuffle;
 let ShuffleGame = true;
@@ -39,7 +40,7 @@ app.set('view engine', 'ejs');
 /* -------------------------------------------------------------------------- */
 /*                                 Middleware                                 */
 /* -------------------------------------------------------------------------- */
- 
+
 
 app.use('/assets', express.static('public'));
 app.use(bodyParser.urlencoded({extended:false}));

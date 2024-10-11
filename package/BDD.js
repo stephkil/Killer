@@ -104,12 +104,16 @@ class BDD{
             password : await bcrypt.hash(pwd, secrets.saltRounds), // hash du mdp
             game_played : 0,
             game_win : 0,
+            game_survivant : 0,
+            game_topKiller : 0,
+            game_killerAlpha : 0,
+            game_killerSupreme : 0,
             success : 0,
             friends : [],
             historique : []
         });
 
-        //console.log(`profil is register with id : ${result.insertedId}`);
+        console.log(`profil is register with id : ${result.insertedId}`);
         return true;
     } 
 
@@ -141,7 +145,7 @@ class BDD{
         
         if(user){
             tab[0] = user.username;  
-            tab[1] = user.surname;
+            tab[1] = user.title;
             
             tab[2] = user.game_played;
             tab[3] = user.game_survivant;
@@ -350,7 +354,7 @@ class BDD{
             const friend = await this.collections.User.findOne({username : friends[i]});
         
             tab[0] = friend.username;  
-            tab[1] = friend.surname;
+            tab[1] = friend.title;
             
             tab[2] = friend.game_played;
             tab[3] = friend.game_survivant;
