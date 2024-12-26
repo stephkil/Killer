@@ -443,6 +443,7 @@ app.get('/game/display', async (req,res) =>{
                     console.log(progression);
 
                     console.log("ShuffleGame : ", ShuffleGame);
+
                     if(ShuffleGame == true){
                         console.log("shuffle display");
                         TableShuffle = shuffle([...game.TableInGame]);
@@ -481,7 +482,7 @@ app.post('/game/display', async(req,res)=>{
     
     console.log("req.body :", req.body);
 
-    if(req.body.add_friend_inGame != '' && req.body.mort != "kill"){
+    if(req.body.add_friend_inGame != '' && req.body.mort != "kill" && req.body.mort != "confirmKill" && req.body.mort != "contestKill"){
         console.log("add friend in game");
 
         let friends =  await bdd.getListOfFriend(req.session.user.username);
@@ -500,7 +501,15 @@ app.post('/game/display', async(req,res)=>{
     } else {
         if(req.body.mort != '' && req.body.mort != undefined){
             if(req.body.mort == 'kill'){
+                gameRunning = await game.newKill(bdd,data,'confirmation');
+            }
+
+            if(req.body.mort == 'confirmKill'){
                 gameRunning = await game.kill(bdd,data);
+            }
+
+            if(req.body.mort == 'contestKill'){
+                gameRunning = await game.contestKill(bdd,data,'life');
             }
             
             if(gameRunning == false){

@@ -93,6 +93,23 @@ class Game {
     /*                                  Fonction                                  */
     /* -------------------------------------------------------------------------- */
 
+    async newKill(bdd,data,action){
+        // Recherche du tué
+        let killed = this.TableInGame[data[2]];
+        console.log("new kill : ", killed.name)
+        await bdd.updateNewKill(killed,action); // on va update les info dans la bdd après le kill
+        killed.status = action;
+        return true;
+    }
+
+    async contestKill(bdd,data,action){
+        // Recherche du tué
+        let killed = this.TableInGame[data[1]];
+        console.log("new kill : ", killed.name)
+        await bdd.updateNewKill(killed,action); // on va update les info dans la bdd après le kill
+        killed.status = action;
+        return true;
+    }
 
     async kill(bdd,data){ // gestion du cas "kill"
         

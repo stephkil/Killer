@@ -311,6 +311,11 @@ class BDD{
     /*                                  Fonction                                  */
     /* -------------------------------------------------------------------------- */
     
+    async updateNewKill(killedInGame,action){
+        const killed = await this.collections.Players.findOne({ name: killedInGame.name, game: killedInGame.game});
+        console.log("killed : ", killed);
+        await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ status : action}});
+    }
 
     async updateKill(killerInGame, killedInGame){
         
@@ -375,7 +380,7 @@ class BDD{
     
     async getListOfFriend(name){
         const result = await this.collections.User.findOne({username : name});
-        console.log(result.friends);
+        //console.log(result.friends);
         return result.friends;
     }
     

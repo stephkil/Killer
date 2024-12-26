@@ -83,6 +83,10 @@
                                 
                                 <% if(TableShuffle[i].status == "life"){ %>
                                     <img class="right floated mini ui image" src="/assets/picture/life.png">
+
+                                <% } else if (TableShuffle[i].status == "confirmation"){ %>
+                                    <img class="right floated mini ui image" src="/assets/picture/confirmation.png">
+
                                 <% } else { %>
                                     <img class="right floated mini ui image" src="/assets/picture/dead.png">
                                 <% } %>
@@ -117,9 +121,12 @@
 
         <% if(game.TableInGame[mainPlayer].status == 'dead'){ %>
 
-            <h3 class="ui dividing header"> Vous avez été tué
-                 </h3>
+            <h3 class="ui dividing header"> Vous avez été tué </h3>
         
+        <% } else if(game.TableInGame[mainPlayer].status == 'confirmation'){ %>
+
+            <h3 class="ui dividing header"> Veuillez confirmer / contester votre mort </h3>
+
         <% } else { %>
             <h3 class="ui dividing header"> Votre Mission </h3> 
 
@@ -156,18 +163,53 @@
         <% } %>
 
 <!-- Modal -->
-<div class="ui basic modal" id="myModal">
+<div class="ui basic modal" id="deathModal">
+    <div class="ui icon header">
+        <img src="/assets/picture/dead-blanc.png">
+        Confirmation de votre mort
+    </div>
+    <div class="content">
+        <p>Vous avez été tué</p>
+        <p>Veuillez confirmer que cela est bien le cas</p>
+        <p>Cette action sera irréversible !</p>
+        <p>Je t'invite à voir avec lui/elle avant de confirmer cette élimination</p>
+    </div>
+
+     <!-- Formulaire pour confirmer la mort -->
+     <form id="deathForm" action="/game/display" method="POST" style="display:none;">
+        <input type="hidden" name="mort" value="confirmKill">
+    </form>
+
+    <!-- Formulaire pour contester la mort -->
+    <form id="contestForm" action="/game/display" method="POST" style="display:none;">
+        <input type="hidden" name="mort" value="contestKill">
+    </form>
+
+    <div class="actions">
+        <div class="ui red basic cancel inverted button" id="contestDeath">
+            <i class="remove icon"></i>
+            Ce n'est pas le cas
+        </div>
+        <div class="ui green ok inverted button" id="confirmDeath">
+            <i class="checkmark icon"></i>
+            Je confirme ma mort
+        </div>
+    </div>
+</div>
+
+
+<div class="ui basic modal" id="confirmationModal">
     <div class="ui icon header">
         <img src="/assets/picture/dead-blanc.png">
         Confirmation
     </div>
     <div class="content">
         <p>Êtes-vous sûr de vouloir confirmer que tu as tué ta cible ?</p>
-        <p>Cette action sera irreversible !</p>
+        <p>Cette action sera irréversible !</p>
         <p>Je t'invite à voir avec lui/elle avant de confirmer cette élimination</p>
     </div>
 
-    <form id="eliminateForm" action="/game/display" method="POST" style="display:none;">
+    <form id="confirmationForm" action="/game/display" method="POST" style="display:none;">
         <input type="hidden" name="mort" value="kill">
     </form>
 
@@ -176,32 +218,52 @@
             <i class="remove icon"></i>
             Annuler
         </div>
-        <div class="ui green ok inverted button" id="confirmEliminate">
+        <div class="ui green ok inverted button" id="confirmKill">
             <i class="checkmark icon"></i>
             Éliminer
         </div>
     </div>
 </div>
 
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
 
 <script>
     $(document).ready(function() {
-        // Ouvre la modale au clic du bouton
-        $('.ui.dark.red.labeled.submit.icon.button').on('click', function() {
-            $('#myModal').modal('show');
+        // Injection de la variable serveur
+        var playerStatus = '<%= game.TableInGame[mainPlayer].status %>';
+
+        // Vérifier la condition et afficher la modale si nécessaire
+        if (playerStatus === 'confirmation') {
+            $('#deathModal').modal('show');
+        }
+
+        // Soumettre le formulaire de confirmation de la mort
+        $('#confirmDeath').on('click', function() {
+            $('#deathForm').submit();
         });
 
-        // Action pour le bouton "Annuler"
-        $('.cancel.button').on('click', function() {
-            $('#myModal').modal('hide');
+        // Soumettre le formulaire pour contester la mort
+        $('#contestDeath').on('click', function() {
+            $('#contestForm').submit();
         });
 
-        // Action pour le bouton "Éliminer"
-        $('#confirmEliminate').on('click', function() {
-            // Soumettre le formulaire
-            $('#eliminateForm').submit();
+        // -----------------
+
+        // Ouvrir la modale de confirmation
+        $('#confirmationForm').on('click', function() {
+            $('#confirmationModal').modal('show');
+        });
+
+        // Soumettre le formulaire pour confirmer un kill
+        $('#confirmKill').on('click', function() {
+            $('#confirmationForm').submit();
+        });
+
+         // Annuler l'action (fermer toutes les modales)
+         $('.cancel.button').on('click', function() {
+            $('.ui.basic.modal').modal('hide');
         });
     });
 </script>
