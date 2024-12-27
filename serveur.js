@@ -587,8 +587,13 @@ app.post('/profil', async(req,res)=>{
 /*                                   listen                                   */
 /* -------------------------------------------------------------------------- */
 
-app.listen(8080, async () => {
+const PORT = process.env.PORT || 3000;
+//const PORT = process.env.PORT || 8080;
+
+
+app.listen(PORT, async () => {
     await bdd.setupBDD(); // démarer la bdd
+    console.log(`Server running on port ${PORT}`);
 });
 
 
