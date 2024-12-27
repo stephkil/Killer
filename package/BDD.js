@@ -9,8 +9,18 @@ const Player = require('./Player');
 class BDD{
 
     constructor(){
-        this.uri = `mongodb+srv://${secrets.db_username}:${secrets.db_password}@${secrets.cluster}.${secrets.domain}/${secrets.database}?retryWrites=true&w=majority`;        
+        this.uri;
+        
+        // Vérification de l'environnement d'exécution (local ou production)
+        if (process.env.NODE_ENV === 'production') {
+            // En production (Heroku), utilisez les variables d'environnement
+            this.uri = `mongodb+srv://${process.env.db_username}:${process.env.db_password}@${process.env.cluster}.${process.env.domain}/${process.env.database}?retryWrites=true&w=majority`;
+        } else {
+            // En local, utilisez le fichier secrets.json
+            this.uri = `mongodb+srv://${secrets.db_username}:${secrets.db_password}@${secrets.cluster}.${secrets.domain}/${secrets.database}?retryWrites=true&w=majority`;
+        }
         //console.log(this.uri);
+
         this.client = new MongoClient(this.uri, { // création du client
             serverApi: {
               version: ServerApiVersion.v1,
