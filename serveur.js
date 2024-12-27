@@ -587,17 +587,7 @@ app.post('/profil', async(req,res)=>{
 /*                                   listen                                   */
 /* -------------------------------------------------------------------------- */
 
-let PORT;
-
-if (process.env.NODE_ENV === 'production') {
-    console.log('Running in production mode!');
-    PORT = process.env.PORT || 3000;
-
-} else {
-    console.log('Running in development mode!');
-    PORT = 8080;
-}
-
+let PORT = process.env.PORT || 8080;
 
 app.listen(PORT, async () => {
     await bdd.setupBDD(); // démarer la bdd
