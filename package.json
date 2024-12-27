@@ -4,8 +4,7 @@
   "description": "Petit projet sympa !",
   "main": "serveur.js",
   "scripts": {
-    "start": "node serveur.js",
-    "dev": "nodemon serveur.js"
+    "start": "nodemon serveur.js"
   },
   "repository": {
     "type": "git",

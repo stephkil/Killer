@@ -28,7 +28,7 @@ class BDD{
               deprecationErrors: true,
             }
           });
-        this.collectionNames = ['User','Games','Players','Historique','Task']; // on renseigne le nom des collections présente dans la bdd
+        this.collectionNames = ['User','Games','Players','Historique','Task','Success']; // on renseigne le nom des collections présente dans la bdd
         this.collections = {};
     }
 
@@ -76,7 +76,6 @@ class BDD{
 
         await this.collections.Players.deleteMany({ game : game.name }); // on retire les joueur racroché a l'id de la game, de la bdd
         await this.collections.Games.deleteOne({ name : game.name }); // on retire la game de la bdd
-        
         
         let topKillerLife;
         let topKillerAll;
@@ -458,6 +457,30 @@ class BDD{
         }
         
         return tabGame;
+    }
+
+
+    /* -------------------------------------------------------------------------- */
+    /*                                 Success                                    */
+    /* -------------------------------------------------------------------------- */
+
+    async getSuccess(){
+        // Créer un tableau vide pour stocker les résultats
+        let resultArray = [];
+
+        // Récupérer les documents avec seulement les champs 'title' et 'description'
+        const cursor = this.collections.Success.find({}, { title: 1, description: 1 });
+
+        // Utiliser une boucle pour parcourir les résultats
+        for await (const success of cursor) {
+            // Ajouter un tableau contenant 'title' et 'description' dans le tableau principal
+            resultArray.push([success.title, 0, success.description]);
+        }
+
+        // Afficher le tableau avec les données récupérées
+        console.log(resultArray);
+        return resultArray;
+
     }
 
 }

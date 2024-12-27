@@ -59,16 +59,33 @@
     <h3 class="ui dividing header">  Title :  <%= infoPlayer[1] %> || <a>0 / 10 </a></h3>
 
 
-    <h3 class="ui dividing header">  Success :  <a><%= infoPlayer[8] %> / 20 </a></h3>
+    <h3 class="ui dividing header">  Success :  <a><%= infoPlayer[8] %> / 10 </a></h3>
 
+        <% for (var i = 0; i < success.length; i++ ) { %>
+            <div class="column">
+                <div class="ui card">
+                    <div class="content">
+                        <div class="header"><%= success[i][0] %></div>
+                        <div class="meta">
+                            <a>Optenu par <%= success[i][1] %> % des joueurs</a>
+                        </div>
+                        <div class="description">
+                            <%= success[i][2] %> <br> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p></p>
+        <% } %>
 </div>
 
 
-
+<p></p>
+<p></p>
 
 <form action="/profil" method="post" class="ui form">
     <div style="display: flex; justify-content: center; align-items: center;">
-        <button type="submit" class="ui dark red labeled submit icon button" style="position:fixed ; bottom: 10%">
+        <button type="submit" class="ui dark red labeled submit icon button" style="position:bottom ; bottom: 10%">
             <i class="close  icon"></i>
             Déconnection
         </button>

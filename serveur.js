@@ -572,7 +572,9 @@ app.get('/profil', async (req,res) =>{
     
     if (req.session.user && (req.session.cookie.expires > new Date())) {
         var user = await bdd.getUser(req.session.user.username);
-        res.render('profil', {username: req.session.user.username, infoPlayer: user});
+        const listOfSuccess = await bdd.getSuccess();
+        
+        res.render('profil', {username: req.session.user.username, infoPlayer: user, success: listOfSuccess});
     } else {
         destroySession(req,res);
     }
