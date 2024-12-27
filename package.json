@@ -2,9 +2,10 @@
   "name": "killer",
   "version": "1.0.0",
   "description": "Petit projet sympa !",
-  "main": "package/main.js",
+  "main": "serveur.js",
   "scripts": {
-    "start": "node serveur.js"
+    "start": "node serveur.js",
+    "dev": "nodemon serveur.js"
   },
   "repository": {
     "type": "git",
@@ -29,7 +30,9 @@
     "moment": "^2.29.4",
     "mongodb": "^6.1.0",
     "morgan": "^1.10.0",
-    "nodemon": "^3.0.1",
     "socket.io": "^4.8.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
