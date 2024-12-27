@@ -459,6 +459,9 @@ app.get('/game/display', async (req,res) =>{
                     //console.log(targetPlayer);
 
                     let friends =  await bdd.getListOfFriend(req.session.user.username);
+                    
+                    console.log("game : ", game);
+                    
                     res.render('game/display', { 
                         game : game, 
                         gameRunning: gameRunning, 

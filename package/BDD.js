@@ -63,6 +63,7 @@ class BDD{
             tabKill[i]= game.TableInGame[i].nbKill;
             tabStatus[i] = game.TableInGame[i].status;
         }
+
         await this.collections.Games.updateOne({name : game.name}, {$set:{allName : tabName}});
         await this.collections.Games.updateOne({name : game.name}, {$set:{allTask : tabTask}});
         await this.collections.Games.updateOne({name : game.name}, {$set:{allKill : tabKill}});
@@ -75,11 +76,38 @@ class BDD{
 
         await this.collections.Players.deleteMany({ game : game.name }); // on retire les joueur racroché a l'id de la game, de la bdd
         await this.collections.Games.deleteOne({ name : game.name }); // on retire la game de la bdd
+        
+        
+        let topKillerLife;
+        let topKillerAll;
+        let nbLife = 0;
+        let nbAll = 0;
 
         for(let i = 0; i < game.nbPlayer; i++){
             const user = await this.collections.User.findOne({ username: game.TableInGame[i].name});
             await this.collections.User.updateOne({ _id: user._id }, {$inc: { game_played : 1 }}); // update nombre de partie jouer ou en cours
-            await this.collections.User.updateOne({ _id: user._id }, {$push: { historique : histoId }}); 
+            await this.collections.User.updateOne({ _id: user._id }, {$push: { historique : histoId }});
+            
+            if(game.TableInGame[i].nbKill > nbLife && game.TableInGame[i].status == "life"){
+                topKillerLife = game.TableInGame[i].name;
+            }
+            if(game.TableInGame[i].nbKill > nbAll){
+                topKillerAll = game.TableInGame[i].name;
+            }
+
+            if(game.TableInGame[i].status == "life"){
+                await this.collections.User.updateOne({ _id: user._id }, {$inc: { game_survivant : 1 }});
+            }
+        }
+        
+        const top_killer = await this.collections.User.findOne({ username: topKillerAll});
+        await this.collections.User.updateOne({ _id: top_killer._id }, {$inc: { game_topKiller : 1 }});
+
+        const killer_alpha = await this.collections.User.findOne({ username: topKillerLife});
+        await this.collections.User.updateOne({ _id: killer_alpha._id }, {$inc: { game_killerAlpha : 1 }});
+
+        if(topKillerAll == topKillerLife){
+            await this.collections.User.updateOne({ _id: killer_alpha._id }, {$inc: { game_killerSupreme : 1 }});
         }
 
         const user = await this.collections.User.findOne({username : game.winner});
