@@ -86,8 +86,9 @@ class BDD{
         for(let i = 0; i < game.nbPlayer; i++){
             const user = await this.collections.User.findOne({ username: game.TableInGame[i].name});
             await this.collections.User.updateOne({ _id: user._id }, {$inc: { game_played : 1 }}); // update nombre de partie jouer ou en cours
+            await this.collections.User.updateOne({ _id: user._id }, {$inc: { kill : game.TableInGame[i].nbKill }});
             await this.collections.User.updateOne({ _id: user._id }, {$push: { historique : histoId }});
-            
+
             if(game.TableInGame[i].nbKill > nbLife && game.TableInGame[i].status == "life"){
                 topKillerLife = game.TableInGame[i].name;
             }
