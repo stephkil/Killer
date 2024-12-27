@@ -158,7 +158,7 @@ app.post('/auth/register', async (req,res)=>{
             
             if(status == true){
                 req.flash('success', "Votre Profil est bien enregistrer  :)"); 
-                res.redirect('/auth.login');
+                res.redirect('/auth/login');
             } else {
                 req.flash('error', "Ce Profil existe déjà  :(");
                 res.redirect('/auth/register');
@@ -461,7 +461,7 @@ app.get('/game/display', async (req,res) =>{
                     let friends =  await bdd.getListOfFriend(req.session.user.username);
                     
                     console.log("game : ", game);
-                    
+
                     res.render('game/display', { 
                         game : game, 
                         gameRunning: gameRunning, 

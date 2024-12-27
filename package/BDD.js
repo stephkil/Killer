@@ -99,7 +99,7 @@ class BDD{
                 await this.collections.User.updateOne({ _id: user._id }, {$inc: { game_survivant : 1 }});
             }
         }
-        
+
         const top_killer = await this.collections.User.findOne({ username: topKillerAll});
         await this.collections.User.updateOne({ _id: top_killer._id }, {$inc: { game_topKiller : 1 }});
 
@@ -146,6 +146,7 @@ class BDD{
             game_topKiller : 0,
             game_killerAlpha : 0,
             game_killerSupreme : 0,
+            kill : 0,
             success : 0,
             friends : [],
             historique : []
