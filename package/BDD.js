@@ -317,11 +317,11 @@ class BDD{
         await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ status : action}});
     }
 
-    async updateKill(killerInGame, killedInGame){
+    async updateKill(killedInGame){
         
         // je cherche le killer  et le killed dans la bdd grâce au nom et id de game
-        const killer = await this.collections.Players.findOne({ name: killerInGame.name, game: killerInGame.game});
         const killed = await this.collections.Players.findOne({ name: killedInGame.name, game: killedInGame.game});
+        const killer = await this.collections.Players.findOne({ target: killedInGame.name, game: killedInGame.game});
 
         console.log("killer : ", killer);
         console.log("killed : ", killed);
@@ -334,6 +334,7 @@ class BDD{
         await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ status : "dead"}});
         await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ target : "none" }});
         
+        return killer;
     }
 
     async updateGame(killer){
