@@ -4,7 +4,7 @@
   "description": "Petit projet sympa !",
   "main": "package/main.js",
   "scripts": {
-    "start": "nodemon serveur.js"
+    "start": "node serveur.js"
   },
   "repository": {
     "type": "git",
