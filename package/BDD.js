@@ -147,7 +147,7 @@ class BDD{
             game_killerAlpha : 0,
             game_killerSupreme : 0,
             kill : 0,
-            success : 0,
+            success : [],
             friends : [],
             historique : []
         });
@@ -464,23 +464,27 @@ class BDD{
     /*                                 Success                                    */
     /* -------------------------------------------------------------------------- */
 
-    async getSuccess(){
+    async getSuccess(name){
         // Créer un tableau vide pour stocker les résultats
         let resultArray = [];
+        var user = await this.collections.User.findOne({ username: name });
+        var listOfSuccess = user.success;
 
         // Récupérer les documents avec seulement les champs 'title' et 'description'
         const cursor = this.collections.Success.find({}, { title: 1, description: 1 });
 
         // Utiliser une boucle pour parcourir les résultats
         for await (const success of cursor) {
-            // Ajouter un tableau contenant 'title' et 'description' dans le tableau principal
-            resultArray.push([success.title, 0, success.description]);
+            if(listOfSuccess.includes(success.title)){
+                resultArray.push([success.title, 0, success.description, true]);
+            } else {
+                resultArray.push([success.title, 0, success.description, false]);
+            }
         }
 
         // Afficher le tableau avec les données récupérées
-        console.log(resultArray);
+        //console.log(resultArray);
         return resultArray;
-
     }
 
 }
