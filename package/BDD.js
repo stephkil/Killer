@@ -5,7 +5,8 @@ const bcrypt = require('bcrypt');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
 const Player = require('./Player');
-
+const Success = require('./Success');
+const success = new Success();
 class BDD{
 
     constructor(){
@@ -50,7 +51,7 @@ class BDD{
 
     async closeBDD(game) {
 
-        console.log("update bdd : ", game);
+        console.log("update find de game : ", game.name);
         // update l'historique partie 
         const tabName = [];
         const tabTask = [];
@@ -90,28 +91,34 @@ class BDD{
 
             if(game.TableInGame[i].nbKill > nbLife && game.TableInGame[i].status == "life"){
                 topKillerLife = game.TableInGame[i].name;
+                nbLife = game.TableInGame[i].nbKill;
             }
+
             if(game.TableInGame[i].nbKill > nbAll){
                 topKillerAll = game.TableInGame[i].name;
+                nbAll = game.TableInGame[i].nbKill;
             }
 
             if(game.TableInGame[i].status == "life"){
                 await this.collections.User.updateOne({ _id: user._id }, {$inc: { game_survivant : 1 }});
+                await this.checkSuccess(game.TableInGame[i].name,game.TableInGame[i].nbKill,"Spectateur");
             }
         }
-
+        console.log("top killer : ", topKillerAll);
         const top_killer = await this.collections.User.findOne({ username: topKillerAll});
         await this.collections.User.updateOne({ _id: top_killer._id }, {$inc: { game_topKiller : 1 }});
 
+        console.log("Killer Alpha : ", topKillerLife);
         const killer_alpha = await this.collections.User.findOne({ username: topKillerLife});
         await this.collections.User.updateOne({ _id: killer_alpha._id }, {$inc: { game_killerAlpha : 1 }});
 
         if(topKillerAll == topKillerLife){
+            console.log("nous avons un killer suprème : ", topKillerLife);
             await this.collections.User.updateOne({ _id: killer_alpha._id }, {$inc: { game_killerSupreme : 1 }});
         }
 
         const user = await this.collections.User.findOne({username : game.winner});
-        console.log("winner : ", user);
+        console.log("winner : ", user.name);
         if(user){
             await this.collections.User.updateOne({ _id: user._id }, {$inc: { game_win : 1 }});
         }
@@ -295,7 +302,8 @@ class BDD{
             date_debut : new Date(),
             date_fin : game.end_date,
             winner : game.winner,
-            allName : tab
+            allName : tab,
+            histo : game.histo
         });
     }
 
@@ -309,6 +317,7 @@ class BDD{
                 game.start_date = result.date_debut;
                 game.end_date = result.date_fin;
                 game.winner = result.winner;
+                game.histo = result.histo;
                 return true;
             } else {
                 //console.log("partie trouvé mais déjà finis");
@@ -356,28 +365,34 @@ class BDD{
         await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ status : action}});
     }
 
-    async updateKill(killedInGame){
+    async updateKill(killedInGame,game){
         
         // je cherche le killer  et le killed dans la bdd grâce au nom et id de game
         const killed = await this.collections.Players.findOne({ name: killedInGame.name, game: killedInGame.game});
         const killer = await this.collections.Players.findOne({ target: killedInGame.name, game: killedInGame.game});
 
-        console.log("killer : ", killer);
-        console.log("killed : ", killed);
+        console.log("killer : ", killer.name);
+        console.log("killed : ", killed.name);
+
+        await this.checkSuccess(killer.name,game,"First Blood");
+        await this.checkSuccess(killed.name,game,"Spawn Kill");
 
         //update du killer
         await this.collections.Players.updateOne({ _id: killer._id }, {$inc: { nombre_kill : 1 }});
-        await this.collections.Players.updateOne({ _id: killer._id }, {$set: { target : killedInGame.target }}); 
+        await this.collections.Players.updateOne({ _id: killer._id }, {$set: { target : killedInGame.target }});
 
          // de même pour le tué
         await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ status : "dead"}});
         await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ target : "none" }});
         
+        const result = await this.collections.Games.findOne({ name: killer.game});
+        await this.collections.Games.updateOne({ _id: result._id }, { $push: { histo : [killer.name,'kill',killed.name,killed.mission] }});     
+        
         return killer;
     }
 
     async updateGame(killer){
-         // de même pour le tué
+        // de même pour le tué
         const result = await this.collections.Games.findOne({ name: killer.game});
         await this.collections.Games.updateOne({ _id: result._id }, { $set:{ winner : killer.name}}); // update winner dans bdd     
     }
@@ -485,6 +500,19 @@ class BDD{
         // Afficher le tableau avec les données récupérées
         //console.log(resultArray);
         return resultArray;
+    }
+
+    async checkSuccess(name,game,title){
+
+        var user = await this.collections.User.findOne({ username: name });
+        var listOfSuccess = user.success;
+
+        var result = await success.checkAllSuccess(user,game,title);
+        console.log(result);
+        if(result && !listOfSuccess.includes(title)){
+            console.log(name, "viens d'optenir le succès :", title);
+            await this.collections.User.updateOne({ username: name }, { $push: { success: title }}); 
+        }
     }
 
 }

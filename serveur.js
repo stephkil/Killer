@@ -460,7 +460,7 @@ app.get('/game/display', async (req,res) =>{
 
                     let friends =  await bdd.getListOfFriend(req.session.user.username);
                     
-                    console.log("game : ", game);
+                    //console.log("game : ", game);
 
                     res.render('game/display', { 
                         game : game, 
@@ -484,6 +484,7 @@ app.get('/game/display', async (req,res) =>{
 app.post('/game/display', async(req,res)=>{
     
     console.log("req.body :", req.body);
+    console.log("data : ", data);
 
     if(req.body.add_friend_inGame != '' && req.body.mort != "kill" && req.body.mort != "confirmKill" && req.body.mort != "contestKill"){
         console.log("add friend in game");
@@ -508,24 +509,24 @@ app.post('/game/display', async(req,res)=>{
             }
 
             if(req.body.mort == 'confirmKill'){
-                gameRunning = await game.kill(bdd,data);
+                gameRunning = await game.kill(bdd,data,game);
             }
 
             if(req.body.mort == 'contestKill'){
                 gameRunning = await game.contestKill(bdd,data,'life');
             }
             
-            if(gameRunning == false){
+            /*if(gameRunning == false){
                 req.flash('success', "GG " + game.winner + ", tu es le killer ultime !");
                 res.redirect('/game/endScreen');
-            } else {
+            } else {*/
                 if(req.body.mort != 'kill'){
                     req.flash('error', "erreur durant le kill, re-esayer");
                 } else {
                     req.flash('succes', "Le joueur" + game.TableInGame[data[2]].name + " est mort !")
                 }
                 res.redirect('/game/display');
-            }
+            //}
         } else {
             res.redirect('/game/display');
         }
@@ -537,6 +538,7 @@ app.post('/game/display', async(req,res)=>{
 /* -------------------------------------------------------------------------- */
 
 app.get('/game/endScreen', async (req,res) =>{
+    console.log("GAME APRES KILL",game);
     await bdd.closeBDD(game);
     res.render('game/endScreen', {game : game});
 });
@@ -573,7 +575,7 @@ app.get('/profil', async (req,res) =>{
     if (req.session.user && (req.session.cookie.expires > new Date())) {
         var user = await bdd.getUser(req.session.user.username);
         const listOfSuccess = await bdd.getSuccess(req.session.user.username);
-        
+        await bdd.checkSuccess(req.session.user.username,"","Collectionneur")
         res.render('profil', {username: req.session.user.username, infoPlayer: user, success: listOfSuccess});
     } else {
         destroySession(req,res);

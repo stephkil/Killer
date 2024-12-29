@@ -1,5 +1,6 @@
 const Player = require('./Player');
-
+const Success = require('./Success');
+const success = new Success();
 class Game {
 
     constructor(){
@@ -10,6 +11,7 @@ class Game {
         this.start_date = null;
         this.end_date = null;
         this.winner = undefined;
+        this.histo = []
     }
     
     destroy(){
@@ -20,6 +22,7 @@ class Game {
         this.start_date = null;
         this.end_date = null;
         this.winner = undefined;
+        this.histo = [];
     }
 
     /* -------------------------------------------------------------------------- */
@@ -111,22 +114,25 @@ class Game {
         return true;
     }
 
-    async kill(bdd,data){ // gestion du cas "kill"
-        
+    async kill(bdd,data,game){ // gestion du cas "kill"
+        console.log("GAME AVANT KILL", game);
         // Recherche du tué
         let killed = this.TableInGame[data[1]];
 
-        let killer = await bdd.updateKill(killed); // on va update les info dans la bdd après le kill
+        let killer = await bdd.updateKill(killed,game); // on va update les info dans la bdd après le kill
 
-        killer.target = killed.target;
+        game.histo.push([killer.name,'kill',killed.name,killed.mission]);
+
         killer.nbKill ++;
+        killer.target = killed.target;
 
         killed.status = "dead";
         killed.target = "none";
 
+       
         if(killer.name == killer.target) {
             this.winner = killer.name;
-            await bdd.updateGame(killer);
+            //await bdd.updateGame(killer);
             return false // si un joueur dois se tué lui même cela veut dire que il y a plus que lui, il gagne donc et on stop la game
         }
         return true; // sinon on continue à jouer
