@@ -63,7 +63,13 @@
 
         <% for (var i = 0; i < success.length; i++ ) { %>
             <div class="column">
-                <div class="ui card">
+
+                    <% if(!success[i][3]){ %>
+                        <div class="ui card"  style = "background-color: #a7a5a5; width: 100%">
+                    <% } else { %>
+                        <div class="ui card" style = "background-color: #38b83fb8; width: 100%">
+                    <% } %>
+
                     <div class="content">
                         <div class="header"><%= success[i][0] %></div>
                         <div class="meta">
