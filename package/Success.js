@@ -10,7 +10,7 @@ class Success{
         if(success == "Serial Killer") return await this.SerialKiller();
         if(success == "Jack the Ripper") return await this.JackTheRipper(user);
         if(success == "Il n'en restera qu'un") return await this.IlEnResteraUn();
-        if(success == "Speedrunner") return await this.Speedrunner();
+        if(success == "Speedrunner") return await this.Speedrunner(game);
     }
 
     async SpawnKill(game){
@@ -75,11 +75,12 @@ class Success{
         return true;
     }
 
-    async Speedrunner(){
+    async Speedrunner(game){
+        const now = new Date();
         const startDate = new Date(game.start_date); // Date de début du jeu
         const millisecondsElapsed = now - startDate; // Millisecondes écoulées depuis le début du jeu
 
-        const min = millisecondsElapsed / 6000;
+        const min = millisecondsElapsed / 60000;
         console.log("Speedrunner : ", min);
 
         if(min <= 15){
