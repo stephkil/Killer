@@ -578,6 +578,7 @@ app.get('/profil', async (req,res) =>{
         const listOfSuccess = await bdd.getSuccess(req.session.user.username);
         await bdd.checkSuccess(req.session.user.username,"","Collectionneur");
         await bdd.checkSuccess(req.session.user.username,"","Jack the Ripper");
+        await bdd.checkSuccess(req.session.user.username,bdd,"Invincible");
 
         res.render('profil', {username: req.session.user.username, infoPlayer: user, success: listOfSuccess});
     } else {

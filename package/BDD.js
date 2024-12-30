@@ -52,60 +52,52 @@ class BDD{
     async closeBDD(game) {
 
         console.log("update find de game : ", game.name);
-        // update l'historique partie 
+
+        // update de la fin de partie
+
         const tabName = [];
         const tabTask = [];
         const tabKill = [];
         const tabStatus = [];
 
-        for(let i=0; i<game.nbPlayer;i++){
-            tabName[i]= game.TableInGame[i].name;
-            tabTask[i]= game.TableInGame[i].mission;
-            tabKill[i]= game.TableInGame[i].nbKill;
-            tabStatus[i] = game.TableInGame[i].status;
-        }
+        const survivant = [];
 
-        await this.collections.Games.updateOne({name : game.name}, {$set:{allName : tabName}});
-        await this.collections.Games.updateOne({name : game.name}, {$set:{allTask : tabTask}});
-        await this.collections.Games.updateOne({name : game.name}, {$set:{allKill : tabKill}});
-        await this.collections.Games.updateOne({name : game.name}, {$set:{allStatus : tabStatus}});
-
-        // on ajoute la partie dans l'historique
-        const result = await this.collections.Games.findOne({name:game.name});
-        let resultHisto = await this.collections.Historique.insertOne(result);
-        let histoId = resultHisto.insertedId;
-
-        await this.collections.Players.deleteMany({ game : game.name }); // on retire les joueur racroché a l'id de la game, de la bdd
-        await this.collections.Games.deleteOne({ name : game.name }); // on retire la game de la bdd
-        
         let topKillerLife;
         let topKillerAll;
         let nbLife = 0;
         let nbAll = 0;
+        
+        // recherche des dernière info manquante
 
-        for(let i = 0; i < game.nbPlayer; i++){
+        for(let i=0; i<game.nbPlayer;i++){
+
             const user = await this.collections.User.findOne({ username: game.TableInGame[i].name});
-            await this.collections.User.updateOne({ _id: user._id }, {$inc: { game_played : 1 }}); // update nombre de partie jouer ou en cours
-            await this.collections.User.updateOne({ _id: user._id }, {$inc: { kill : game.TableInGame[i].nbKill }});
-            await this.collections.User.updateOne({ _id: user._id }, {$push: { historique : histoId }});
 
-            await this.checkSuccess(game.TableInGame[i].name,game.TableInGame[i].nbKill,"Pentakill");
+            tabName[i]= game.TableInGame[i].name;
+            tabTask[i]= game.TableInGame[i].mission;
+            tabKill[i]= game.TableInGame[i].nbKill;
+            tabStatus[i] = game.TableInGame[i].status;
+
+            if(game.TableInGame[i].status == "life"){
+                survivant.push(game.TableInGame[i].name);
+            }
 
             if(game.TableInGame[i].nbKill > nbLife && game.TableInGame[i].status == "life"){
                 topKillerLife = game.TableInGame[i].name;
                 nbLife = game.TableInGame[i].nbKill;
             }
-
             if(game.TableInGame[i].nbKill > nbAll){
                 topKillerAll = game.TableInGame[i].name;
                 nbAll = game.TableInGame[i].nbKill;
             }
-
             if(game.TableInGame[i].status == "life"){
                 await this.collections.User.updateOne({ _id: user._id }, {$inc: { game_survivant : 1 }});
                 await this.checkSuccess(game.TableInGame[i].name,game.TableInGame[i].nbKill,"Spectateur");
             }
         }
+
+        // Top killer
+
         console.log("top killer : ", topKillerAll);
         const top_killer = await this.collections.User.findOne({ username: topKillerAll});
         await this.collections.User.updateOne({ _id: top_killer._id }, {$inc: { game_topKiller : 1 }});
@@ -119,16 +111,47 @@ class BDD{
             await this.collections.User.updateOne({ _id: killer_alpha._id }, {$inc: { game_killerSupreme : 1 }});
         }
 
+        // winner 
+
         if(game.winner == undefined){
             game.winner = topKillerLife;
-            const result = await this.collections.Games.findOne({ name: game.name});
-            await this.collections.Games.updateOne({ _id: result._id }, { $set:{ winner : topKillerLife}}); // update winner dans bdd
+            await this.collections.Games.updateOne({ name: game.name }, {$set:{ winner : game.winner}}); // update winner dans bdd
         }
+
         const user = await this.collections.User.findOne({username : game.winner});
-        console.log("winner : ", user.name);
+        console.log("winner : ", user.username);
         if(user){
             await this.collections.User.updateOne({ _id: user._id }, {$inc: { game_win : 1 }});
         }
+
+        // last update 
+
+        await this.collections.Games.updateOne({name : game.name}, {$set:{allName : tabName}});
+        await this.collections.Games.updateOne({name : game.name}, {$set:{allTask : tabTask}});
+        await this.collections.Games.updateOne({name : game.name}, {$set:{allKill : tabKill}});
+        await this.collections.Games.updateOne({name : game.name}, {$set:{allStatus : tabStatus}});
+
+        // on ajoute la partie dans l'historique
+
+        const result = await this.collections.Games.findOne({name:game.name});
+        result.survivant = survivant;
+
+        let resultHisto = await this.collections.Historique.insertOne(result);
+        let histoId = resultHisto.insertedId;
+
+        for(let i = 0; i < game.nbPlayer; i++){
+            const user = await this.collections.User.findOne({ username: game.TableInGame[i].name});
+            await this.collections.User.updateOne({ _id: user._id }, {$inc: { game_played : 1 }}); // update nombre de partie jouer ou en cours
+            await this.collections.User.updateOne({ _id: user._id }, {$inc: { kill : game.TableInGame[i].nbKill }});
+            await this.collections.User.updateOne({ _id: user._id }, {$push: { historique : histoId }});
+
+            await this.checkSuccess(game.TableInGame[i].name,game.TableInGame[i].nbKill,"Pentakill");
+        }
+        
+        // delete la partie et ses players
+
+        await this.collections.Players.deleteMany({ game : game.name }); // on retire les joueur racroché a l'id de la game, de la bdd
+        await this.collections.Games.deleteOne({ name : game.name }); // on retire la game de la bdd
         
         //await this.client.close(); // fermeture du client
     }
@@ -228,8 +251,6 @@ class BDD{
         }
         return gameName
     };
-    
-
 
         /* -------------------------------------------------------------------------- */
         /*                                   Player                                   */
@@ -520,6 +541,32 @@ class BDD{
             console.log(name, "viens d'optenir le succès :", title);
             await this.collections.User.updateOne({ username: name }, { $push: { success: title }}); 
         }
+    }
+
+    async last2Games(user){
+
+        const allGames = user.historique;
+
+        if (allGames.length >= 2) {
+            const lastTwoGames = allGames.slice(-2); // Extrait les deux dernières parties
+            
+            var result = await this.collections.Historique.findOne({ _id: lastTwoGames[0] })
+            const result1 = result.survivant.includes(user.username);
+
+            result = await this.collections.Historique.findOne({ _id: lastTwoGames[1] })
+            const result2 = result.survivant.includes(user.username);
+
+            if(result1 && result2){
+                return true;
+            }
+
+            console.log("Les deux dernières parties :", result1, " || ", result2);
+
+        } else { 
+            console.log("Il y a moins de deux parties dans l'historique");
+        }
+
+        return false;
     }
 
 }

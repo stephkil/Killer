@@ -6,7 +6,7 @@ class Success{
         if(success == "First Blood") return await this.FirstBlood(game);
         if(success == "Spectateur") return await this.Spectateur(game);
         if(success == "Pentakill") return await this.Pentakill(game);
-        if(success == "Invincible") return await this.Invincible();
+        if(success == "Invincible") return await this.Invincible(user,game);
         if(success == "Serial Killer") return await this.SerialKiller();
         if(success == "Jack the Ripper") return await this.JackTheRipper(user);
         if(success == "Il n'en restera qu'un") return await this.IlEnResteraUn();
@@ -53,8 +53,9 @@ class Success{
         return false;
     }
 
-    async Invincible(){
+    async Invincible(user,bdd){
         console.log("Invincible");
+        return await bdd.last2Games(user);
     }
 
     async SerialKiller(){
