@@ -76,7 +76,16 @@ class Success{
     }
 
     async Speedrunner(){
-        console.log("Speedrunner");
+        const startDate = new Date(game.start_date); // Date de début du jeu
+        const millisecondsElapsed = now - startDate; // Millisecondes écoulées depuis le début du jeu
+
+        const min = millisecondsElapsed / 6000;
+        console.log("Speedrunner : ", min);
+
+        if(min <= 15){
+            return true;
+        }
+        return false;
     }
 }
 

@@ -129,6 +129,7 @@ class Game {
         killed.status = "dead";
         killed.target = "none";
 
+        await bdd.checkSuccess(killer.name,game,"Speedrunner");
        
         if(killer.name == killer.target) {
             this.winner = killer.name;
