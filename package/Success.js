@@ -7,7 +7,7 @@ class Success{
         if(success == "Spectateur") return await this.Spectateur(game);
         if(success == "Pentakill") return await this.Pentakill(game);
         if(success == "Invincible") return await this.Invincible(user,game);
-        if(success == "Serial Killer") return await this.SerialKiller();
+        if(success == "Serial Killer") return await this.SerialKiller(user,game);
         if(success == "Jack the Ripper") return await this.JackTheRipper(user);
         if(success == "Il n'en restera qu'un") return await this.IlEnResteraUn();
         if(success == "Speedrunner") return await this.Speedrunner(game);
@@ -58,9 +58,9 @@ class Success{
         return await bdd.last2Games(user);
     }
 
-    async SerialKiller(){
+    async SerialKiller(user,game){
         console.log("SerialKiller");
-        
+        return await bdd.last3Kill(user,game);
     }
 
     async JackTheRipper(user){

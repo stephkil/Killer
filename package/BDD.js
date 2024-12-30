@@ -404,6 +404,7 @@ class BDD{
 
         await this.checkSuccess(killer.name,game,"First Blood");
         await this.checkSuccess(killed.name,game,"Spawn Kill");
+        await this.checkSuccess(killer.name,game,"Serial Killer");
 
         //update du killer
         await this.collections.Players.updateOne({ _id: killer._id }, {$inc: { nombre_kill : 1 }});
@@ -564,6 +565,28 @@ class BDD{
 
         } else { 
             console.log("Il y a moins de deux parties dans l'historique");
+        }
+
+        return false;
+    }
+
+    async last3Kill(user,game){
+
+        if (game.histo.length >= 3) {
+            const last3Kill = allGames.slice(-3); // Extrait les deux dernières parties
+            
+            const result1 = await this.collections.Historique.findOne({ _id: last3Kill[0][0] })
+            const result2 = await this.collections.Historique.findOne({ _id: last3Kill[1][0] })
+            const result3 = await this.collections.Historique.findOne({ _id: last3Kill[2][0] })
+
+            console.log("Les trois dernier kill de la parties :", result1, " || ", result2, " || ", result3);
+
+            if(user.username == result1 && result1 == result2 && result1 == result3){
+                return true;
+            }
+
+        } else { 
+            console.log("Il y a moins de trois kill dans la parties");
         }
 
         return false;
