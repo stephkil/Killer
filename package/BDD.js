@@ -393,7 +393,7 @@ class BDD{
         await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ status : action}});
     }
 
-    async updateKill(killedInGame,game){
+    async updateKill(killedInGame,game,bdd){
         
         // je cherche le killer  et le killed dans la bdd grâce au nom et id de game
         const killed = await this.collections.Players.findOne({ name: killedInGame.name, game: killedInGame.game});
@@ -404,7 +404,6 @@ class BDD{
 
         await this.checkSuccess(killer.name,game,"First Blood");
         await this.checkSuccess(killed.name,game,"Spawn Kill");
-        await this.checkSuccess(killer.name,game,"Serial Killer");
 
         //update du killer
         await this.collections.Players.updateOne({ _id: killer._id }, {$inc: { nombre_kill : 1 }});
@@ -415,8 +414,12 @@ class BDD{
         await this.collections.Players.updateOne({ _id: killed._id }, { $set:{ target : "none" }});
         
         const result = await this.collections.Games.findOne({ name: killer.game});
-        await this.collections.Games.updateOne({ _id: result._id }, { $push: { histo : [killer.name,'kill',killed.name,killed.mission] }});     
+        await this.collections.Games.updateOne({ _id: result._id }, { $push: { histo : [killer.name,'kill',killed.name,killed.mission] }});  
         
+        game.histo.push([killer.name,'kill',killed.name,killed.mission]);
+
+        await this.checkSuccess(killer.name,[game,bdd],"Serial Killer");
+
         return killer;
     }
 
@@ -573,11 +576,11 @@ class BDD{
     async last3Kill(user,game){
 
         if (game.histo.length >= 3) {
-            const last3Kill = allGames.slice(-3); // Extrait les deux dernières parties
+            const last3Kill = game.histo.slice(-3); // Extrait les deux dernières parties
             
-            const result1 = await this.collections.Historique.findOne({ _id: last3Kill[0][0] })
-            const result2 = await this.collections.Historique.findOne({ _id: last3Kill[1][0] })
-            const result3 = await this.collections.Historique.findOne({ _id: last3Kill[2][0] })
+            const result1 = last3Kill[0][0];
+            const result2 = last3Kill[1][0];
+            const result3 = last3Kill[2][0];
 
             console.log("Les trois dernier kill de la parties :", result1, " || ", result2, " || ", result3);
 

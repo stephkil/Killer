@@ -1,16 +1,16 @@
 class Success{
 
-    async checkAllSuccess(user,game,success){
-        if(success == "Spawn Kill") return await this.SpawnKill(game);
+    async checkAllSuccess(user,param,success){
+        if(success == "Spawn Kill") return await this.SpawnKill(param);
         if(success == "Collectionneur") return await this.Collectionneur(user);
-        if(success == "First Blood") return await this.FirstBlood(game);
-        if(success == "Spectateur") return await this.Spectateur(game);
-        if(success == "Pentakill") return await this.Pentakill(game);
-        if(success == "Invincible") return await this.Invincible(user,game);
-        if(success == "Serial Killer") return await this.SerialKiller(user,game);
+        if(success == "First Blood") return await this.FirstBlood(param);
+        if(success == "Spectateur") return await this.Spectateur(param);
+        if(success == "Pentakill") return await this.Pentakill(param);
+        if(success == "Invincible") return await this.Invincible(user,param);
+        if(success == "Serial Killer") return await this.SerialKiller(user,param[0],param[1]);
         if(success == "Jack the Ripper") return await this.JackTheRipper(user);
         if(success == "Il n'en restera qu'un") return await this.IlEnResteraUn();
-        if(success == "Speedrunner") return await this.Speedrunner(game);
+        if(success == "Speedrunner") return await this.Speedrunner(param);
     }
 
     async SpawnKill(game){
@@ -58,7 +58,7 @@ class Success{
         return await bdd.last2Games(user);
     }
 
-    async SerialKiller(user,game){
+    async SerialKiller(user,game,bdd){
         console.log("SerialKiller");
         return await bdd.last3Kill(user,game);
     }

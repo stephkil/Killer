@@ -119,9 +119,7 @@ class Game {
         // Recherche du tué
         let killed = this.TableInGame[data[1]];
 
-        let killer = await bdd.updateKill(killed,game); // on va update les info dans la bdd après le kill
-
-        game.histo.push([killer.name,'kill',killed.name,killed.mission]);
+        let killer = await bdd.updateKill(killed,game,bdd); // on va update les info dans la bdd après le kill
 
         killer.nbKill ++;
         killer.target = killed.target;
