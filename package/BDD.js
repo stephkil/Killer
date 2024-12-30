@@ -119,6 +119,11 @@ class BDD{
             await this.collections.User.updateOne({ _id: killer_alpha._id }, {$inc: { game_killerSupreme : 1 }});
         }
 
+        if(game.winner == undefined){
+            game.winner = topKillerLife;
+            const result = await this.collections.Games.findOne({ name: game.name});
+            await this.collections.Games.updateOne({ _id: result._id }, { $set:{ winner : topKillerLife}}); // update winner dans bdd
+        }
         const user = await this.collections.User.findOne({username : game.winner});
         console.log("winner : ", user.name);
         if(user){
