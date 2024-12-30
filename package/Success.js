@@ -5,7 +5,7 @@ class Success{
         if(success == "Collectionneur") return await this.Collectionneur(user);
         if(success == "First Blood") return await this.FirstBlood(game);
         if(success == "Spectateur") return await this.Spectateur(game);
-        if(success == "Pentakill") return await this.Pentakill();
+        if(success == "Pentakill") return await this.Pentakill(game);
         if(success == "Invincible") return await this.Invincible();
         if(success == "Serial Killer") return await this.SerialKiller();
         if(success == "Jack the Ripper") return await this.JackTheRipper(user);
@@ -45,8 +45,12 @@ class Success{
         return false;
     }
 
-    async Pentakill(){
-        console.log("Pentakill");
+    async Pentakill(kill){
+        console.log("Pentakill : ", kill);
+        if(kill >= 5){
+            return true;
+        }
+        return false;
     }
 
     async Invincible(){
@@ -55,6 +59,7 @@ class Success{
 
     async SerialKiller(){
         console.log("SerialKiller");
+        
     }
 
     async JackTheRipper(user){
@@ -67,6 +72,7 @@ class Success{
 
     async IlEnResteraUn(){
         console.log("IlEnResteraUn");
+        return true;
     }
 
     async Speedrunner(){

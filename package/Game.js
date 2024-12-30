@@ -132,7 +132,8 @@ class Game {
        
         if(killer.name == killer.target) {
             this.winner = killer.name;
-            //await bdd.updateGame(killer);
+            await bdd.updateGame(killer);
+            await bdd.checkSuccess(killer.name,game,"Il n'en restera qu'un");
             return false // si un joueur dois se tué lui même cela veut dire que il y a plus que lui, il gagne donc et on stop la game
         }
         return true; // sinon on continue à jouer

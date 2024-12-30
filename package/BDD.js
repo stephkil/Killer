@@ -89,6 +89,8 @@ class BDD{
             await this.collections.User.updateOne({ _id: user._id }, {$inc: { kill : game.TableInGame[i].nbKill }});
             await this.collections.User.updateOne({ _id: user._id }, {$push: { historique : histoId }});
 
+            await this.checkSuccess("",game.TableInGame[i].nbKill,"Pentakill");
+
             if(game.TableInGame[i].nbKill > nbLife && game.TableInGame[i].status == "life"){
                 topKillerLife = game.TableInGame[i].name;
                 nbLife = game.TableInGame[i].nbKill;
