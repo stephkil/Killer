@@ -14,23 +14,16 @@
 
     <form action="/game/load" method="post" class="ui form">
         
-        Liste des Parties en cours :
-
+        <h2> Liste des Parties en cours </h2>
+        <br>
         <div class="ui cards">
-            <div class="card">
                 <% for (var i = 0; i < name.length; i++) { %>
-                    <button type="submit" class="ui blue labeled submit icon button game-button" name="gameName" value="<%= name[i] %>">
-                        <i class="icon edit"></i> <%= name[i] %> 
+                    <button type="submit" class="ui gray labeled submit icon button game-button" style="margin-bottom:20px; width:90%" name="gameName" value="<%= name[i] %>">
+                        <i class="icon game"></i> <%= name[i] %> 
                     </button>
-                    
-                    <p></p>
-
                 <% } %>
-            </div>
         </div>
     </form>
-
-
 
 <%- include ('../menu.ejs') %>
 

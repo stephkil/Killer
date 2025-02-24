@@ -14,8 +14,8 @@
 
 
     <form action="/auth/register" method="post" class="form">
-        <div class="ui placeholder segment">
-            <div class="ui form">
+            
+        <div class="ui form">
 
                 <div class="middle aligned column">
                     <div class="ui big button">
@@ -24,12 +24,12 @@
                     </div>
                 </div>
 
-                <div class="ui horizontal divider">
+                <h2>
                     Or
-                </div>
+                </h2>
 
                 <div class="field">
-                    <label>Username</label>
+                    <h5>Username</h5>
                     <div class="ui left icon input">
                         <i class="user icon"></i>
                         <input type="text" 
@@ -39,7 +39,7 @@
                                maxlength="11"
                                oninput="updateCharacterCount()"> 
                     </div>
-                    <h6><small>Caractères restants : <span id="charCount">11</span></small></p> 
+                    <h4><small>Caractères restants : <span id="charCount">11</span></small></p> 
                 </div>
 
                 <script>
@@ -55,8 +55,9 @@
                     }
                 </script>
 
+                
                 <div class="field">
-                    <label>Password</label>
+                    <h5>Password</h5>
                     <div class="ui left icon input">
                       <i class="lock icon"></i>
                       <input type="password" 
@@ -66,7 +67,7 @@
                       maxlength="40"
                       oninput="updateCharacterCountMdp()">
                     </div>
-                    <h6><small>Caractères restants : <span id="MdpCharCount">40</span></small></h6> 
+                    <h4><small>Caractères restants : <span id="MdpCharCount">40</span></small></h4> 
                 </div>
                 
                 
@@ -83,9 +84,8 @@
                     }
                 </script>
 
-                <button type="submit" class="ui blue submit button">Envoyer</button>
+                <button type="submit" class="ui green submit button" style="width:70%"> Register </button>
         
-            </div>
         </div>
     </form>
 

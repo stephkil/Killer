@@ -15,7 +15,7 @@
     flex-wrap: wrap; /* Permet aux cartes de passer à la ligne si nécessaire */
     justify-content: center;
     margin : 0;
-    color : white;
+    color : rgb(182, 32, 32);
 }
 
 .card {
@@ -26,28 +26,6 @@
     overflow: hidden; /* Évite le débordement de contenu */
 }
 
-h2, div{
-    font-size: 1rem;
-    color: #ffffff;
-}
-
-h3 {
-    color: #ffffff;
-    text-transform: uppercase;
-}
-
-h4 {
-    margin-top: 0px;
-    font-size: 0.9rem;
-    color: #c5c4c4;
-}
-
-h5{
-    font-size: 1rem;
-    color: #ffffff;
-    margin-top: 0px;
-
-}
 
 .ui.card.reveal{
     width : 100%;

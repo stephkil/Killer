@@ -25,57 +25,58 @@
     
     <div class="content">
 
-        <h3 class="ui dividing header"> Progression </h3>
+        <h2> Progression </h2>
 
-        <div class="ui indicating progress" id="progressBar" data-value="0" data-total="100">
+        <div class="ui indicating progress" style="background-color:rgba(255, 255, 255, 0.1)" id="progressBar" data-value="0" data-total="100">
             
             <% if ((remaining < 10) && (remaining >= 0)) { %> 
-                <div class="bar" style="width: 0%;"></div>
+                <div class="bar" style="width: 0%;background-color:green"></div>
 
             <% } else if ((remaining < 20) && (remaining >= 10)) { %> 
-                <div class="bar" style="width: 10%;"></div>
+                <div class="bar" style="width: 10%;background-color:green"></div>
 
             <% } else if ((remaining < 30) && (remaining >= 20)) { %> 
-                <div class="bar" style="width: 20%;"></div>
+                <div class="bar" style="width: 20%;background-color:green"></div>
 
             <% } else if ((remaining < 40) && (remaining >= 30)) { %> 
-                <div class="bar" style="width: 30%;"></div>
+                <div class="bar" style="width: 30%;background-color:green"></div>
 
             <% } else if ((remaining < 50) && (remaining >= 40)) { %> 
                 <div class="bar" style="width: 40%;"></div>
 
             <% } else if ((remaining < 60) && (remaining >= 50)) { %> 
-                <div class="bar" style="width: 50%;"></div>
+                <div class="bar" style="width: 50%;background-color:green"></div>
 
             <% } else if ((remaining < 70) && (remaining >= 60)) { %> 
-                <div class="bar" style="width: 60%;"></div>
+                <div class="bar" style="width: 60%;background-color:green"></div>
                 
             <% } else if ((remaining < 80) && (remaining >= 70)) { %> 
-                <div class="bar" style="width: 70%;"></div>
+                <div class="bar" style="width: 70%;background-color:green"></div>
 
             <% } else if ((remaining < 90) && (remaining >= 80)) { %> 
-                <div class="bar" style="width: 80%;"></div>
+                <div class="bar" style="width: 80%;background-color:green"></div>
 
             <% } else if ((remaining < 100) && (remaining >= 90)) { %> 
-                <div class="bar" style="width: 90%;"></div>
+                <div class="bar" style="width: 90%;background-color:green"></div>
 
             <% } else if (remaining >= 100){ %> 
-                <div class="bar" style="width: 10%;"></div>
+                <div class="bar" style="width: 10%;background-color:green"></div>
             <% } %>
     
 
-            <div class="label" id="progressLabel"> Fin de la partie le : <%= formattedDate%></div>
+            <div class="label" style="font-size: 1rem;color: #ffffff;" id="progressLabel">  Fin de la partie le <br> <%= formattedDate%></div>
         </div>
         
+        <br>
 
-        <h3 class="ui dividing header"> Participants </h3>
+        <h2> Participants </h2>
 
         <div class="ui two column grid">
             <% for (var i = 0; i < game.nbPlayer; i++) { %>
                 <div class="column">
 
                     <% if(TableShuffle[i].name == username){%>
-                        <div class="ui card" style="border: 2px solid black;">
+                        <div class="ui card" style="border: 1px solid rgba(230, 57, 70, 1); box-shadow: 0 0 10px rgba(230, 57, 70, 1);">
                     <% }else{ %>
                         <div class="ui card">
                     <% } %>
@@ -121,15 +122,14 @@
 
         <% if(game.TableInGame[mainPlayer].status == 'dead'){ %>
 
-            <h3 class="ui dividing header"> Vous avez été tué </h3>
+            <h3> <strong> Vous avez été tué </strong> </h3>
         
         <% } else if(game.TableInGame[mainPlayer].status == 'confirmation'){ %>
 
             <h3 class="ui dividing header"> Veuillez confirmer / contester votre mort </h3>
 
         <% } else { %>
-            <h3 class="ui dividing header"> Votre Mission </h3> 
-
+            <h2> Votre Mission </h2>
         
             <div class="ui card reveal">
                 <div class="content">
@@ -137,17 +137,19 @@
                         <img class="visible content" src="/assets/picture/couteau.png" alt="Couteau">
                     </div>
                     
-                    <div class="header">
+                    <h3>
                         <%= game.TableInGame[targetPlayer].name %>
-                    </div>
+                    </h3>
 
-                    <div class="description">
+                    <h5>
                         <%= game.TableInGame[targetPlayer].mission %>
-                    </div>
+                    </h5>
                 </div>
             </div>
 
-            <p style="text-align: center;"><small>Click on the Knife to reveal</small></p>
+            <h5><small>Click on the Knife to reveal</small></h5>
+
+            <h2></h2> 
     </div>
 </div>
 
