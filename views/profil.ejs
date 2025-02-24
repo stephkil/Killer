@@ -4,14 +4,13 @@
 
 <%- include('./header.ejs') %>
 
-<h1>  Profil : <%= username %> </h1>
+<h1>  <%= username %> </h1>
 
 <%- include ('./flash.ejs') %>
 
 
 <div class="content">
-    <h3 class="ui dividing header">  Info Player : <a><%= infoPlayer[2] %> parties </a> <br> 
-    </h3>
+    <h2>  Info Player : <a><%= infoPlayer[2] %> parties </a> <br></h2>
 
     <div class="description">
 
@@ -53,13 +52,13 @@
 
         <br>
         <br>
-        Nombre de kill :  <%= infoPlayer[7] %>  
+        <div class = "underline"> Nombre de kill :  <%= infoPlayer[7] %></div>
     </div>
 
     <!--  <h3 class="ui dividing header">  Title :  <%= infoPlayer[1] %> || <a>0 / 10 </a></h3>  -->
 
 
-    <h3 class="ui dividing header">  Success :  <a><%= infoPlayer[8].length %> / 10 </a></h3>
+    <h2>  Success :  <a><%= infoPlayer[8].length %> / 10 </a></h2>
 
         <% for (var i = 0; i < success.length; i++ ) { %>
             <div class="column">
@@ -71,13 +70,15 @@
                     <% } %>
 
                     <div class="content">
-                        <div class="header"><%= success[i][0] %></div>
-                        <div class="meta">
-                            <a>Optenu par <%= success[i][1] %> % des joueurs</a>
-                        </div>
-                        <div class="description">
+                        <h3>
+                            <%= success[i][0] %>
+                        </h3>
+                        <h4>
+                            Optenu par <%= success[i][1] %> % des joueurs
+                        </h4>
+                        <h5>
                             <%= success[i][2] %> <br> 
-                        </div>
+                        </h5>
                     </div>
                 </div>
             </div>
@@ -91,7 +92,7 @@
 
 <form action="/profil" method="post" class="ui form">
     <div style="display: flex; justify-content: center; align-items: center;">
-        <button type="submit" class="ui dark red labeled submit icon button" style="position:bottom ; bottom: 10%">
+        <button type="submit" class="ui dark red labeled submit icon button" style="position:bottom ; bottom: 10%; background-color: #e63946">
             <i class="close  icon"></i>
             Déconnection
         </button>

@@ -36,15 +36,15 @@
                                name="paramPlayer"
                                id="name"
                                placeholder="Username"
-                               maxlength="20"
+                               maxlength="11"
                                oninput="updateCharacterCount()"> 
                     </div>
-                    <p><small>Caractères restants : <span id="charCount">20</span></small></p> 
+                    <h6><small>Caractères restants : <span id="charCount">11</span></small></p> 
                 </div>
 
                 <script>
                     function updateCharacterCount() {
-                        const maxLength = 20;
+                        const maxLength = 11;
                         const inputField = document.getElementById('name');
                         const charCount = document.getElementById('charCount');
                         
@@ -66,7 +66,7 @@
                       maxlength="40"
                       oninput="updateCharacterCountMdp()">
                     </div>
-                    <p><small>Caractères restants : <span id="MdpCharCount">40</span></small></p> 
+                    <h6><small>Caractères restants : <span id="MdpCharCount">40</span></small></h6> 
                 </div>
                 
                 
